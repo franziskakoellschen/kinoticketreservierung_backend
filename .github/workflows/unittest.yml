@@ -25,3 +25,5 @@ jobs:
         with:
           name: jacoco-reports
           path: target/site/jacoco
+      - name: jacoco-badge-generator
+        uses: cicirello/jacoco-badge-generator@v2.5.0

@@ -20,3 +20,8 @@ jobs:
           distribution: 'adopt'
       - name: Run Unit Tests
         run: mvn verify
+      - name: Archive Jacoco reports
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: jacoco-reports
+          path: test-coverage/target/site/jacoco

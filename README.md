@@ -1,7 +1,7 @@
 # Readme
 
 # Unit Tests
-'mvn verify'
+`mvn verify`
 
 # Backend starten
-'mvn spring-boot:run'
+`mvn spring-boot:run`

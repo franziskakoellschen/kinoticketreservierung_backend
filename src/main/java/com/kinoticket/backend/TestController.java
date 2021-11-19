@@ -11,4 +11,8 @@ public class TestController {
     public String testRequest() {
         return "Hello from Backend!";
     }
+
+    private void test() {
+        return;
+    }
 }

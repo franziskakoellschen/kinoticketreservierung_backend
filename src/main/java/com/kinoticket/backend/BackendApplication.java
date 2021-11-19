@@ -25,6 +25,9 @@ public class BackendApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedOrigins(
 					"http://localhost:3000",
+					"http://kinoticket-frontend-dev.herokuapp.com",
+					"http://kinoticket-frontend-prod.herokuapp.com",
+					"https://localhost:3000",
 					"https://kinoticket-frontend-dev.herokuapp.com",
 					"https://kinoticket-frontend-prod.herokuapp.com"
 				);

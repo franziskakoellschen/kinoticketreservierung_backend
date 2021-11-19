@@ -29,3 +29,6 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2.5.0
         with:
           generate-branches-badge: true
+          fail-if-coverage-less-than: 100
+          fail-if-branches-less-than: 100
+          fail-on-coverage-decrease: true

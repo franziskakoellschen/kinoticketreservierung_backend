@@ -27,3 +27,5 @@ jobs:
           path: target/site/jacoco
       - name: jacoco-badge-generator
         uses: cicirello/jacoco-badge-generator@v2.5.0
+        with:
+          generate-branches-badge: true

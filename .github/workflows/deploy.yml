@@ -1,0 +1,42 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Heroku Action
+  # You may pin to the exact commit or the version.
+  # uses: CDNievas/heroku-action@c9cf9c85571e67583e44ec92c0d1113f66b0e838
+        uses: CDNievas/heroku-action@v1.0
+        with:
+          # Used for authentication. You can find it in your heroku homepage account settings
+          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          # Email from Heroku Account
+          heroku_email: kinoticketbuchung@gmail.com
+          # The appname to use for deploying/updating
+          heroku_app_name: kinoticket-backend-dev
+          # The branch that you would like to deploy to Heroku
+          branch: dev
+          buildpack: heroku/java

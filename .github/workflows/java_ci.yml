@@ -7,9 +7,10 @@ on:
      - dev
   pull_request:
 
+runs-on: ubuntu-latest
+
 jobs:
   Test:
-    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -20,6 +21,7 @@ jobs:
           distribution: 'adopt'
       - name: Run Unit Tests
         run: mvn verify
+  Code Coverage:
       - name: Archive Jacoco reports
         uses: actions/upload-artifact@v2.2.4
         with:

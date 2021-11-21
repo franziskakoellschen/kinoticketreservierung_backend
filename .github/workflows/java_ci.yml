@@ -3,13 +3,15 @@ name: Java CI
 on:
   push:
     branches:
-     - main
-     - dev
+      - main
+      - dev
   pull_request:
 
 jobs:
   TestsAndCoverage:
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -34,3 +36,41 @@ jobs:
           fail-if-branches-less-than: 80
           fail-on-coverage-decrease: true
           fail-on-branches-decrease: true
+
+  DeployProd:
+    if: github.ref == 'refs/heads/main'
+    needs: TestsAndCoverage
+    runs-on: ubuntu-latest
+    environment: 
+      name: kinoticket-backend-prod 
+      url: https://kinoticket-backend-prod.herokuapp.com/
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Heroku Deploy
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_email: kinoticketbuchung@gmail.com
+          heroku_app_name: kinoticket-backend-prod
+          buildpack: heroku/java
+
+  DeployDev:
+    if: github.ref == 'refs/heads/dev'
+    needs: TestsAndCoverage
+    runs-on: ubuntu-latest
+    environment: 
+      name: kinoticket-backend-dev 
+      url: https://kinoticket-backend-dev.herokuapp.com/
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Heroku Deploy
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_email: kinoticketbuchung@gmail.com
+          heroku_app_name: kinoticket-backend-dev
+          buildpack: heroku/java

@@ -1,0 +1,64 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+  TestsAndCoverage:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Run Unit Tests
+        run: mvn verify
+
+      - name: Archive Jacoco reports
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: jacoco-reports
+          path: target/site/jacoco
+      - name: Check Coverage
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
+          on-missing-report: fail
+          fail-if-coverage-less-than: 80
+          fail-if-branches-less-than: 80
+          fail-on-coverage-decrease: true
+          fail-on-branches-decrease: true
+
+  Deployment:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    needs: TestsAndCoverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Heroku Deploy Prod
+        if: github.ref == 'refs/heads/main'
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_email: kinoticketbuchung@gmail.com
+          heroku_app_name: kinoticket-backend-prod
+          buildpack: heroku/java
+
+      - name: Heroku Deploy Dev
+        if: github.ref == 'refs/heads/dev'
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_email: kinoticketbuchung@gmail.com
+          heroku_app_name: kinoticket-backend-dev
+          buildpack: heroku/java

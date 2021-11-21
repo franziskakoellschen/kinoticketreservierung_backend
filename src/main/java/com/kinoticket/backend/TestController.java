@@ -9,6 +9,7 @@ public class TestController {
 
     @GetMapping("/testRequest")
     public String testRequest() {
-        return "Hello from Backend!";
+        return "Hello from Backendiius!";
     }
+
 }

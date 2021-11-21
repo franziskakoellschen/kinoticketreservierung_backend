@@ -37,7 +37,7 @@ jobs:
           fail-on-coverage-decrease: true
           fail-on-branches-decrease: true
 
-  Deploy Prod:
+  DeployProd:
     if: github.ref == 'refs/heads/main'
     needs: TestsAndCoverage
     runs-on: ubuntu-latest
@@ -54,7 +54,7 @@ jobs:
           heroku_app_name: kinoticket-backend-prod
           buildpack: heroku/java
 
-  Deploy Dev:
+  DeployDev:
     if: github.ref == 'refs/heads/dev'
     needs: TestsAndCoverage
     runs-on: ubuntu-latest

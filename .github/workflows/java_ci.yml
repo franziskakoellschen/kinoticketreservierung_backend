@@ -37,20 +37,16 @@ jobs:
           fail-on-coverage-decrease: true
           fail-on-branches-decrease: true
 
-  Deployment:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+  Deploy Prod:
+    if: github.ref == 'refs/heads/main'
     needs: TestsAndCoverage
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-      environment: kinoticket-backend-prod 
-    if: github.ref == 'refs/heads/dev'
-      environment: kinoticket-backend-dev
+    environment: kinoticket-backend-prod 
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Heroku Deploy Prod
-        if: github.ref == 'refs/heads/main'
+      - name: Heroku Deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
@@ -58,8 +54,16 @@ jobs:
           heroku_app_name: kinoticket-backend-prod
           buildpack: heroku/java
 
-      - name: Heroku Deploy Dev
-        if: github.ref == 'refs/heads/dev'
+  Deploy Dev:
+    if: github.ref == 'refs/heads/dev'
+    needs: TestsAndCoverage
+    runs-on: ubuntu-latest
+    environment: kinoticket-backend-dev 
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Heroku Deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c

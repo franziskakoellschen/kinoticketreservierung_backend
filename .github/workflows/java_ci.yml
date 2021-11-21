@@ -41,6 +41,10 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     needs: TestsAndCoverage
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+      environment: kinoticket-backend-prod 
+    if: github.ref == 'refs/heads/dev'
+      environment: kinoticket-backend-dev
 
     steps:
       - uses: actions/checkout@v2

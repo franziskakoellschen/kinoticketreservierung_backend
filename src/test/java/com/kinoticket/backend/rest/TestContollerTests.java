@@ -1,4 +1,4 @@
-package com.kinoticket.backend;
+package com.kinoticket.backend.rest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

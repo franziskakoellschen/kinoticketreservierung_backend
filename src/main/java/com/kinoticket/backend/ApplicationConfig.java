@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import javax.sql.DataSource;
 
 import org.postgresql.ds.PGSimpleDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -13,6 +15,8 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:application.properties")
 public class ApplicationConfig {
+
+    Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
     
     @Bean
     public DataSource dataSource() throws URISyntaxException {
@@ -31,8 +35,8 @@ public class ApplicationConfig {
 
             return basicDataSource;
         } catch(NullPointerException e) {
-            System.out.println("DATABASE_URL is null");
-            return new PGSimpleDataSource();
+            logger.error("DATABASE_URL is null");
+            return null;
         }
     }
 }

@@ -4,6 +4,6 @@ import com.kinoticket.backend.model.Movie;
 
 import org.springframework.data.repository.*;
 
-public interface MovieRepository extends CrudRepository<Movie, Long> {
+public interface MovieRepository extends CrudRepository<Movie, String> {
     
 }

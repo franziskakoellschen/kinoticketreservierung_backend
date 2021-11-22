@@ -21,6 +21,9 @@ jobs:
           distribution: 'adopt'
       - name: Run Unit Tests
         run: mvn verify
+        with:
+          env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Archive Jacoco reports
         uses: actions/upload-artifact@v2.2.4

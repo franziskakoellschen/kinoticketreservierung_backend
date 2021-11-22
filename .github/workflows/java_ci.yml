@@ -30,6 +30,7 @@ jobs:
           name: jacoco-reports
           path: target/site/jacoco
       - name: Check Coverage
+        id: jacoco-check
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
@@ -38,6 +39,8 @@ jobs:
           fail-if-branches-less-than: 80
           fail-on-coverage-decrease: true
           fail-on-branches-decrease: true
+      - name: Print Coverage
+        run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
 
   DeployProd:
     if: github.ref == 'refs/heads/main'

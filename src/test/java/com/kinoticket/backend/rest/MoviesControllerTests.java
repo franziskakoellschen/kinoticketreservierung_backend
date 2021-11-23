@@ -37,14 +37,13 @@ public class MoviesControllerTests {
     @Test
     void testGetAll() throws Exception {
 
-        MvcResult result =
-            this.mvc.perform(get("/movies"))
-                .andExpect(status().isOk())
-                .andReturn();
-        
-        movieRepository.count();
+        long oldSize = movieRepository.count();
 
-        assertEquals(result.getResponse().getContentLength(), movieRepository.count());
+        this.mvc.perform(get("/movies"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        assertEquals(oldSize, movieRepository.count());
     }
 
     @Test

@@ -9,31 +9,34 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/movies")
 public class MoviesController {
 
     @Autowired
     MoviesService service;
 
-    @PostMapping("/movies")
+    @PostMapping()
     public Movie postMovie(@RequestBody Movie movie) {
         return service.putMovie(movie);
     }
 
-    @GetMapping("/movies")
+    @GetMapping()
     public Iterable<Movie> getMovies() {
         return service.getMovies();
     }
 
-    @GetMapping("/movies/{id}")
+    @GetMapping("/{id}")
     public Movie getMovie(@PathVariable int id) {
         return service.getMovie(id);
     }
 
-    @GetMapping("/movies/{movieId}/filmShows")
+    @GetMapping("/{movieId}/filmShows")
     public Iterable<FimShow> getFilmShows(@PathVariable int movieId) {
+        System.out.println("getFilmShows " + movieId);
         return service.getFilmShows(movieId);
     }
 }

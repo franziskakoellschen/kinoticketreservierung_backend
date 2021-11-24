@@ -67,7 +67,7 @@ public class MoviesControllerTests {
         assertTrue(result.getResponse().getContentAsString().contains("bar"));
 
         //  TODO
-        //  these checks check will work again, once the MoviesService interacts with the movieRepository
+        //  these checks will work again, once the MoviesService interacts with the movieRepository
         
         //  assertEquals(oldSize+1, movieRepository.count());
     
@@ -100,7 +100,7 @@ public class MoviesControllerTests {
             .andExpect(status().isOk());
 
         //  TODO
-        //  these checks check will work again, once the MoviesService interacts with the movieRepository
+        //  these checks will work again, once the MoviesService interacts with the movieRepository
         
         //  assertEquals(oldSize+1, movieRepository.count());
     

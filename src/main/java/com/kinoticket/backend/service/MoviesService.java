@@ -28,11 +28,7 @@ public class MoviesService {
         return null;
     }
 
-<<<<<<< HEAD
     public Iterable<FilmShow> getFilmShows(int movieId) {
-=======
-    public Iterable<FimShow> getFilmShows(int movieId) {
->>>>>>> b244a52 (Implement draft for MoviesService)
         // TODO
         return null;
     }

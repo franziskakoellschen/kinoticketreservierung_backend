@@ -1,6 +1,6 @@
 package com.kinoticket.backend.rest;
 
-import com.kinoticket.backend.model.FimShow;
+import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.service.MoviesService;
 
@@ -35,7 +35,7 @@ public class MoviesController {
     }
 
     @GetMapping("/{movieId}/filmShows")
-    public Iterable<FimShow> getFilmShows(@PathVariable int movieId) {
+    public Iterable<FilmShow> getFilmShows(@PathVariable int movieId) {
         return service.getFilmShows(movieId);
     }
 }

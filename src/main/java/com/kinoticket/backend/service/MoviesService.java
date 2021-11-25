@@ -1,6 +1,6 @@
 package com.kinoticket.backend.service;
 
-import com.kinoticket.backend.model.FimShow;
+import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.MovieRepository;
 
@@ -28,7 +28,7 @@ public class MoviesService {
         return null;
     }
 
-    public Iterable<FimShow> getFilmShows(int movieId) {
+    public Iterable<FilmShow> getFilmShows(int movieId) {
         // TODO
         return null;
     }

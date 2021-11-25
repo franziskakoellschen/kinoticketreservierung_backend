@@ -1,5 +1,5 @@
 package com.kinoticket.backend.model;
 
-public class FimShow {
+public class FilmShow {
     // TODO
 }

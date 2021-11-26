@@ -6,13 +6,15 @@ import com.kinoticket.backend.repositories.BookingPlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookingPlanService {
 
   @Autowired
   BookingPlanRepository repository;
 
-  public BookingPlan getBookingPlan(int id) {
+  public Optional<BookingPlan> getBookingPlan(int id) {
     return repository.findById(id);
   }
 

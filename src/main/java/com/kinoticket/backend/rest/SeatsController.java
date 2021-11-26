@@ -1,6 +1,5 @@
 package com.kinoticket.backend.rest;
 
-import com.kinoticket.backend.model.BookingPlan;
 import com.kinoticket.backend.service.SeatsService;
 
 import org.springframework.beans.factory.annotation.Autowired;

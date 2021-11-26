@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/bookingplans")
@@ -18,7 +20,7 @@ public class BookingPlanController {
   BookingPlanService service;
 
   @GetMapping("/{id}")
-  public BookingPlan getBookingPlan(@PathVariable int id) {
+  public Optional<BookingPlan> getBookingPlan(@PathVariable int id) {
     return service.getBookingPlan(id);
   }
 }

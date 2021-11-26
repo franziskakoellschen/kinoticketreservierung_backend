@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import com.kinoticket.backend.repositories.MovieRepository;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,13 @@ public class MoviesControllerTests {
     @BeforeEach
     void before() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        if (movieRepository.findById("foo").isPresent()) {
+            movieRepository.delete(movieRepository.findById("foo").get());
+        }
+    }
+
+    @AfterEach
+    void after() {
         if (movieRepository.findById("foo").isPresent()) {
             movieRepository.delete(movieRepository.findById("foo").get());
         }

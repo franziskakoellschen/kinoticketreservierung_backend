@@ -10,15 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "FILMSHOW")
+@Data
 public class FilmShow {
 
     @Column
     @GeneratedValue
     @Id
     private long id;
-
 
     @Column
     private Date date;
@@ -28,38 +30,4 @@ public class FilmShow {
 
     @OneToOne
     private SeatingPlan seatingPlan;
-    
-    /* Getters and Setters */
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
-
-    public SeatingPlan getSeatingPlan() {
-        return seatingPlan;
-    }
-
-    public void setSeatingPlan(SeatingPlan seatingPlan) {
-        this.seatingPlan = seatingPlan;
-    }
 }

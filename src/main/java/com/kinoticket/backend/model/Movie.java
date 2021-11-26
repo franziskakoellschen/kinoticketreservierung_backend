@@ -11,8 +11,11 @@ import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "MOVIES")
+@Data
 public class Movie implements Serializable {
 
     @Column
@@ -40,60 +43,4 @@ public class Movie implements Serializable {
 
     @OneToMany
     private List<FilmShow> filmShows;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getFsk() {
-        return fsk;
-    }
-
-    public void setFsk(int fsk) {
-        this.fsk = fsk;
-    }
-
-    public String getTrailer() {
-        return trailer;
-    }
-
-    public void setTrailer(String trailer) {
-        this.trailer = trailer;
-    }
-
-    public List<FilmShow> getFilmShows() {
-        return filmShows;
-    }
-
-    public void setFilmShow(List<FilmShow> filmShows) {
-        this.filmShows = filmShows;
-    }
 }

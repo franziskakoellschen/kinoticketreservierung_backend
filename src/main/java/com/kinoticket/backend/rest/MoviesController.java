@@ -30,12 +30,12 @@ public class MoviesController {
     }
 
     @GetMapping("/{id}")
-    public Movie getMovie(@PathVariable int id) {
+    public Movie getMovie(@PathVariable String id) {
         return service.getMovie(id);
     }
 
     @GetMapping("/{movieId}/filmShows")
-    public Iterable<FilmShow> getFilmShows(@PathVariable int movieId) {
+    public Iterable<FilmShow> getFilmShows(@PathVariable String movieId) {
         return service.getFilmShows(movieId);
     }
 }

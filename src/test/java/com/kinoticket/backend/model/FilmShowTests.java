@@ -2,11 +2,6 @@ package com.kinoticket.backend.model;
 
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.Column;
-import javax.persistence.OneToOne;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

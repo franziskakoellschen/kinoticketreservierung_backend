@@ -27,13 +27,19 @@ public class MovieService {
         return movieRepository.findAll();
     }
 
-    public Movie getMovie(int id) {
-        // TODO
-        return null;
+    public Movie getMovie(String id) {
+        if (movieRepository.findById(id).isPresent()) {
+            return movieRepository.findById(id).get();
+        } else {
+            return null;
+        }
     }
 
-    public Iterable<FilmShow> getFilmShows(int movieId) {
-        // TODO
-        return null;
+    public Iterable<FilmShow> getFilmShows(String id) {
+        if (movieRepository.findById(id).isPresent()) {
+            return movieRepository.findById(id).get().getFilmShows();
+        } else {
+            return null;
+        }
     }
 }

@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,12 +19,10 @@ public class FilmShow {
     @Id
     private long id;
 
-    @ManyToOne
-    private Movie movie;
 
     @Column
     private Date date;
-    
+
     @Column
     private Time time;
 
@@ -40,14 +37,6 @@ public class FilmShow {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public void setMovie(Movie movie) {
-        this.movie = movie;
     }
 
     public Date getDate() {

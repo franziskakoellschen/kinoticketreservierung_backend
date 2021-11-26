@@ -1,10 +1,12 @@
 package com.kinoticket.backend.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
@@ -35,6 +37,9 @@ public class Movie implements Serializable {
 
     @Column
     private String trailer;
+
+    @OneToMany
+    private List<FilmShow> filmShows;
 
     public String getTitle() {
         return title;
@@ -84,4 +89,11 @@ public class Movie implements Serializable {
         this.trailer = trailer;
     }
 
+    public List<FilmShow> getFilmShows() {
+        return filmShows;
+    }
+
+    public void setFilmShow(List<FilmShow> filmShows) {
+        this.filmShows = filmShows;
+    }
 }

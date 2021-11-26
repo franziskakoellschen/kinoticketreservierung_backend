@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import com.kinoticket.backend.repositories.MovieRepository;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +34,9 @@ public class MoviesControllerTests {
     @BeforeEach
     void before() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        if (movieRepository.findById("foo").isPresent()) {
+            movieRepository.delete(movieRepository.findById("foo").get());
+        }
     }
 
     @Test

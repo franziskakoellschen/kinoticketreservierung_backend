@@ -77,11 +77,10 @@ public class MoviesControllerTests {
         assertTrue(result.getResponse().getContentAsString().contains("bar"));
         assertTrue(result.getResponse().getContentAsString().contains("fsk"));
         assertTrue(result.getResponse().getContentAsString().contains("16"));
+
         assertEquals(oldSize+1, movieRepository.count());
 
-        movieRepository.delete(
-            movieRepository.findById("foo").get()
-        );
+        movieRepository.delete(movieRepository.findById("foo").get());
 
         assertEquals(oldSize, movieRepository.count());
     }
@@ -106,10 +105,8 @@ public class MoviesControllerTests {
                 .andReturn();
 
         assertEquals(oldSize+1, movieRepository.count());
-
-        movieRepository.delete(
-            movieRepository.findById("foo").get()
-        );
+    
+        movieRepository.delete(movieRepository.findById("foo").get());
 
         assertEquals(oldSize, movieRepository.count());
     }

@@ -11,11 +11,15 @@ import javax.persistence.Table;
 
 import org.springframework.lang.NonNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @Table(name = "MOVIES")
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie implements Serializable {
 
     @Column

@@ -6,8 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
 import com.kinoticket.backend.repositories.MovieRepository;
 
 import org.junit.jupiter.api.AfterEach;
@@ -65,19 +63,20 @@ public class MoviesControllerTests {
         long oldSize = movieRepository.count();
 
         MvcResult result = this.mvc.perform(
-            post("/movies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    "{ \"title\": \"foo\", \"description\": \"bar\" }"
-                )
-            )
-            .andExpect(status().isOk())
-            .andReturn();
+                post("/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"foo\",\"year\":2000,\"shortDescription\":\"bar\",\"fsk\":16}"))
+                .andExpect(status().isOk())
+                .andReturn();
 
         assertTrue(result.getResponse().getContentAsString().contains("title"));
         assertTrue(result.getResponse().getContentAsString().contains("foo"));
-        assertTrue(result.getResponse().getContentAsString().contains("description"));
+        assertTrue(result.getResponse().getContentAsString().contains("year"));
+        assertTrue(result.getResponse().getContentAsString().contains("2000"));
+        assertTrue(result.getResponse().getContentAsString().contains("shortDescription"));
         assertTrue(result.getResponse().getContentAsString().contains("bar"));
+        assertTrue(result.getResponse().getContentAsString().contains("fsk"));
+        assertTrue(result.getResponse().getContentAsString().contains("16"));
         assertEquals(oldSize+1, movieRepository.count());
 
         movieRepository.delete(
@@ -93,22 +92,18 @@ public class MoviesControllerTests {
         long oldSize = movieRepository.count();
 
         this.mvc.perform(
-            post("/movies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    "{ \"title\": \"foo\", \"description\": \"bar\" }"
-                )
-            )
-            .andExpect(status().isOk());
+                post("/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"foo\",\"year\":2000,\"shortDescription\":\"bar\",\"fsk\":16}"))
+                .andExpect(status().isOk())
+                .andReturn();
 
         this.mvc.perform(
-            post("/movies")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    "{ \"title\": \"foo\", \"description\": \"bar\" }"
-                )
-            )
-            .andExpect(status().isOk());
+                post("/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"foo\",\"year\":2000,\"shortDescription\":\"bar\",\"fsk\":16}"))
+                .andExpect(status().isOk())
+                .andReturn();
 
         assertEquals(oldSize+1, movieRepository.count());
 

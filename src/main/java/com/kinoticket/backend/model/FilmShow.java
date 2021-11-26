@@ -10,11 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @Table(name = "FILMSHOW")
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FilmShow {
 
     @Column

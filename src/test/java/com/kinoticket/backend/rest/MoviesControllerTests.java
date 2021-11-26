@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import com.kinoticket.backend.repositories.MovieRepository;
 
@@ -83,6 +84,31 @@ public class MoviesControllerTests {
         movieRepository.delete(movieRepository.findById("foo").get());
 
         assertEquals(oldSize, movieRepository.count());
+    }
+
+    @Test
+    void testPostWithFilmShow() throws Exception {
+        this.mvc.perform(
+            post("/movies")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"title\": \"foo\",\"filmShows\":[{\"date\":\"2021-09-20\"}]}"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void testGetNonPresentId() throws Exception {
+        this.mvc.perform(
+            get("/movies/4711"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(""));
+    }
+
+    @Test
+    void testGetFilmShowForNonPresentId() throws Exception {
+        this.mvc.perform(
+            get("/movies/4711/filmShows"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(""));
     }
 
     @Test

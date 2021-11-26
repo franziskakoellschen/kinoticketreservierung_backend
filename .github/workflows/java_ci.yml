@@ -36,7 +36,7 @@ jobs:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
           on-missing-report: fail
           fail-if-coverage-less-than: 60
-          fail-on-coverage-decrease: true
+          fail-if-branches-less-than: 60
       - name: Print Coverage
         run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
 

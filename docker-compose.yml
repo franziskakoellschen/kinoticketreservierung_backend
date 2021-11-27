@@ -7,21 +7,14 @@
 # Project: Kinoticketreservierungssystem
 ########################################################
 
+# docker-compose.yml
 version: '3'
 services:
- postgres:
-  image: postgres
-  hostname: postgres
-  # if you need to connect from outside, comment this in:
-  ports:
-   - 5432:5432
-  environment:
-   POSTGRES_USER: test
-   POSTGRES_PASSWORD: password
-   POSTGRES_DB: registration
-     volumes:
-      - postgres-data:/var/lib/postgresql/data
-     restart: unless-stopped
-
- volumes:
-  postgres-data:
+ database:
+  image: "postgres" # use latest official postgres version
+  env_file:
+   - database.env # configure postgres
+  volumes:
+   - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+volumes:
+ database-data: # named volumes can be managed easier using docker-compose

@@ -26,6 +26,7 @@ public class Movie implements Serializable {
 
     @Column
     @NonNull
+    @Id
     private String title;
 
     @Column

@@ -12,6 +12,4 @@ public class FilmShowTests {
         assertEquals(new FilmShow().hashCode(), new FilmShow().hashCode());
         assertEquals(new FilmShow().toString(), "FilmShow(id=0, date=null, time=null, seatingPlan=null)");
     }
-
-
 }

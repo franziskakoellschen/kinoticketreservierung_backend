@@ -3,10 +3,14 @@ package com.kinoticket.backend.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
 import lombok.AllArgsConstructor;
@@ -15,16 +19,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Data
-@NoArgsConstructor
 @Table(name = "MOVIES")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Movie implements Serializable {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    private Long id;
 
     @Column
     @NonNull
@@ -44,7 +42,6 @@ public class Movie implements Serializable {
     @Column
     @NonNull
     private int fsk;
-
 
     @Column
     private String trailer;

@@ -1,0 +1,27 @@
+
+########################################################
+# creates postgres sql database image and pgadmin4 image
+# login db: postgres:postgres hostname: postgres
+# login pgadmin: admin@developer-blog.net:admin port 5555
+#
+# Project: Kinoticketreservierungssystem
+########################################################
+
+version: '3'
+services:
+ postgres:
+  image: postgres
+  hostname: postgres
+  # if you need to connect from outside, comment this in:
+  ports:
+   - 5432:5432
+  environment:
+   POSTGRES_USER: test
+   POSTGRES_PASSWORD: password
+   POSTGRES_DB: registration
+     volumes:
+      - postgres-data:/var/lib/postgresql/data
+     restart: unless-stopped
+
+ volumes:
+  postgres-data:

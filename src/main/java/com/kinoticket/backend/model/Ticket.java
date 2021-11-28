@@ -7,8 +7,6 @@ import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 
-
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,15 +14,13 @@ import javax.persistence.*;
 @Table(name = "Ticket")
 public class Ticket {
 
-
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Id
-        private int id;
+        private long id;
 
         @Column
         @NonNull
         private String filmShowID;
-
 
         @Column
         @NonNull
@@ -36,6 +32,4 @@ public class Ticket {
 
         @OneToOne
         private Movie movie;
-
-
 }

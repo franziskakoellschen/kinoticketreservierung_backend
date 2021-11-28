@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "SEATS")
 @IdClass(SeatPK.class)
-@NoArgsConstructor
 @Data
 public class Seat {
 
@@ -34,28 +33,25 @@ public class Seat {
     @NotNull
     private int priceCategory;
 
+    public Seat(int row, int seatNumber, BookingPlan bookingplan, boolean reserved, int priceCategory) {
+        this.row = row;
+        this.seatNumber = seatNumber;
+        this.bookingplan = bookingplan;
+        this.reserved  = reserved;
+        this.priceCategory = priceCategory;
+    }
+
     public int getRow() {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
 
     public int getSeatNumber() {
         return seatNumber;
     }
 
-    public void setSeatNumber(int seatNumber) {
-        this.seatNumber = seatNumber;
-    }
-
     public BookingPlan getBookingplan() {
         return bookingplan;
-    }
-
-    public void setBookingplan(BookingPlan bookingplan) {
-        this.bookingplan = bookingplan;
     }
 
     public boolean isReserved() {

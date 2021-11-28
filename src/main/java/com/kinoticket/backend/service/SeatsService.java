@@ -15,6 +15,7 @@ public class SeatsService {
 
   public ResponseEntity changeSeat(int bookingPlanID, int row, int seat, Seat updatedSeat) {
     // TODO --> Only change attribute "reserved"
+    // TODO: Create Error message if seat does not exist
     return new ResponseEntity(null, HttpStatus.OK);
   }
 

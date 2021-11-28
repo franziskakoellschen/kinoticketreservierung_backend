@@ -2,19 +2,15 @@ package com.kinoticket.backend.service;
 
 
 import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.MovieRepository;
 import com.kinoticket.backend.repositories.TicketRepository;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 
 @Service
-@Slf4j
 public class BookingService {
 
     @Autowired
@@ -28,7 +24,6 @@ public class BookingService {
 
 
     public Booking putBooking(Booking booking) {
-
 
         booking.getTickets().stream().forEach( e -> {
             movieRepository.save(e.getMovie());

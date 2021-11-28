@@ -30,8 +30,8 @@ public class BookingController {
         return service.getBooking(id);
     }
 
-    @PutMapping(value="/cancel")
-    public Booking updateBooking(@RequestBody long id){
+    @PutMapping("/{id}/cancel")
+    public Booking updateBooking(@PathVariable long id){
         return service.cancelBooking(id);
     }
 }

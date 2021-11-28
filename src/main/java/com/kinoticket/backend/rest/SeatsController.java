@@ -14,7 +14,7 @@ public class SeatsController {
   @Autowired
   SeatsService service;
 
-  @PutMapping("/bookingplan/{id}/row/{row}/seat/{seat}")
+  @PutMapping("/bookingplan/{id}/row/{row}/seatnumber/{seat}")
   public ResponseEntity changeSeat(@PathVariable(value = "id") int id,
                                    @PathVariable(value = "row") int row,
                                    @PathVariable(value = "seat") int seat,

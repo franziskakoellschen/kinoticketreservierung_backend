@@ -1,4 +1,4 @@
-package com.kinoticket.backend;
+package com.kinoticket.backend.rest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

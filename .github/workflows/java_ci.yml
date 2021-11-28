@@ -21,6 +21,8 @@ jobs:
           distribution: 'adopt'
       - name: Run Unit Tests
         run: mvn verify
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Archive Jacoco reports
         uses: actions/upload-artifact@v2.2.4
@@ -28,14 +30,15 @@ jobs:
           name: jacoco-reports
           path: target/site/jacoco
       - name: Check Coverage
+        id: jacoco-check
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
           on-missing-report: fail
-          fail-if-coverage-less-than: 80
-          fail-if-branches-less-than: 80
-          fail-on-coverage-decrease: true
-          fail-on-branches-decrease: true
+          fail-if-coverage-less-than: 60
+          fail-if-branches-less-than: 60
+      - name: Print Coverage
+        run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
 
   DeployProd:
     if: github.ref == 'refs/heads/main'

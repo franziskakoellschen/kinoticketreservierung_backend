@@ -6,9 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class BackendApplicationTests {
 
-	
 	// Performs a Start of the Spring Application
 	@Test
 	void contextLoads() {}
 
+	@Test
+	void applicationStarts() {
+		BackendApplication.main(new String[0]);
+	}
 }

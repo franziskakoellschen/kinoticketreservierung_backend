@@ -1,24 +1,30 @@
 package com.kinoticket.backend.model;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "BOOKINGPLANS")
 public class BookingPlan implements Serializable {
 
-  @Column
-  @NonNull
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
+  @Column
   private int id;
 
-  // TODO
+  @Column
+  @OneToMany(mappedBy = "bookingplan", cascade = CascadeType.ALL)
+  private List<Seat> seats;
+
+  // TODO: SeatPlan
 
 
   public int getId() {
@@ -27,5 +33,13 @@ public class BookingPlan implements Serializable {
 
   public void setId(int id) {
     this.id = id;
+  }
+
+  public List<Seat> getSeats() {
+    return seats;
+  }
+
+  public void setSeats(List<Seat> seats) {
+    this.seats = seats;
   }
 }

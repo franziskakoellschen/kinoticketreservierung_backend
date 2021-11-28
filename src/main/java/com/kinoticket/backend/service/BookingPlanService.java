@@ -12,10 +12,11 @@ import java.util.Optional;
 public class BookingPlanService {
 
   @Autowired
-  BookingPlanRepository repository;
+  private BookingPlanRepository repository;
 
   public Optional<BookingPlan> getBookingPlan(int id) {
     return repository.findById(id);
+    // TODO: Handle if booking plan not found
   }
 
 }

@@ -27,7 +27,7 @@ public class MovieService {
         return movieRepository.findAll();
     }
 
-    public Movie getMovie(String id) {
+    public Movie getMovie(long id) {
         if (movieRepository.findById(id).isPresent()) {
             return movieRepository.findById(id).get();
         } else {
@@ -35,7 +35,7 @@ public class MovieService {
         }
     }
 
-    public Iterable<FilmShow> getFilmShows(String id) {
+    public Iterable<FilmShow> getFilmShows(long id) {
         if (movieRepository.findById(id).isPresent()) {
             return movieRepository.findById(id).get().getFilmShows();
         } else {

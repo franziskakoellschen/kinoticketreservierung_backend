@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
 
 @Data
 @NoArgsConstructor

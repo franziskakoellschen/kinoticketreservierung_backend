@@ -49,7 +49,7 @@ public class BookingService {
     }
 
     public Booking getBooking(long id) throws EntityNotFound {
-        Booking requestedBooking =bookingRepository.findById(id);
+        Booking requestedBooking = bookingRepository.findById(id);
         if(requestedBooking == null) {
             throw new EntityNotFound("Can't find Entity by Id" + id);
         }

@@ -1,20 +1,30 @@
 package com.kinoticket.backend.rest;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
-import com.kinoticket.backend.repositories.MovieRepository;
 import com.kinoticket.backend.service.BookingService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,24 +32,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,14 +43,14 @@ public class BookingServiceTests {
     @Autowired
     WebApplicationContext webApplicationContext;
 
-    @Mock
+    @InjectMocks
     private BookingService bookingService;
-
-    @Mock
-    private BookingRepository bookingRepository;
 
     @InjectMocks
     private BookingController bookingController;
+
+    @MockBean
+    BookingRepository bookingRepository;
 
     private JacksonTester<Booking> jsonBooking;
 
@@ -69,21 +63,19 @@ public class BookingServiceTests {
     MockMvc mvc;
 
     @BeforeEach
-   public void setup(){
+   public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
-        mvc = MockMvcBuilders.standaloneSetup(bookingController).build();
+        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    public Booking createBooking(){
+    public Booking createBooking() throws ParseException{
         Booking booking = new Booking();
 
         String meansOfPayment = "Visa";
         boolean isPaid = true;
         boolean isActive = true;
         long customerID = 344646l;
-        Date created = new Date();
-        Date updated = new Date();
-
+        
         Ticket ticket = new Ticket();
 
         String filmShowId = "53252";
@@ -128,10 +120,9 @@ public class BookingServiceTests {
         Booking booking = createBooking();
         booking.setId(1l);
 
-        given(bookingService.getBooking(1l)).willReturn(booking);
-
+        when(bookingRepository.findById(1l)).thenReturn(booking);
         MockHttpServletResponse response = mvc.perform(get("/booking/1")
-                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+            .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -141,9 +132,7 @@ public class BookingServiceTests {
     @Test
     public void canRetrieveByIdWhenDoesNotExist() throws Exception{
 
-        Booking booking = createBooking();
-
-        given(bookingService.getBooking(1)).willThrow(new EntityNotFound("No Entity with this Id"));
+        when(bookingRepository.getById(1l)).thenReturn(null);
 
         MockHttpServletResponse response = mvc.perform(get("/booking/1")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
@@ -187,47 +176,44 @@ public class BookingServiceTests {
     @Test
     void canRetrieveByCustomerIdWhenExists() throws Exception {
 
-        List<Booking> booking = new ArrayList<>();
-        booking.add(createBooking());
-
-        given(bookingService.getBookingByCustomerId(1)).willReturn(booking);
+        when(bookingRepository.findByCustomerId(1)).thenReturn(null);
 
         MockHttpServletResponse response = mvc.perform(get("/booking/customerId/1")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo( jsonBookingList.write(booking).getJson());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).isEqualTo("");
     }
 
     @Test
     void canRetrieveByTimestamp() throws Exception {
 
-        List<Booking> booking = new ArrayList<>();
-        booking.add(createBooking());
+        List<Booking> bookings = new ArrayList<>();
+        Booking b = createBooking();
+        
 
-        String date1 = "7-Jun-2013";
-        String date2 = "7-Jun-2022";
-
-
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-            Date firstDate = formatter.parse(date1);
-            Date secondDate = formatter.parse(date2);
+        String firstDate = "7-Jun-2013";
+        String secondDate = "7-Jun-2022";
 
 
-        given(bookingService.getBookingBetweenDates(firstDate,secondDate)).willReturn(booking);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        b.setCreated(formatter.parse(firstDate));
+        b.setUpdated(formatter.parse(secondDate));
+
+        bookings.add(b);
+
+        when(bookingRepository.findAllByCreatedBetween(
+            formatter.parse(firstDate), formatter.parse(secondDate)
+        )).thenReturn(bookings);
 
         MockHttpServletResponse response = mvc.perform(get("/booking/btw/7-Jun-2013/7-Jun-2022")
                 .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo( jsonBookingList.write(booking).getJson());
+
+        assertThat(response.getContentAsString())
+            .contains("\"created\":\"2013-06-06T22:00:00.000+00:00\",\"updated\":\"2022-06-06T22:00:00.000+00:00\"");
 
     }
 
-    }
-
-
-
-
-
-
+}

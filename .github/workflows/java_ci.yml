@@ -19,6 +19,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - uses: szenius/set-timezone@v1.0
+        with:
+          timezoneWindows: "Berlin"
       - name: Run Unit Tests
         run: mvn verify
         env:

@@ -1,4 +1,4 @@
-package com.kinoticket.backend.rest;
+package com.kinoticket.backend.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
@@ -15,6 +15,7 @@ import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
+import com.kinoticket.backend.rest.BookingController;
 import com.kinoticket.backend.service.BookingService;
 
 import org.junit.jupiter.api.BeforeEach;

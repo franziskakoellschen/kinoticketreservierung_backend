@@ -35,10 +35,14 @@ public class Booking {
     private Date created;
 
     @Column
-    @NonNull
-    private int customerId;
+    private Date updated;
 
-    @OneToMany
+    @Column
+    @NonNull
+    private long customerId;
+
+
+    @OneToMany()
     private List<Ticket> tickets;
 
     @Column
@@ -52,8 +56,14 @@ public class Booking {
     @PrePersist
     protected void onCreate(){
         created = new Date();
+        updated = new Date();
     }
 
+    public Booking(Long id, boolean isActive, int customerId) {
+        this.id = id;
+        this.isActive = isActive;
+        this.customerId = customerId;
+    }
 
-//to be finished in another ticket
+    //to be finished in another ticket
 }

@@ -1,9 +1,13 @@
-package com.kinoticket.backend.service;
+package com.kinoticket.backend.rest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +19,7 @@ import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
-import com.kinoticket.backend.rest.BookingController;
+import com.kinoticket.backend.service.BookingService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,12 +33,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BookingServiceTests {
+public class BookingControllerTests {
 
 
     @Autowired
@@ -113,6 +119,14 @@ public class BookingServiceTests {
     }
 
     @Test
+    void getAllBookings() throws Exception {
+
+        when(bookingRepository.findAll()).thenReturn(new ArrayList<Booking>());
+        mvc.perform(get("/booking"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
     void canRetrieveByIdWhenExists() throws Exception {
 
         Booking booking = createBooking();
@@ -120,11 +134,21 @@ public class BookingServiceTests {
 
         when(bookingRepository.findById(1l)).thenReturn(booking);
         MockHttpServletResponse response = mvc.perform(get("/booking/1")
-            .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn().getResponse();
 
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo( jsonBooking.write(booking).getJson());
+    }
+
+    @Test
+    public void postBookingWithMissingParameter() throws Exception{
+        
+        mvc.perform(
+            post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                jsonBooking.write(new Booking()).getJson()
+            )).andExpect(status().isBadRequest());
+
     }
 
     @Test
@@ -133,55 +157,133 @@ public class BookingServiceTests {
         when(bookingRepository.getById(1l)).thenReturn(null);
 
         MockHttpServletResponse response = mvc.perform(get("/booking/1")
-                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andReturn().getResponse();
+
         assertThat(response.getContentAsString()).isEmpty();
 
     }
 
-@Test
+    @Test
     public void canCreateNewBooking() throws Exception{
-        // when
-        MockHttpServletResponse response = mvc.perform(
-                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                        jsonBooking.write(createBooking()).getJson()
-                )).andReturn().getResponse();
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        
+        mvc.perform(
+            post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                jsonBooking.write(createBooking()).getJson()
+            )).andExpect(status().isOk());
     }
 
     @Test
-    public void testUpdateBooking() throws Exception {
+    public void testPostSameBookingAgain() throws Exception {
 
         Booking createdBooking = createBooking();
         // when
          mvc.perform(
-                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                        jsonBooking.write(createdBooking).getJson()
-                )).andReturn().getResponse();
+            post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                jsonBooking.write(createdBooking).getJson()
+            ));
 
         // when
-        MockHttpServletResponse response = mvc.perform(
-                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                        jsonBooking.write(createdBooking).getJson()
-                )).andReturn().getResponse();
+        mvc.perform(
+            post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                jsonBooking.write(createdBooking).getJson()
+            )).andExpect(status().isOk());
 
-        // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
-    void canRetrieveByCustomerIdWhenExists() throws Exception {
+    public void updateBooking() throws Exception {
+
+        Booking updatedBooking = createBooking();
+        updatedBooking.setId(1l);
+        updatedBooking.setPaid(false);
+
+        when(bookingRepository.save(any())).thenReturn(updatedBooking);
+        String contentAsString = mvc.perform(
+                post("/booking/update")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonBooking.write(updatedBooking).getJson()))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+
+        assertTrue(contentAsString.contains("\"paid\":false"));
+    }
+
+    @Test
+    public void testPostBookingFromNullBody() throws Exception {
+
+         mvc.perform(post("/booking")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+        
+    }
+
+    
+    @Test
+    public void testUpdateBookingWithNullTickets() throws Exception {
+
+        Booking booking = createBooking();
+        booking.setTickets(null);
+
+         mvc.perform(post("/booking/update")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonBooking.write(booking).getJson()))
+        .andExpect(status().isBadRequest());
+        
+    }
+
+    @Test
+    public void testUpdateBookingWithNullId() throws Exception {
+
+        Booking booking = createBooking();
+        booking.setId(null);
+
+         mvc.perform(post("/booking/update")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonBooking.write(booking).getJson()))
+        .andExpect(status().isBadRequest());
+        
+    }
+
+    @Test
+    public void testUpdateBookingFromNullBody() throws Exception {
+
+         mvc.perform(post("/booking/update")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+        
+    }
+
+    @Test
+    void canRetrieveByCustomerIdWhenNotExists() throws Exception {
 
         when(bookingRepository.findByCustomerId(1)).thenReturn(null);
 
         MockHttpServletResponse response = mvc.perform(get("/booking/customerId/1")
-                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andReturn().getResponse();
+        
         assertThat(response.getContentAsString()).isEqualTo("");
     }
+
+    
+    @Test
+    void canRetrieveByCustomerIdWhenExists() throws Exception {
+
+        List<Booking> bookings = new ArrayList<Booking>();
+        bookings.add(createBooking());
+
+        when(bookingRepository.findByCustomerId(1)).thenReturn(bookings);
+
+        mvc.perform(get("/booking/customerId/1")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
 
     @Test
     void canRetrieveByTimestamp() throws Exception {
@@ -205,12 +307,33 @@ public class BookingServiceTests {
         )).thenReturn(bookings);
 
         MockHttpServletResponse response = mvc.perform(get("/booking/btw/7-Jun-2013/7-Jun-2022")
-                .accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn().getResponse();
 
         assertThat(response.getContentAsString())
             .contains("\"created\":\"2013-06").contains("\"updated\":\"2022-06");
     }
 
+    
+    @Test
+    void testWrongDateFormat() throws Exception {
+
+        mvc.perform(get("/booking/btw/Juli 2013/Juli 2021")
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void cancelBooking() throws Exception {
+
+        when(bookingRepository.findById(1l)).thenReturn(createBooking());
+        mvc.perform(post("/booking/cancel/1"))
+            .andExpect(status().isOk());
+
+        when(bookingRepository.findById(1)).thenReturn(null);
+        mvc.perform(post("/booking/cancel/1"))
+            .andExpect(status().isBadRequest());
+    }
 }

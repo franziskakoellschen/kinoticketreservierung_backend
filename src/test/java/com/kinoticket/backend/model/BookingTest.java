@@ -74,4 +74,9 @@ public class BookingTest {
 
     }
 
+    @Test
+    void ConstructorTest() {
+        new Booking(2L, false, 1234);
+    }
+
 }

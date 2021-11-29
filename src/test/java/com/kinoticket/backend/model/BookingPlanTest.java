@@ -50,4 +50,11 @@ public class BookingPlanTest {
 
     }
 
+    @Test
+    void setIdTest() {
+        BookingPlan p = new BookingPlan();
+        p.setId(5);
+        assertEquals(5, p.getId());
+    }
+
 }

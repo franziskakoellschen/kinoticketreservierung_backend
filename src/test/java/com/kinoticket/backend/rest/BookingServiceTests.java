@@ -1,15 +1,12 @@
 package com.kinoticket.backend.rest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,12 +60,13 @@ public class BookingServiceTests {
     MockMvc mvc;
 
     @BeforeEach
-   public void setup() {
+    public void setup() {
         JacksonTester.initFields(this, new ObjectMapper());
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    public Booking createBooking() throws ParseException{
+
+    public Booking createBooking(){
         Booking booking = new Booking();
 
         String meansOfPayment = "Visa";

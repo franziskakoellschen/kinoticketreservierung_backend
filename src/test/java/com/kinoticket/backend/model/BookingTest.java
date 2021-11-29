@@ -16,7 +16,7 @@ public class BookingTest {
          String meansOfPayment = "Visa";
          boolean isPaid = true;
          boolean isActive = true;
-         int customerID = 344646;
+         long customerID = 344646l;
 
 
         Ticket ticket = new Ticket();

@@ -210,8 +210,7 @@ public class BookingServiceTests {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
         assertThat(response.getContentAsString())
-            .contains("\"created\":\"2013-06-06T22:00:00.000+00:00\",\"updated\":\"2022-06-06T22:00:00.000+00:00\"");
-
+            .contains("\"created\":\"2013-06").contains("\"updated\":\"2022-06");
     }
 
 }

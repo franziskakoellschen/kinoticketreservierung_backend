@@ -9,3 +9,7 @@
 
 ### Run the application
 `mvn spring-boot:run`
+
+### Run the application with dev config
+`mvn spring-boot:run -D"spring-boot.run.profiles"=local`
+This allows all tables to be regenerated a application start.

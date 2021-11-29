@@ -5,11 +5,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Movie;
@@ -196,6 +199,7 @@ public class BookingServiceTests {
 
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        formatter.setTimeZone(TimeZone.getDefault());
         b.setCreated(formatter.parse(firstDate));
         b.setUpdated(formatter.parse(secondDate));
 

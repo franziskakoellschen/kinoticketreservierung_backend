@@ -4,54 +4,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.repositories.MovieRepository;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 public class MovieServiceTest {
     
-    @Autowired
+    @MockBean
     MovieRepository movieRepository;
 
-    @Autowired
+    @MockBean
     FilmShowRepository filmShowRepository;
 
     @Autowired
     MovieService movieService;
 
-    @BeforeEach
-    void beforeEach() {
-        if (movieRepository.findById("Foo").isPresent()) {
-            movieRepository.delete(movieRepository.findById("Foo").get());
-        }
-    }
-
-    @AfterEach
-    void afterEach() {
-        if (movieRepository.findById("Foo").isPresent()) {
-            movieRepository.delete(movieRepository.findById("Foo").get());
-        }
-    }
-
     @Test
     void testGetFilmShows() {
 
-        long oldFilmShowSize = filmShowRepository.count();
-
         Movie m = new Movie();
-        m.setTitle("Foo");
+        m.setId(4711);
         ArrayList<FilmShow> shows = new ArrayList<FilmShow>();
 
         shows.add(new FilmShow());
@@ -61,10 +46,9 @@ public class MovieServiceTest {
 
         movieService.postMovie(m);
 
-        assertEquals(oldFilmShowSize+2, filmShowRepository.count());
-
         int count = 0;
-        Iterator<FilmShow> iterator = movieService.getFilmShows("Foo").iterator();
+        when(movieRepository.findById(4711l)).thenReturn(Optional.of(m));
+        Iterator<FilmShow> iterator = movieService.getFilmShows(4711).iterator();
         while(iterator.hasNext()) {
             count++;
             iterator.next();
@@ -75,18 +59,20 @@ public class MovieServiceTest {
     @Test
     void testGetMovie() {
         Movie m1 = new Movie();
+        m1.setId(4711);
         m1.setTitle("Foo");
         m1.setYear(2000);
         movieService.postMovie(m1);
 
-        assertTrue(movieRepository.findById("Foo").isPresent());
-        Movie m = movieService.getMovie("Foo");
+        when(movieRepository.findById(4711l)).thenReturn(Optional.of(m1));
+        assertTrue(movieRepository.findById(4711l).isPresent());
+        Movie m = movieService.getMovie(4711);
         assertNotNull(m);
     }
 
     @Test
     void testGetNonPresentMovie() {
-        assertNull(movieService.getMovie("Foo"));
+        assertNull(movieService.getMovie(4711));
     }
 
     @Test
@@ -103,18 +89,15 @@ public class MovieServiceTest {
 
     @Test
     void testPostMovie() {
-        long repoSize = movieRepository.count();
-
+        
         Movie m1 = new Movie();
         m1.setTitle("Foo");
-        movieService.postMovie(m1);
-
-        assertEquals(movieRepository.count(), repoSize+1);
+        Movie retMovie1 = movieService.postMovie(m1);
 
         Movie m2 = new Movie();
         m2.setTitle("Foo");
-        movieService.postMovie(m2);
+        Movie retMovie2 = movieService.postMovie(m2);
 
-        assertEquals(movieRepository.count(), repoSize+1);
+        assertEquals(retMovie1, retMovie2);
     }
 }

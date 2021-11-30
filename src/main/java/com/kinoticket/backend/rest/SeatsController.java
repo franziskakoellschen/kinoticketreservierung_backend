@@ -15,7 +15,7 @@ public class SeatsController {
   SeatsService service;
 
   @PutMapping("/bookingplan/{id}/row/{row}/seatnumber/{seat}")
-  public ResponseEntity changeSeat(@PathVariable(value = "id") int id,
+  public ResponseEntity<Seat> changeSeat(@PathVariable(value = "id") int id,
                                    @PathVariable(value = "row") int row,
                                    @PathVariable(value = "seat") int seat,
                                    @RequestBody Seat updatedSeat) {

@@ -13,6 +13,7 @@ DATABASE_URL: \
 `mvn verify`
 
 ## Run the application
+`docker-compose up` \
 `mvn spring-boot:run`
 
 ## Run the application with dev config

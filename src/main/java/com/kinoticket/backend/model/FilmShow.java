@@ -33,6 +33,6 @@ public class FilmShow {
     private Time time;
 
     @OneToOne
-    private SeatingPlan seatingPlan;
+    private BookingPlan bookingPlan;
     
 }

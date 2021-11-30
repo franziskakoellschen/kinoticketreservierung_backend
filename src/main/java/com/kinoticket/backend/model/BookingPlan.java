@@ -24,6 +24,8 @@ public class BookingPlan implements Serializable {
   private List<Seat> seats;
 
   // TODO: SeatPlan
+  @OneToOne
+  private SeatingPlan seatingPlan;
 
 
   public int getId() {

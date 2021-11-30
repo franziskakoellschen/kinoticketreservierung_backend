@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
@@ -102,7 +103,7 @@ public class BookingControllerTests {
         movie.setDescription(description);
         movie.setTrailer(trailer);
 
-        ticket.setFilmShowID(filmShowId);
+        ticket.setFilmShow(new FilmShow());
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);

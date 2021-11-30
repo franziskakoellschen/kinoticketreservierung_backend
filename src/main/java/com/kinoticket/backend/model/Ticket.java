@@ -18,9 +18,9 @@ public class Ticket {
         @Id
         private long id;
 
-        @Column
         @NonNull
-        private String filmShowID;
+        @ManyToOne
+        FilmShow filmShow;
 
         @Column
         @NonNull

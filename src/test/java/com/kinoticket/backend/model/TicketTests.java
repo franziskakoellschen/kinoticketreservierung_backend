@@ -30,13 +30,13 @@ public class TicketTests {
         movie.setTrailer(trailer);
 
 
-        ticket.setFilmShowID(filmShowId);
+        ticket.setFilmShow(new FilmShow());
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);
 
 
-        assertEquals(filmShowId, ticket.getFilmShowID());
+        assertEquals(filmShowId, ticket.getFilmShow());
         assertEquals(movie, ticket.getMovie());
         assertEquals(seat, ticket.getSeat());
         assertEquals(price, ticket.getPrice());

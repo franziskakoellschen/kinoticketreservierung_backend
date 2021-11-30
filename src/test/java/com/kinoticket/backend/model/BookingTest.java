@@ -41,7 +41,7 @@ public class BookingTest {
         movie.setDescription(description);
         movie.setTrailer(trailer);
 
-        ticket.setFilmShowID(filmShowId);
+        ticket.setFilmShow(new FilmShow());
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);
@@ -59,7 +59,7 @@ public class BookingTest {
         assertEquals(isActive, booking.isActive());
         assertEquals(customerID, booking.getCustomerId());
 
-        assertEquals(filmShowId, booking.getTickets().get(0).getFilmShowID());
+        assertEquals(filmShowId, booking.getTickets().get(0).getFilmShow());
         assertEquals(movie, booking.getTickets().get(0).getMovie());
         assertEquals(seat, booking.getTickets().get(0).getSeat());
         assertEquals(price, booking.getTickets().get(0).getPrice());

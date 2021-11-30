@@ -33,17 +33,17 @@ public class UserController {
         service.updateMasterData(user);
     }
 
-    @PostMapping()
+    @PostMapping("/{id}/bankdetails")
     public void postBankDetails(@RequestBody BankDetails bankDetails){
         service.addBankDetails(bankDetails);
     }
 
-    @PatchMapping("{id}/bankdetails")
+    @PatchMapping("/{id}/bankdetails")
     public void updateBankDetails(@RequestBody BankDetails bankDetails){
         service.updateBankDetails(bankDetails);
     }
 
-    @GetMapping("{id}/bankdetails")
+    @GetMapping("/{id}/bankdetails")
     public BankDetails getBankDetails(@PathVariable long id) {
         return service.getBankDetails(id);
     }

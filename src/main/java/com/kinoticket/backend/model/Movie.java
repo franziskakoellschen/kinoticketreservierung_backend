@@ -52,4 +52,7 @@ public class Movie implements Serializable {
 
     @OneToMany
     private List<FilmShow> filmShows;
+
+    @Column
+    private String imageUrl;
 }

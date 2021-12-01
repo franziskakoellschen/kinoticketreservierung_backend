@@ -52,10 +52,7 @@ public class BookingController {
         ResponseEntity<Booking> responseEntity = null;
         Booking sentBooking = null;
         try {
-            if (booking.equals(new Booking()) ||
-                booking.getId() == null ||
-                booking.getTickets() == null
-            ) {
+            if (booking.equals(new Booking()) || booking.getId() == null || booking.getTickets() == null) {
                 throw new MissingParameterException("You have to pass the full Booking Object, with ID");
             }
             sentBooking = service.updateBooking(booking);

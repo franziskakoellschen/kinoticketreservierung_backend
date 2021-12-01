@@ -1,7 +1,6 @@
 package com.kinoticket.backend.rest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -20,6 +19,9 @@ import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
+import com.kinoticket.backend.repositories.FilmShowRepository;
+import com.kinoticket.backend.repositories.MovieRepository;
+import com.kinoticket.backend.repositories.TicketRepository;
 import com.kinoticket.backend.service.BookingService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,12 +32,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -55,14 +54,19 @@ public class BookingControllerTests {
 
     @MockBean
     BookingRepository bookingRepository;
+    
+    @MockBean
+    FilmShowRepository filmShowRepository;
+
+    @MockBean
+    MovieRepository movieRepository;
+    
+    @MockBean
+    TicketRepository ticketRepository;
 
     private JacksonTester<Booking> jsonBooking;
 
     JacksonTester<List<Booking>> jsonBookingList;
-
-
-    @Autowired
-    BookingRepository repository;
 
     MockMvc mvc;
 
@@ -83,7 +87,9 @@ public class BookingControllerTests {
         
         Ticket ticket = new Ticket();
 
-        String filmShowId = "53252";
+        FilmShow filmShow = new FilmShow();
+        filmShow.setId(12345);
+
         String seat ="5b";
         double price= 10.2;
 
@@ -102,8 +108,11 @@ public class BookingControllerTests {
         movie.setShortDescription(shortDescription);
         movie.setDescription(description);
         movie.setTrailer(trailer);
+        ArrayList<FilmShow> shows = new ArrayList<FilmShow>();
+        shows.add(filmShow);
+        movie.setFilmShows(shows);
 
-        ticket.setFilmShow(new FilmShow());
+        ticket.setFilmShow(filmShow);
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);
@@ -168,7 +177,7 @@ public class BookingControllerTests {
 
     @Test
     public void canCreateNewBooking() throws Exception{
-        
+
         mvc.perform(
             post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
                 jsonBooking.write(createBooking()).getJson()

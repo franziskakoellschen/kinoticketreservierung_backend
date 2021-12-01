@@ -9,7 +9,8 @@ public class TicketTests {
     void ticketsTest() {
         Ticket ticket = new Ticket();
 
-        String filmShowId = "53252";
+        FilmShow filmShow = new FilmShow();
+        filmShow.setId(53252);
         String seat ="5b";
         double price= 10.2;
 
@@ -30,13 +31,13 @@ public class TicketTests {
         movie.setTrailer(trailer);
 
 
-        ticket.setFilmShow(new FilmShow());
+        ticket.setFilmShow(filmShow);
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);
 
 
-        assertEquals(filmShowId, ticket.getFilmShow());
+        assertEquals(filmShow, ticket.getFilmShow());
         assertEquals(movie, ticket.getMovie());
         assertEquals(seat, ticket.getSeat());
         assertEquals(price, ticket.getPrice());

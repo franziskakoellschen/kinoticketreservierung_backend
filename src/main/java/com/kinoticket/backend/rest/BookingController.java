@@ -52,12 +52,15 @@ public class BookingController {
         ResponseEntity<Booking> responseEntity = null;
         Booking sentBooking = null;
         try {
-            if(booking== null || booking.getId() == null || booking.getTickets() == null){
+            if (booking.equals(new Booking()) ||
+                booking.getId() == null ||
+                booking.getTickets() == null
+            ) {
                 throw new MissingParameterException("You have to pass the full Booking Object, with ID");
             }
             sentBooking = service.updateBooking(booking);
             responseEntity = new ResponseEntity<Booking>(sentBooking,HttpStatus.OK);
-        }catch (MissingParameterException mp){
+        } catch (MissingParameterException mp) {
             log.error("Invalid Parameter: " + mp.getMessage());
             responseEntity = new ResponseEntity<Booking>(booking,HttpStatus.BAD_REQUEST);
         }

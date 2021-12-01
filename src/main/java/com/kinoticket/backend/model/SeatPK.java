@@ -14,7 +14,11 @@ public class SeatPK implements Serializable {
     public boolean equals(Object object) {
         if (object instanceof SeatPK) {
             SeatPK pk = (SeatPK) object;
-            return row == pk.row && seatNumber == pk.seatNumber && bookingplan == pk.bookingplan;
+            return (
+                row == pk.row &&
+                seatNumber == pk.seatNumber &&
+                bookingplan == pk.bookingplan
+            );
         } else {
             return false;
         }

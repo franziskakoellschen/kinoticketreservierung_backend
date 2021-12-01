@@ -79,8 +79,6 @@ public class BookingControllerTests {
         boolean isPaid = true;
         boolean isActive = true;
         long customerID = 344646l;
-        
-        Ticket ticket = new Ticket();
 
         String filmShowId = "53252";
         String seat ="5b";
@@ -102,18 +100,20 @@ public class BookingControllerTests {
         movie.setDescription(description);
         movie.setTrailer(trailer);
 
+        Ticket ticket = new Ticket();
         ticket.setFilmShowID(filmShowId);
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);
-        List<Ticket> ticketList = new ArrayList<>();
-        ticketList.add(ticket);
+
+        List<Ticket> tickets = new ArrayList<Ticket>();
+        tickets.add(ticket);
 
         booking.setMeansOfPayment(meansOfPayment);
         booking.setPaid(isPaid);
         booking.setActive(isActive);
         booking.setCustomerId(customerID);
-        booking.setTickets(ticketList);
+        booking.setTickets(tickets);
 
         return booking;
     }
@@ -211,27 +211,36 @@ public class BookingControllerTests {
     }
 
     @Test
-    public void testPostBookingFromNullBody() throws Exception {
+    public void testPostBookingFromEmptyBody() throws Exception {
 
          mvc.perform(post("/booking")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
         .andExpect(status().isBadRequest());
-        
     }
 
-    
     @Test
-    public void testUpdateBookingWithNullTickets() throws Exception {
+    public void testPostBookingWithNullMovie() throws Exception {
 
         Booking booking = createBooking();
-        booking.setTickets(null);
+        booking.getTickets().get(0).setMovie(null);
+
+         mvc.perform(post("/booking")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonBooking.write(booking).getJson()))
+        .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateBookingWithEmptyTickets() throws Exception {
+
+        Booking booking = createBooking();
+        booking.getTickets().clear();
 
          mvc.perform(post("/booking/update")
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonBooking.write(booking).getJson()))
         .andExpect(status().isBadRequest());
-        
     }
 
     @Test
@@ -244,7 +253,7 @@ public class BookingControllerTests {
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonBooking.write(booking).getJson()))
         .andExpect(status().isBadRequest());
-        
+
     }
 
     @Test
@@ -254,11 +263,11 @@ public class BookingControllerTests {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
         .andExpect(status().isBadRequest());
-        
+
     }
 
     @Test
-    void canRetrieveByCustomerIdWhenNotExists() throws Exception {
+    void retrieveByCustomerIdWhenNotExists() throws Exception {
 
         when(bookingRepository.findByCustomerId(1)).thenReturn(null);
 

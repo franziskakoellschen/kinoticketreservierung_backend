@@ -1,8 +1,9 @@
 package com.kinoticket.backend.model;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class SeatTest {
 
@@ -68,10 +69,25 @@ public class SeatTest {
         seatPK5.seatNumber = 11;
         seatPK5.bookingplan = 6;
 
+        assertEquals(seatPK, seatPK);
         assertEquals(seatPK, seatPK2);
         assertNotEquals(seatPK, seatPK3);
         assertNotEquals(seatPK, seatPK4);
         assertNotEquals(seatPK, seatPK5);
+
+        assertEquals(seatPK2, seatPK2);
+        assertNotEquals(seatPK2, seatPK3);
+        assertNotEquals(seatPK2, seatPK4);
+        assertNotEquals(seatPK2, seatPK5);
+
+        assertEquals(seatPK3, seatPK3);
+        assertNotEquals(seatPK3, seatPK4);
+        assertNotEquals(seatPK3, seatPK5);
+
+        assertEquals(seatPK4, seatPK4);
+        assertNotEquals(seatPK4, seatPK5);
+
+        assertEquals(seatPK5, seatPK5);
 
         BookingPlan bookingPlan = new BookingPlan();
 

@@ -1,11 +1,12 @@
 package com.kinoticket.backend.model;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 public class BookingTest {
 
@@ -77,6 +78,14 @@ public class BookingTest {
     @Test
     void ConstructorTest() {
         new Booking(2L, false, 1234);
+    }
+    
+    @Test
+    void onCreateTest() {
+        Booking b = new Booking(2L, false, 1234);
+        b.onCreate();
+        assertNotNull(b.getCreated());
+        assertNotNull(b.getUpdated());
     }
 
 }

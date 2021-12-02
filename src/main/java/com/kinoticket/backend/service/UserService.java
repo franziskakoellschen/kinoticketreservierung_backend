@@ -41,12 +41,12 @@ public class UserService {
         return requestedUser;
     }
 
-    public void updateUser(long id){
-
-    }
-
-    public void updateMasterData(User user){
-
+    public void updateUser(long id) throws EntityNotFound {
+        User requestedUser = userRepository.findById(id);
+        if(requestedUser == null) {
+            throw new EntityNotFound("Can't find User by Id" + id);
+        }
+        userRepository.save(requestedUser);
     }
 
     public void addBankDetails(BankDetails bankDetails){
@@ -57,8 +57,12 @@ public class UserService {
 
     }
 
-    public BankDetails getBankDetails(long id){
-        return null;
+    public BankDetails getBankDetails(long id) throws EntityNotFound {
+        BankDetails requestedBank = bankDetailRepository.findById(id);
+        if(requestedBank == null) {
+            throw new EntityNotFound("Can't find BankDetails by Id" + id);
+        }
+        return requestedBank;
     }
 
 }

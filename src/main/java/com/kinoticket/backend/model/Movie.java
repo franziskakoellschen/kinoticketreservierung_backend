@@ -3,21 +3,30 @@ package com.kinoticket.backend.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
-@Entity
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Data
-@NoArgsConstructor
+@Entity
 @Table(name = "MOVIES")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @Column
     @NonNull
@@ -38,56 +47,9 @@ public class Movie implements Serializable {
     @NonNull
     private int fsk;
 
-
     @Column
     private String trailer;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
-    public void setShortDescription(String shortDescription) {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getFsk() {
-        return fsk;
-    }
-
-    public void setFsk(int fsk) {
-        this.fsk = fsk;
-    }
-
-    public String getTrailer() {
-        return trailer;
-    }
-
-    public void setTrailer(String trailer) {
-        this.trailer = trailer;
-    }
-
+    @OneToMany
+    private List<FilmShow> filmShows;
 }

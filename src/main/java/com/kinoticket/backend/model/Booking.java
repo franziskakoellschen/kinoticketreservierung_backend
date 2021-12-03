@@ -1,19 +1,21 @@
 package com.kinoticket.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jdk.jfr.DataAmount;
-import lombok.Data;
-import lombok.Generated;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.lang.NonNull;
-
-import javax.persistence.*;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+
+import org.springframework.lang.NonNull;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -33,10 +35,14 @@ public class Booking {
     private Date created;
 
     @Column
-    @NonNull
-    private int customerId;
+    private Date updated;
 
-    @OneToMany
+    @Column
+    @NonNull
+    private long customerId;
+
+
+    @OneToMany()
     private List<Ticket> tickets;
 
     @Column
@@ -50,8 +56,14 @@ public class Booking {
     @PrePersist
     protected void onCreate(){
         created = new Date();
+        updated = new Date();
     }
 
+    public Booking(Long id, boolean isActive, int customerId) {
+        this.id = id;
+        this.isActive = isActive;
+        this.customerId = customerId;
+    }
 
-//to be finished in another ticket
+    //to be finished in another ticket
 }

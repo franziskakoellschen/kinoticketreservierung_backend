@@ -1,16 +1,15 @@
 package com.kinoticket.backend.model;
 
-import javax.persistence.*;
-import org.springframework.lang.NonNull;
-import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
+import javax.persistence.*;
 
+@Data
 @NoArgsConstructor
 @Entity
-@Table(name = "Authorization")
-@Data
+@Table(name = "users")
 public class Authorization {
 
     @Id
@@ -19,31 +18,21 @@ public class Authorization {
 
     @Column
     @NonNull
-    private String email;
+    private String password;
 
     @Column
     @NonNull
-    private String password;
-    //maybe better char[] or with an hash value
+    private String username;
 
     @Column
-    private boolean confirmed;
+    private boolean isAccountNonExpired;
 
     @Column
-    private String emailCode;
+    private boolean isAccountNonLocked;
 
     @Column
-    private Date timeStampRegistration;
-    
+    private boolean isCredentialsNonExpired;
+
     @Column
-    private Date timeStampForgotPassword;
-
-    @PrePersist
-    protected void onCreate(){
-        timeStampRegistration = new Date();
-    }
-
-    public Long getId() {
-        return id;
-    }
+    private boolean isEnabled;
 }

@@ -1,42 +1,46 @@
 package com.kinoticket.backend.rest;
 
 
-import com.kinoticket.backend.model.Authorization;
-
 import com.kinoticket.backend.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/authorization")
-public class AuthorizationController {
+public class AuthorizationController
+{
 
-    @Autowired
-    AuthorizationService service;
 
-    @PostMapping()
-    public void registration(@RequestBody Authorization authorization) {
-        service.registration(authorization);
+    @GetMapping("/user")
+    public String showUser()
+    {
+        return "Welcome User!!";
     }
 
-    @PatchMapping()
-    public void changePassword(@RequestBody Authorization authorization, String newPassword) {
-        service.changePassword(authorization, newPassword);
+
+    @GetMapping("{username}")
+    public String checkIfUserExists(@PathVariable("username") String username)
+    {
+        return("Hallo user: " + username);
     }
 
-    @PostMapping()
-    public void forgotPasswordStart(@RequestBody String email) {
-        service.forgotPasswordStart(email);
+    @PostMapping("/register/{username}")
+    public String createUser(@PathVariable("username") String username)
+    {
+        return("Hallo user: " + username);
     }
 
-    @PatchMapping()
-    public void forgotPasswordEnd(@RequestBody Authorization authorization, String emailCode) {
-        service.forgotPasswordEnd(authorization, emailCode);
-    }
 
-    @GetMapping()
-    public void logIn(@RequestBody Authorization authorization) {
-        service.logIn(authorization);
+
+    @DeleteMapping("{username}")
+    public String deleteUser(@PathVariable("username") String username)
+    {
+        return("Tschüss user: " + username);
     }
 }
+

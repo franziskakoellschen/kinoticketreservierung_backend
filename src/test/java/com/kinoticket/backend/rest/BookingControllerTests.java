@@ -1,7 +1,6 @@
 package com.kinoticket.backend.rest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -19,6 +18,8 @@ import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
+import com.kinoticket.backend.repositories.MovieRepository;
+import com.kinoticket.backend.repositories.TicketRepository;
 import com.kinoticket.backend.service.BookingService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,19 +30,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BookingControllerTests {
-
 
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -55,13 +52,15 @@ public class BookingControllerTests {
     @MockBean
     BookingRepository bookingRepository;
 
+    @MockBean
+    MovieRepository movieRepository;
+
+    @MockBean
+    TicketRepository ticketRepository;
+
     private JacksonTester<Booking> jsonBooking;
 
     JacksonTester<List<Booking>> jsonBookingList;
-
-
-    @Autowired
-    BookingRepository repository;
 
     MockMvc mvc;
 

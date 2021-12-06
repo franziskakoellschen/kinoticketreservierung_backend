@@ -63,12 +63,6 @@ public class BookingControllerTests {
     @MockBean
     TicketRepository ticketRepository;
 
-    @MockBean
-    MovieRepository movieRepository;
-
-    @MockBean
-    TicketRepository ticketRepository;
-
     private JacksonTester<Booking> jsonBooking;
 
     JacksonTester<List<Booking>> jsonBookingList;

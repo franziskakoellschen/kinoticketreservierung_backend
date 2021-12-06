@@ -42,7 +42,6 @@ import org.springframework.web.context.WebApplicationContext;
 @AutoConfigureMockMvc
 public class BookingControllerTests {
 
-
     @Autowired
     WebApplicationContext webApplicationContext;
 
@@ -61,6 +60,12 @@ public class BookingControllerTests {
     @MockBean
     MovieRepository movieRepository;
     
+    @MockBean
+    TicketRepository ticketRepository;
+
+    @MockBean
+    MovieRepository movieRepository;
+
     @MockBean
     TicketRepository ticketRepository;
 

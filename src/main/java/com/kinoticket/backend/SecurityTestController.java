@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SecurityTestController {
 
     @GetMapping("/eins")
-    public void ichBinGesichert(){
-        System.out.println("eins");
+    public String ichBinGesichert(){
+        return ("eins");
     }
 
     @GetMapping("/zwei")
-    public void getAdminView(){
-        System.out.println("eins");
+    public String getAdminView(){
+        return ("eins");
     }
 }

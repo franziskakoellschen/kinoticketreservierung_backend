@@ -29,7 +29,9 @@ public class MovieService {
     public Iterable<Movie> getMovies() {
         Iterable<Movie> movies = movieRepository.findAll();
         movies.forEach(movie -> {
-            movie.getFilmShows().sort(new FilmShowComparator());
+            if (movie.getFilmShows() != null) {
+                movie.getFilmShows().sort(new FilmShowComparator());
+            }
         });
         return movies;
     }
@@ -45,7 +47,9 @@ public class MovieService {
     public Iterable<FilmShow> getFilmShows(long id) {
         if (movieRepository.findById(id).isPresent()) {
             List<FilmShow> filmShows = movieRepository.findById(id).get().getFilmShows();
-            filmShows.sort(new FilmShowComparator());
+            if (filmShows != null) {
+                filmShows.sort(new FilmShowComparator());
+            }
             return filmShows;
         } else {
             return null;

@@ -10,6 +10,6 @@ public class FilmShowTests {
     void filmShowTests() {
         assertEquals(new FilmShow(), new FilmShow());
         assertEquals(new FilmShow().hashCode(), new FilmShow().hashCode());
-        assertEquals(new FilmShow().toString(), "FilmShow(id=0, date=null, time=null, seatingPlan=null)");
+        assertEquals(new FilmShow().toString(), "FilmShow(id=0, date=null, time=null, cinemaHall=null, filmShow_seats=null)");
     }
 }

@@ -19,3 +19,7 @@ DATABASE_URL: \
 ## Run the application with dev config
 `mvn spring-boot:run -D"spring-boot.run.profiles"=local` \
 This allows all tables to be regenerated a application start.
+
+## Useful Plugins
+- [Lombok Annotations Support for VS Code](https://marketplace.visualstudio.com/items?itemName=GabrielBB.vscode-lombok)
+- [JPA Buddy for IntelliJ](https://plugins.jetbrains.com/plugin/15075-jpa-buddy)

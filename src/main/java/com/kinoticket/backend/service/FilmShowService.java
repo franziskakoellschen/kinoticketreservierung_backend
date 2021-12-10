@@ -24,12 +24,6 @@ public class FilmShowService {
     FilmShowRepository filmShowRepository;
 
     @Autowired
-    FilmShowSeatRepository filmShowSeatRepository;
-
-    @Autowired
-    SeatsRepository seatsRepository;
-
-    @Autowired
     CinemaHallRepository cinemaHallRepository;
 
     public void postFilmShow(Date date, Time time, int cinemaHallId){

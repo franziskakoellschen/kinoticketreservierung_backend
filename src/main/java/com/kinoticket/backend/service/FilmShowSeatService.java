@@ -1,7 +1,6 @@
 package com.kinoticket.backend.service;
 
 import com.kinoticket.backend.model.FilmShowSeat;
-import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.repositories.FilmShowSeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

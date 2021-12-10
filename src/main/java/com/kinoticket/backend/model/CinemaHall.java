@@ -3,6 +3,7 @@ package com.kinoticket.backend.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,11 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "CINEMA_HALL")
+@ToString
 public class CinemaHall {
 
     @GeneratedValue
     @Id
-    private int id;
+    private long id;
 
     @Column
     private int squareMeters;
@@ -49,11 +51,11 @@ public class CinemaHall {
         this.screenSize = screenSize;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

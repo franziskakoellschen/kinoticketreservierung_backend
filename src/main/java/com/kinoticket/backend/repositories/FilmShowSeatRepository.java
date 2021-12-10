@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FilmShowSeatRepository extends CrudRepository<FilmShowSeat, Integer> {
+public interface FilmShowSeatRepository extends CrudRepository<FilmShowSeat, Long> {
 
     List<FilmShowSeat> findByFilmShow_id(int filmshow_id);
 }

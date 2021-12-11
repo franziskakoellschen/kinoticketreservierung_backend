@@ -1,6 +1,6 @@
 package com.kinoticket.backend.model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Time;
 
 import javax.persistence.Column;

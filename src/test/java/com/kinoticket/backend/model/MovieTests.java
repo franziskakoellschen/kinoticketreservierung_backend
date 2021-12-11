@@ -35,7 +35,7 @@ public class MovieTests {
 
     @Test
     void equalsTest() {
-        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl");
+        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl", "Peter Maffay" , null , 2 , null , null,0l );
         Movie movieB = new Movie();
 
         long id = 15;
@@ -64,7 +64,7 @@ public class MovieTests {
 
     @Test
     void toStringTest() {
-        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl");
+        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl", "Peter Maffay" , null , 2 , null , null ,0l);
         assertEquals("Movie(id=15, title=Test Movie, year=2000, shortDescription=This is a Description, description=This is a full Description, fsk=16, trailer=someTrailerUrl, filmShows=[], imageUrl=someImageUrl)", movieA.toString());
     }
 }

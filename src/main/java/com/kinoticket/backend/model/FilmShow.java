@@ -29,7 +29,7 @@ public class FilmShow {
     @Column
     private Time time;
 
-    @ManyToOne(targetEntity = CinemaHall.class)
+    @ManyToOne(targetEntity = Movie.class)
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     @JsonIgnore
     private Movie movie;

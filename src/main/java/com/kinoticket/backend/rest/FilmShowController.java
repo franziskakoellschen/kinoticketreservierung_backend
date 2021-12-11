@@ -15,8 +15,12 @@ public class FilmShowController {
     @Autowired
     FilmShowService filmShowService;
 
+
+    /*
+    NOTE: This endpoint provides admin functionality
+     */
     @PostMapping()
     public void postMovie(@RequestBody FilmShowDTO filmShow) {
-         filmShowService.postFilmShow(filmShow.getDate(), filmShow.getTime(), filmShow.getCinemaHallId());
+         filmShowService.postFilmShow(filmShow.getDate(), filmShow.getTime(), filmShow.getMovieId(), filmShow.getCinemaHallId());
     }
 }

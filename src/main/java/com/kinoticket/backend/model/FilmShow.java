@@ -30,6 +30,11 @@ public class FilmShow {
     private Time time;
 
     @ManyToOne(targetEntity = CinemaHall.class)
+    @JoinColumn(name = "movie_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Movie movie;
+
+    @ManyToOne(targetEntity = CinemaHall.class)
     @JoinColumn(name = "cinema_hall_id", referencedColumnName = "id")
     @JsonIgnore
     private CinemaHall cinemaHall;
@@ -38,9 +43,10 @@ public class FilmShow {
     @OneToMany(mappedBy = "filmShow", cascade = CascadeType.ALL)
     private List<FilmShowSeat> filmShow_seats;
 
-    public FilmShow (Date date, Time time, CinemaHall cinemaHall, List<FilmShowSeat> filmShow_seats) {
+    public FilmShow (Date date, Time time, Movie movie, CinemaHall cinemaHall, List<FilmShowSeat> filmShow_seats) {
         this.date = date;
         this.time = time;
+        this.movie = movie;
         this.cinemaHall = cinemaHall;
         this.filmShow_seats = filmShow_seats;
     }
@@ -67,6 +73,14 @@ public class FilmShow {
 
     public void setTime(Time time) {
         this.time = time;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
     }
 
     public CinemaHall getCinemaHall() {

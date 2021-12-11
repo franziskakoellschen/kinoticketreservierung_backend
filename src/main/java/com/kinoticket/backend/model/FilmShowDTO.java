@@ -7,7 +7,8 @@ public class FilmShowDTO {
 
     private Date date;
     private Time time;
-    private int cinemaHallId;
+    private long cinemaHallId;
+    private long movieId;
 
     public Date getDate() {
         return date;
@@ -17,8 +18,14 @@ public class FilmShowDTO {
         return time;
     }
 
-    public int getCinemaHallId() {
+    public long getCinemaHallId() {
         return cinemaHallId;
     }
+
+    public long getMovieId() {
+        return movieId;
+    }
+
+
 
 }

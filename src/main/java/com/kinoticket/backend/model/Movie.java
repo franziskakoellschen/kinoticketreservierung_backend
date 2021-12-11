@@ -3,13 +3,7 @@ package com.kinoticket.backend.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.springframework.lang.NonNull;
 
@@ -50,7 +44,8 @@ public class Movie implements Serializable {
     @Column
     private String trailer;
 
-    @OneToMany
+    @Column
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<FilmShow> filmShows;
 
     @Column

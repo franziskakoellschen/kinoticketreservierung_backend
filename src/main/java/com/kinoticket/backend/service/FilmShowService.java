@@ -1,12 +1,10 @@
 package com.kinoticket.backend.service;
 
-import com.kinoticket.backend.model.CinemaHall;
-import com.kinoticket.backend.model.FilmShow;
-import com.kinoticket.backend.model.FilmShowSeat;
-import com.kinoticket.backend.model.Seat;
+import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.CinemaHallRepository;
 import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.repositories.FilmShowSeatRepository;
+import com.kinoticket.backend.repositories.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +25,16 @@ public class FilmShowService {
     @Autowired
     CinemaHallRepository cinemaHallRepository;
 
-    public void postFilmShow(Date date, Time time, long cinemaHallId){
+    @Autowired
+    MovieRepository movieRepository;
+
+    public void postFilmShow(Date date, Time time, long movieId, long cinemaHallId){
         Optional<CinemaHall> cinemaHallR = cinemaHallRepository.findById(cinemaHallId);
-        if (cinemaHallR.isPresent()) {
+        Optional<Movie> movieR = movieRepository.findById(movieId);
+        if (cinemaHallR.isPresent() && movieR.isPresent()) {
             CinemaHall cinemaHall = cinemaHallR.get();
-            FilmShow filmShow = new FilmShow(date, time, cinemaHall, null);
+            Movie movie = movieR.get();
+            FilmShow filmShow = new FilmShow(date, time, movie, cinemaHall, null);
             filmShow.setCinemaHall(cinemaHall);
             filmShowRepository.save(filmShow);
             for (Seat s : cinemaHall.getSeats()) {

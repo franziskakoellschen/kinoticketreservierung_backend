@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.model.FilmShowSeat;
-import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.repositories.FilmShowSeatRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,6 @@ public class FilmShowSeatService {
 
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
-
-    @Autowired
-    FilmShowRepository filmShowRepository;
 
     public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound{
         Optional<FilmShowSeat> filmShowSeat = filmShowSeatRepository.findBySeat_idAndFilmShow_id(seat_id, filmshow_id);

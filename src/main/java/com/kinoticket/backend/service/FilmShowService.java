@@ -42,6 +42,9 @@ public class FilmShowService {
                 filmShowSeatRepository.save(filmShowSeat);
             }
         }
+    }
 
+    public FilmShow findById(long filmShowId) {
+        return filmShowRepository.findById(filmShowId).get();
     }
 }

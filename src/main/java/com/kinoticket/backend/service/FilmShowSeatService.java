@@ -53,4 +53,33 @@ public class FilmShowSeatService {
         filmShowSeatRepository.save(filmShowSeat);
         return filmShowSeat;
     }
+
+    public boolean canReserve(List<FilmShowSeat> seats) {
+        for (FilmShowSeat fss : seats) {
+            FilmShowSeat fssFromRepo = 
+                filmShowSeatRepository.findBySeat_idAndFilmShow_id(
+                    fss.getSeat().getId(), fss.getFilmShow().getId()
+                ).get();
+            if (fssFromRepo.isReserved()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean reserve(List<FilmShowSeat> seats) {
+        for (FilmShowSeat fss : seats) {
+            FilmShowSeat fssFromRepo = 
+                filmShowSeatRepository.findBySeat_idAndFilmShow_id(
+                    fss.getSeat().getId(), fss.getFilmShow().getId()
+                ).get();
+            
+            fssFromRepo.setReserved(true);
+
+            filmShowSeatRepository.save(fssFromRepo);
+        }
+
+        return true;
+    }
 }

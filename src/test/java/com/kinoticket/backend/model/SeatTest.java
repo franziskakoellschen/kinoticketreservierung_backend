@@ -10,34 +10,33 @@ public class SeatTest {
     @Test
     void seatTest() {
 
+        CinemaHall cinemaHall = new CinemaHall( 20,80,100, null, null);
+
         int row = 3;
         int seatNumber = 20;
-        BookingPlan bookingPlan = new BookingPlan();
         boolean reserved = true;
         int priceCategory = 2;
 
-        Seat seat = new Seat(row, seatNumber, bookingPlan, reserved, priceCategory);
+        Seat seat = new Seat(1, row, seatNumber, cinemaHall, null, priceCategory);
 
         assertEquals(row, seat.getRow());
         assertEquals(seatNumber, seat.getSeatNumber());
-        assertEquals(bookingPlan, seat.getBookingplan());
-        assertEquals(bookingPlan.getId(), seat.getBookingplan().getId());
-        assertEquals(bookingPlan.getSeats(), seat.getBookingplan().getSeats());
-        assertEquals(reserved, seat.isReserved());
+        assertEquals(cinemaHall, seat.getCinemaHall());
+        assertEquals(cinemaHall.getId(), seat.getCinemaHall().getId());
+        assertEquals(cinemaHall.getSquareMeters(), seat.getCinemaHall().getSquareMeters());
+        assertEquals(cinemaHall.getScreenSize(), seat.getCinemaHall().getScreenSize());
         assertEquals(priceCategory, seat.getPriceCategory());
 
-        reserved = false;
         priceCategory = 1;
 
-        seat.setReserved(reserved);
         seat.setPriceCategory(priceCategory);
 
         assertEquals(row, seat.getRow());
         assertEquals(seatNumber, seat.getSeatNumber());
-        assertEquals(bookingPlan, seat.getBookingplan());
-        assertEquals(bookingPlan.getId(), seat.getBookingplan().getId());
-        assertEquals(bookingPlan.getSeats(), seat.getBookingplan().getSeats());
-        assertEquals(reserved, seat.isReserved());
+        assertEquals(cinemaHall, seat.getCinemaHall());
+        assertEquals(cinemaHall.getId(), seat.getCinemaHall().getId());
+        assertEquals(cinemaHall.getSquareMeters(), seat.getCinemaHall().getSquareMeters());
+        assertEquals(cinemaHall.getScreenSize(), seat.getCinemaHall().getScreenSize());
         assertEquals(priceCategory, seat.getPriceCategory());
     }
 
@@ -105,5 +104,4 @@ public class SeatTest {
         assertEquals(686469, seatPK.hashCode());
 
     }
-
 }

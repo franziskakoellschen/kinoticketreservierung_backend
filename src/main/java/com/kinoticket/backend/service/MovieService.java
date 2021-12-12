@@ -1,9 +1,12 @@
 package com.kinoticket.backend.service;
 
+import java.util.List;
+
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.repositories.MovieRepository;
+import com.kinoticket.backend.util.FilmShowComparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +27,13 @@ public class MovieService {
     }
 
     public Iterable<Movie> getMovies() {
-        return movieRepository.findAll();
+        Iterable<Movie> movies = movieRepository.findAll();
+        movies.forEach(movie -> {
+            if (movie.getFilmShows() != null) {
+                movie.getFilmShows().sort(new FilmShowComparator());
+            }
+        });
+        return movies;
     }
 
     public Movie getMovie(long id) {
@@ -37,7 +46,11 @@ public class MovieService {
 
     public Iterable<FilmShow> getFilmShows(long id) {
         if (movieRepository.findById(id).isPresent()) {
-            return movieRepository.findById(id).get().getFilmShows();
+            List<FilmShow> filmShows = movieRepository.findById(id).get().getFilmShows();
+            if (filmShows != null) {
+                filmShows.sort(new FilmShowComparator());
+            }
+            return filmShows;
         } else {
             return null;
         }

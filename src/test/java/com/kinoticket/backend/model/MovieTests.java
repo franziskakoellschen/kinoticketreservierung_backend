@@ -35,7 +35,7 @@ public class MovieTests {
 
     @Test
     void equalsTest() {
-        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>());
+        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl");
         Movie movieB = new Movie();
 
         long id = 15;
@@ -46,6 +46,7 @@ public class MovieTests {
         String description = "This is a full Description";
         String trailer = "someTrailerUrl";
         ArrayList<FilmShow> filmShows = new ArrayList<FilmShow>();
+        String imageUrl = "someImageUrl";
 
         movieB.setId(id);
         movieB.setTitle(title);
@@ -55,6 +56,7 @@ public class MovieTests {
         movieB.setDescription(description);
         movieB.setTrailer(trailer);
         movieB.setFilmShows(filmShows);
+        movieB.setImageUrl(imageUrl);
 
         assertEquals(movieA, movieB);
         assertEquals(movieA.hashCode(), movieB.hashCode());
@@ -62,7 +64,7 @@ public class MovieTests {
 
     @Test
     void toStringTest() {
-        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>());
-        assertEquals("Movie(id=15, title=Test Movie, year=2000, shortDescription=This is a Description, description=This is a full Description, fsk=16, trailer=someTrailerUrl, filmShows=[])", movieA.toString());
+        Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16, "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl");
+        assertEquals("Movie(id=15, title=Test Movie, year=2000, shortDescription=This is a Description, description=This is a full Description, fsk=16, trailer=someTrailerUrl, filmShows=[], imageUrl=someImageUrl)", movieA.toString());
     }
 }

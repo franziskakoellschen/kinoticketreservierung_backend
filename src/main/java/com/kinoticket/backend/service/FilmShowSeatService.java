@@ -1,19 +1,25 @@
 package com.kinoticket.backend.service;
 
-import com.kinoticket.backend.Exceptions.EntityNotFound;
-import com.kinoticket.backend.model.FilmShowSeat;
-import com.kinoticket.backend.repositories.FilmShowSeatRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.kinoticket.backend.Exceptions.EntityNotFound;
+import com.kinoticket.backend.model.FilmShowSeat;
+import com.kinoticket.backend.repositories.FilmShowRepository;
+import com.kinoticket.backend.repositories.FilmShowSeatRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FilmShowSeatService {
 
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
+
+    @Autowired
+    FilmShowRepository filmShowRepository;
 
     public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound{
         Optional<FilmShowSeat> filmShowSeat = filmShowSeatRepository.findBySeat_idAndFilmShow_id(seat_id, filmshow_id);
@@ -25,8 +31,25 @@ public class FilmShowSeatService {
         }
     }
 
-    public List<FilmShowSeat> getFilmShowSeats(int filmShowId){
-        return filmShowSeatRepository.findByFilmShow_id(filmShowId);
+    public List<List<FilmShowSeat>> getFilmShowSeats(long filmShowId){
+
+        List<List<FilmShowSeat>> rows = new ArrayList<>();
+
+        List<FilmShowSeat> filmShowSeats = filmShowSeatRepository.findByFilmShow_id(filmShowId);
+
+        List<FilmShowSeat> row = new ArrayList<>();
+        int currentRow = 1;
+        for (FilmShowSeat seat : filmShowSeats) {
+            if (seat.getSeat().getRow() != currentRow) {
+                currentRow++;
+                rows.add(row);
+                row = new ArrayList<>();
+            }
+            row.add(seat);
+        }
+        rows.add(row);
+
+        return rows;
     }
 
     public FilmShowSeat changeSeat(FilmShowSeat filmShowSeat, boolean reserved) {

@@ -18,7 +18,7 @@ public class FilmShowSeatController {
     FilmShowSeatService filmShowSeatService;
 
     @GetMapping()
-    public List<FilmShowSeat> getMovies(@PathVariable(value= "filmshowId") int filmShowId) {
+    public List<List<FilmShowSeat>> getSeats(@PathVariable(value= "filmshowId") long filmShowId) {
         return filmShowSeatService.getFilmShowSeats(filmShowId);
     }
 

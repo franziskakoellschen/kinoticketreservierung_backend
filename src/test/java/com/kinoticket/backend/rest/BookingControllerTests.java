@@ -15,7 +15,9 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
+import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.MovieRepository;
@@ -81,8 +83,15 @@ public class BookingControllerTests {
         
         Ticket ticket = new Ticket();
 
-        String filmShowId = "53252";
-        String seat ="5b";
+        FilmShow filmShow = new FilmShow();
+        filmShow.setId(53252);
+        
+        Seat seat = new Seat();
+
+        seat.setId(2);
+        seat.setRow(5);
+        seat.setSeatNumber(3);
+
         double price= 10.2;
 
         Movie movie = new Movie();
@@ -101,7 +110,7 @@ public class BookingControllerTests {
         movie.setDescription(description);
         movie.setTrailer(trailer);
 
-        ticket.setFilmShowID(filmShowId);
+        ticket.setFilmShow(filmShow);
         ticket.setMovie(movie);
         ticket.setSeat(seat);
         ticket.setPrice(price);

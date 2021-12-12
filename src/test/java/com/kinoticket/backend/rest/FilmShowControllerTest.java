@@ -1,27 +1,27 @@
 package com.kinoticket.backend.rest;
 
-import com.kinoticket.backend.repositories.SeatsRepository;
+import com.kinoticket.backend.repositories.FilmShowRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-public class SeatControllerTest {
+public class FilmShowControllerTest {
 
     @Autowired
     WebApplicationContext webApplicationContext;
 
-    @Autowired
-    SeatsRepository seatsRepository;
+    @MockBean
+    FilmShowRepository filmShowRepository;
 
     MockMvc mvc;
 
@@ -31,11 +31,11 @@ public class SeatControllerTest {
     }
 
     @Test
-    void testAlterSeat() throws Exception {
+    void testPostFilmshow() throws Exception {
 
-        this.mvc.perform(put("/seats/bookingplan/1/row/20/seatnumber/13")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{  }"))
+        this.mvc.perform(post("/filmshows")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{  }"))
                 .andExpect(status().isOk())
                 .andReturn();
     }

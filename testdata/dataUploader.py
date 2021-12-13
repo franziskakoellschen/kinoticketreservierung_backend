@@ -2,12 +2,41 @@ import csv
 import psycopg2
 
 def getConnection():
-    print("Database host (z.B. 'localhost'):")
-    url = input()
-    print("Database password:")
-    pwd = input()
 
-    conn = psycopg2.connect("host=" + url + " dbname=postgres user=postgres password=" + pwd)
+    print("1 - prod space")
+    print("2 - dev space")
+    print("3 - custom")
+
+    selection = input()
+
+    host = ""
+    database = ""
+    user = ""
+    pwd = ""
+
+    if selection == "1":
+        host = "ec2-63-33-14-215.eu-west-1.compute.amazonaws.com"
+        database = "deb1hdv5c2raku"
+        user = "kzzxpuxgvekjkp"
+        pwd = "30ebd9a2f009b4f89ced5c39d85639db6efd44a0378d172fce95c97a58cebec9"
+
+    if selection == "2":
+        host = "ec2-34-243-180-8.eu-west-1.compute.amazonaws.com"
+        database = "d5iqk6nl9urqqb"
+        user = "gucosqewklsdkh"
+        pwd = "eb29e2d78d1da0fb670cfc921e1684364c781fde54fbf00687289626167c5e76"
+
+    if selection == "3":
+        print("Database host (z.B. 'localhost'):")
+        host = input()
+        print("Database (z.B. 'postgres'):")
+        database = input()
+        print("User (z.B. 'postgres'):")
+        user = input()
+        print("Password:")
+        pwd = input()
+
+    conn = psycopg2.connect("host=" + host + " dbname=" + database + " user=" + user + " password=" + pwd)
 
     return conn
 
@@ -54,6 +83,7 @@ def cleanTables(conn):
 
 
 if __name__ == "__main__":
+
     conn = getConnection()
 
     while (True):

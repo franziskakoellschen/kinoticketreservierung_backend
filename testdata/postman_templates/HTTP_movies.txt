@@ -1,0 +1,11 @@
+POST /movies
+
+{
+    "title": "abcd",
+    "shortDescription": "abcd",
+    "fsk": 16,
+    "description": "abcd",
+    "trailer": "abcd",
+    "imageUrl": "abcd",
+    "year": 2021
+}

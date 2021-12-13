@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface FilmShowSeatRepository extends CrudRepository<FilmShowSeat, Long> {
 
-    List<FilmShowSeat> findByFilmShow_id(int filmshow_id);
+    List<FilmShowSeat> findByFilmShow_id(long filmshow_id);
 
     Optional<FilmShowSeat> findBySeat_idAndFilmShow_id(long seat_id, long filmshow_id);
 }

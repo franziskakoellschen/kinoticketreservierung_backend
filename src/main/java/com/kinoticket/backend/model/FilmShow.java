@@ -2,7 +2,6 @@ package com.kinoticket.backend.model;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.List;
 
 import javax.persistence.*;
 
@@ -39,16 +38,11 @@ public class FilmShow {
     @JsonIgnore
     private CinemaHall cinemaHall;
 
-    @Column
-    @OneToMany(mappedBy = "filmShow", cascade = CascadeType.ALL)
-    private List<FilmShowSeat> filmShow_seats;
-
-    public FilmShow (Date date, Time time, Movie movie, CinemaHall cinemaHall, List<FilmShowSeat> filmShow_seats) {
+    public FilmShow (Date date, Time time, Movie movie, CinemaHall cinemaHall) {
         this.date = date;
         this.time = time;
         this.movie = movie;
         this.cinemaHall = cinemaHall;
-        this.filmShow_seats = filmShow_seats;
     }
 
     public long getId() {
@@ -89,13 +83,5 @@ public class FilmShow {
 
     public void setCinemaHall(CinemaHall cinemaHall) {
         this.cinemaHall = cinemaHall;
-    }
-
-    public List<FilmShowSeat> getFilmShow_seats() {
-        return filmShow_seats;
-    }
-
-    public void setFilmShow_seats(List<FilmShowSeat> filmShow_seats) {
-        this.filmShow_seats = filmShow_seats;
     }
 }

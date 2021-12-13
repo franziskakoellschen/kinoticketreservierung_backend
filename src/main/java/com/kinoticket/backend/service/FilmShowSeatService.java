@@ -1,6 +1,7 @@
 package com.kinoticket.backend.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FilmShowSeatService {
+
+    private class FilmShowSeatComparator implements Comparator<FilmShowSeat> {
+
+        @Override
+        public int compare(FilmShowSeat o1, FilmShowSeat o2) {
+            if (o1.getSeat().getRow() != o2.getSeat().getRow()) {
+                return o1.getSeat().getRow() - o2.getSeat().getRow();
+            }
+            return o1.getSeat().getSeatNumber() - o2.getSeat().getSeatNumber();
+        }
+    }
 
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
@@ -33,6 +45,9 @@ public class FilmShowSeatService {
 
         List<FilmShowSeat> filmShowSeats = filmShowSeatRepository.findByFilmShow_id(filmShowId);
 
+        filmShowSeats.sort(new FilmShowSeatComparator());
+
+        // split in rows
         List<FilmShowSeat> row = new ArrayList<>();
         int currentRow = 1;
         for (FilmShowSeat seat : filmShowSeats) {

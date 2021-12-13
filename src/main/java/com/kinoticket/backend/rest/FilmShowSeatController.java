@@ -53,7 +53,7 @@ public class FilmShowSeatController {
 
     @PostMapping
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    boolean reserveSeats(@RequestBody List<Seat> seats, @PathVariable(value = "filmshowId") int filmShowId) {
+    ResponseEntity<Iterable<FilmShowSeat>> reserveSeats(@RequestBody List<Seat> seats, @PathVariable(value = "filmshowId") int filmShowId) {
 
         ArrayList<FilmShowSeat> filmShowSeats = new ArrayList<>();
         for (Seat seat: seats) {
@@ -62,9 +62,11 @@ public class FilmShowSeatController {
         }
 
         if (filmShowSeatService.canReserve(filmShowSeats)) {
-            return filmShowSeatService.reserve(filmShowSeats);
+            if (filmShowSeatService.reserve(filmShowSeats)) {
+                return new ResponseEntity<Iterable<FilmShowSeat>>(filmShowSeats, HttpStatus.OK);
+            }
         }
-        
-        return false;
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

@@ -69,27 +69,28 @@ public class FilmShowSeatService {
         return filmShowSeat;
     }
 
-    public boolean canReserve(List<FilmShowSeat> seats) {
+    public boolean canReserve(List<FilmShowSeat> seats, long filmShowId) {
         for (FilmShowSeat fss : seats) {
             FilmShowSeat fssFromRepo = 
                 filmShowSeatRepository.findBySeat_idAndFilmShow_id(
-                    fss.getSeat().getId(), fss.getFilmShow().getId()
+                    fss.getSeat().getId(), filmShowId
                 ).get();
             if (fssFromRepo.isReserved()) {
                 return false;
             }
         }
-
         return true;
     }
 
-    public boolean reserve(List<FilmShowSeat> seats) {
+    public boolean reserve(List<FilmShowSeat> seats, long filmShowId) {
+        if (!canReserve(seats, filmShowId)) return false;
+
         for (FilmShowSeat fss : seats) {
-            FilmShowSeat fssFromRepo = 
+            FilmShowSeat fssFromRepo =
                 filmShowSeatRepository.findBySeat_idAndFilmShow_id(
-                    fss.getSeat().getId(), fss.getFilmShow().getId()
+                    fss.getSeat().getId(), filmShowId
                 ).get();
-            
+
             fssFromRepo.setReserved(true);
 
             filmShowSeatRepository.save(fssFromRepo);

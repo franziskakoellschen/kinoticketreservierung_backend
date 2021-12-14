@@ -1,13 +1,10 @@
 package com.kinoticket.backend.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.model.FilmShowSeat;
-import com.kinoticket.backend.model.Seat;
-import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.service.FilmShowSeatService;
 import com.kinoticket.backend.service.FilmShowService;
 
@@ -56,8 +53,9 @@ public class FilmShowSeatController {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     ResponseEntity<Iterable<FilmShowSeat>> reserveSeats(@RequestBody List<FilmShowSeat> filmShowSeats, @PathVariable(value = "filmshowId") long filmShowId) {
 
-        if (filmShowSeatService.reserve(filmShowSeats, filmShowId)) {
-            return new ResponseEntity<Iterable<FilmShowSeat>>(filmShowSeats, HttpStatus.OK);
+        Iterable<FilmShowSeat> reservedFSS = filmShowSeatService.reserve(filmShowSeats, filmShowId);
+        if (reservedFSS != null) {
+            return new ResponseEntity<Iterable<FilmShowSeat>>(reservedFSS, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

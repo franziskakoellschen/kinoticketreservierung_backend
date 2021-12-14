@@ -82,8 +82,10 @@ public class FilmShowSeatService {
         return true;
     }
 
-    public boolean reserve(List<FilmShowSeat> seats, long filmShowId) {
-        if (!canReserve(seats, filmShowId)) return false;
+    public Iterable<FilmShowSeat> reserve(List<FilmShowSeat> seats, long filmShowId) {
+        if (!canReserve(seats, filmShowId)) return null;
+
+        ArrayList<FilmShowSeat> reservedSeats = new ArrayList<FilmShowSeat>();
 
         for (FilmShowSeat fss : seats) {
             FilmShowSeat fssFromRepo =
@@ -92,10 +94,10 @@ public class FilmShowSeatService {
                 ).get();
 
             fssFromRepo.setReserved(true);
-
-            filmShowSeatRepository.save(fssFromRepo);
+            reservedSeats.add(fssFromRepo);
         }
 
-        return true;
+        filmShowSeatRepository.saveAll(reservedSeats);
+        return reservedSeats;
     }
 }

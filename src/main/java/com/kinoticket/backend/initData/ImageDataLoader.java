@@ -53,7 +53,7 @@ public class ImageDataLoader implements ApplicationRunner {
         List<Image> imageList = new ArrayList<>();
         // convert BufferedImage to byte[]
         byte[] bytes = toByteArray(bi, "png");
-        Image image = new Image(bytes,"house of Gucci");
+        Image image = new Image(bytes,"house of Gucci" ,99l);
         imageList.add(image);
         return imageList;
     }

@@ -16,7 +16,6 @@ import javax.persistence.Lob;
 public class Image {
 
     @Id
-    @GeneratedValue
     Long id;
 
     @Lob
@@ -49,7 +48,8 @@ public class Image {
     String name;
     // Getters and Setters
 
-    public Image(byte[] content, String name) {
+    public Image(byte[] content, String name, long id) {
+        this.id = id;
         this.content = content;
         this.name = name;
     }

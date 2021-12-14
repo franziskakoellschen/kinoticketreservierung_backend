@@ -105,16 +105,21 @@ public class FilmShowSeatControllerTest {
         s.setId(2);
         s.setRow(2);
         s.setSeatNumber(4);
+        s.setPriceCategory(1);
         testSeat1.setSeat(s);
 
         when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(2, 1000)).thenReturn(Optional.of(testSeat1));
         when(filmShowRepository.findById(1000L)).thenReturn(Optional.of(fs));
-        this.mvc.perform(
+        String contentAsString = this.mvc.perform(
                 post("/filmshows/1000/seats")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("[{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1}]\""))
+                    .content("[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1},\"reserved\":false}]\""))
             .andExpect(status().isOk())
-            .andReturn().getResponse();
+            .andReturn().getResponse().getContentAsString();
+
+        String expectedContent = "[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1},\"reserved\":true}]";
+
+        assertEquals(expectedContent, contentAsString);
 
         testSeat1.setReserved(true);
 
@@ -123,9 +128,8 @@ public class FilmShowSeatControllerTest {
         this.mvc.perform(
                 post("/filmshows/1000/seats")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("[{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1}]\""))
-            .andExpect(status().isBadRequest())
-            .andReturn().getResponse();
+                    .content("[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1},\"reserved\":false}]\""))
+            .andExpect(status().isBadRequest());
     }
 
 

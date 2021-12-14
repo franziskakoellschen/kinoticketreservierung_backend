@@ -34,4 +34,8 @@ public class MoviesController {
     public Iterable<FilmShow> getFilmShows(@PathVariable long movieId) {
         return service.getFilmShows(movieId);
     }
+
+
 }
+
+

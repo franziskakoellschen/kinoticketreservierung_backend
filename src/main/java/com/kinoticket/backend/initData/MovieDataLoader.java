@@ -32,9 +32,9 @@ public class MovieDataLoader implements ApplicationRunner {
         Date result  = dateFormat.parse("2021-12-15 00:00:00");
 
         List<FilmShow> filmShowList = new ArrayList<>();
-        filmShowList.add(new FilmShow( new Date(), new Time(2,4,5),null));
-        filmShowList.add(new FilmShow(result, new Time(2,4,5),null));
-        filmShowList.add(new FilmShow(new Date(), new Time(2,4,5),null));
+        filmShowList.add(new FilmShow( new Date(), new Time(2,4,5),null,null));
+        filmShowList.add(new FilmShow(result, new Time(2,4,5),null,null));
+        filmShowList.add(new FilmShow(new Date(), new Time(2,4,5),null,null));
 
 
         movieRepository.save(new Movie(15, "Test Movie",

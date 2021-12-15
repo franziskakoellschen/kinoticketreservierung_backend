@@ -29,6 +29,9 @@ public class FilmShowSeatService {
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
 
+    @Autowired
+    EmailService emailService;
+
     public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound{
         Optional<FilmShowSeat> filmShowSeat = filmShowSeatRepository.findBySeat_idAndFilmShow_id(seat_id, filmshow_id);
         if (filmShowSeat.isPresent()) {
@@ -87,6 +90,7 @@ public class FilmShowSeatService {
 
         ArrayList<FilmShowSeat> reservedSeats = new ArrayList<FilmShowSeat>();
 
+        String retMessage = "";
         for (FilmShowSeat fss : seats) {
             FilmShowSeat fssFromRepo =
                 filmShowSeatRepository.findBySeat_idAndFilmShow_id(
@@ -95,7 +99,11 @@ public class FilmShowSeatService {
 
             fssFromRepo.setReserved(true);
             reservedSeats.add(fssFromRepo);
+
+            retMessage += fssFromRepo.getSeat().getId() + ", " + fssFromRepo.getFilmShow().getId();
         }
+
+        emailService.sendEmail("niklas.weidenfeller@gmx.de", "Tickets", retMessage);
 
         filmShowSeatRepository.saveAll(reservedSeats);
         return reservedSeats;

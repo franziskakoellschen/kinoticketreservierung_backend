@@ -16,7 +16,6 @@ import java.io.InputStream;
 
 
 @RestController
-@CrossOrigin("*")
 class ImageController {
 
     @Autowired

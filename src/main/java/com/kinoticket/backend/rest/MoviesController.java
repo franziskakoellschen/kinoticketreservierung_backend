@@ -7,7 +7,6 @@ import com.kinoticket.backend.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/movies")
 public class MoviesController {

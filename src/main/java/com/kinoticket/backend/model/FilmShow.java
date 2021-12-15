@@ -34,5 +34,10 @@ public class FilmShow {
 
     @OneToOne
     private SeatingPlan seatingPlan;
-    
+
+    public FilmShow(Date date, Time time, SeatingPlan seatingPlan) {
+        this.date = date;
+        this.time = time;
+        this.seatingPlan = seatingPlan;
+    }
 }

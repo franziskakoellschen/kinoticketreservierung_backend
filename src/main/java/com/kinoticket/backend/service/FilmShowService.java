@@ -1,7 +1,7 @@
 package com.kinoticket.backend.service;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
 import java.util.Optional;
 
 import com.kinoticket.backend.model.*;

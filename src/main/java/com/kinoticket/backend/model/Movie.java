@@ -46,7 +46,8 @@ public class Movie implements Serializable {
     @Column
     private String trailer;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @Column
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<FilmShow> filmShows;
 
     @Column

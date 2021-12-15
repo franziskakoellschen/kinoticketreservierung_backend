@@ -18,13 +18,13 @@ public class Ticket {
         @Id
         private long id;
 
-        @Column
+        @ManyToOne
         @NonNull
-        private String filmShowID;
+        private FilmShow filmShow;
 
-        @Column
+        @OneToOne
         @NonNull
-        private String seat;
+        private Seat seat;
 
         @Column
         @NonNull

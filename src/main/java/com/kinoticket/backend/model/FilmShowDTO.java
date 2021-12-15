@@ -25,7 +25,4 @@ public class FilmShowDTO {
     public long getMovieId() {
         return movieId;
     }
-
-
-
 }

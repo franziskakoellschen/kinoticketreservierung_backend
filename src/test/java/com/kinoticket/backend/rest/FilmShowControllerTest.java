@@ -97,4 +97,13 @@ public class FilmShowControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
+
+    @Test
+    void getFilmShowInformationDTODoesNotCrash() throws Exception {
+
+        
+        this.mvc.perform(get("/filmshows/9999")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }

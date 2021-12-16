@@ -35,6 +35,15 @@ public class EmailService {
 
     Logger logger = LoggerFactory.getLogger(EmailService.class);
 
+    /**
+     * This method sends an email containing ticket pdf files to the email address
+     * contained in the Booking object.
+     * 
+     * @param booking This is the booking object, containing a list of all the
+     *                tickets for which a pdf file is generated and sent.
+     * @return An indication wether the email was sent successful.
+     */
+
     public boolean sendBookingConfirmation(Booking booking) {
 
         List<File> ticketPdfs = generateTicketPdfs(booking);
@@ -98,7 +107,7 @@ public class EmailService {
         List<File> ticketPdfs = new ArrayList<>();
 
         for (int i = 0; i < tickets.size(); i++) {
-            File f = new File("Ticket-" + (i+1) + ".pdf");
+            File f = new File("Ticket-" + (i + 1) + ".pdf");
             Document document = new Document();
 
             try (FileOutputStream fileOutputStream = new FileOutputStream(f)) {
@@ -110,29 +119,26 @@ public class EmailService {
                 Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
 
                 try {
-                    String paragraph1 =
-                          "Ticketnummer: " + tickets.get(i).getId() + "\n"
-                        + "Bestellnummer: " + booking.getId() + "\n";
-                    String paragraph2 =
-                          "Vorstellung: " + tickets.get(i).getFilmShow().getMovie().getTitle() + "\n"
-                        + "Datum: " + tickets.get(i).getFilmShow().getDate() + "\n"
-                        + "Uhrzeit: " + tickets.get(i).getFilmShow().getTime() + "\n";
-                    String paragraph3 = 
-                          "Kinosaal: " + tickets.get(i).getFilmShow().getCinemaHall().getId() + "\n"
-                        + "Reihe: " + tickets.get(i).getFilmShowSeat().getSeat().getRow() + "\n"
-                        + "Sitznummer: " + tickets.get(i).getFilmShowSeat().getSeat().getSeatNumber() + "\n";
-                    String paragraph4 =
-                          "Preis: " + tickets.get(i).getPrice() +"€\n";
+                    String paragraph1 = "Ticketnummer: " + tickets.get(i).getId() + "\n"
+                            + "Bestellnummer: " + booking.getId() + "\n";
+                    String paragraph2 = "Vorstellung: " + tickets.get(i).getFilmShow().getMovie().getTitle() + "\n"
+                            + "Datum: " + tickets.get(i).getFilmShow().getDate() + "\n"
+                            + "Uhrzeit: " + tickets.get(i).getFilmShow().getTime() + "\n";
+                    String paragraph3 = "Kinosaal: " + tickets.get(i).getFilmShow().getCinemaHall().getId() + "\n"
+                            + "Reihe: " + tickets.get(i).getFilmShowSeat().getSeat().getRow() + "\n"
+                            + "Sitznummer: " + tickets.get(i).getFilmShowSeat().getSeat().getSeatNumber() + "\n";
+                    String paragraph4 = "Preis: " + tickets.get(i).getPrice() + "€\n";
 
                     document.add(new Paragraph(paragraph1, font));
                     document.add(new Paragraph(paragraph2, font));
                     document.add(new Paragraph(paragraph3, font));
                     document.add(new Paragraph(paragraph4, font));
-                } catch(NullPointerException e) {
+                } catch (NullPointerException e) {
                     logger.error("Invalid Ticket!", e);
                     fileOutputStream.close();
                     f.delete();
-                    for (File alreadyCreatedTicket : ticketPdfs) alreadyCreatedTicket.delete();
+                    for (File alreadyCreatedTicket : ticketPdfs)
+                        alreadyCreatedTicket.delete();
                     return null;
                 }
                 document.close();

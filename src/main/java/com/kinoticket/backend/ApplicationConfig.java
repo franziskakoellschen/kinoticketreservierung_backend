@@ -71,6 +71,13 @@ public class ApplicationConfig {
 		};
 	}
 
+	/**
+	 * Configures a JavaMailSender for email communication.
+	 * Requires environment variables "KINOTICKET_EMAIL"
+	 * and "KINOTICKET_EMAIL_PW" to be set.
+	 * 
+	 * @return A JavaMailSender Object.
+	 */
 	@Bean
 	public JavaMailSender getJavaMailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

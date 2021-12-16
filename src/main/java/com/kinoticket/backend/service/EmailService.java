@@ -3,6 +3,7 @@ package com.kinoticket.backend.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,30 +11,33 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Ticket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class EmailService {
 
     @Autowired
     private JavaMailSender emailSender;
 
-    public boolean sendBookingConfirmation(Booking booking) {
-        List<Ticket> tickets = booking.getTickets();
+    Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-        List<File> ticketPdfs = generateTicketPdfs(tickets);
+    public boolean sendBookingConfirmation(Booking booking) {
+
+        List<File> ticketPdfs = generateTicketPdfs(booking);
         if (ticketPdfs == null) {
             return false;
         }
@@ -54,7 +58,12 @@ public class EmailService {
     }
 
     private String createMessageBody(Booking booking) {
-        return "TODO: Message Body";
+        String message = "Lieber Kunde,\n\n";
+        message += "vielen Dank für Ihre Bestellung bei Theatery.\n";
+        message += "Im Anhang finden Sie Ihre Tickets. Wir freuen uns auf Sie!\n\n";
+        message += "Ihr Team von Theatery";
+
+        return message;
     }
 
     private MimeMessage createBookingConfirmationMessage(String to, String messageBody, List<File> ticketPdfs) {
@@ -64,7 +73,7 @@ public class EmailService {
         try {
             helper = new MimeMessageHelper(message, true);
 
-            helper.setFrom(System.getenv("KINOTICKET_EMAIL"));
+            helper.setFrom(System.getenv("KINOTICKET_EMAIL"), "Theatery");
             helper.setTo(to);
             helper.setSubject("Ihre Reservierung bei Theatery");
             helper.setText(messageBody);
@@ -73,13 +82,14 @@ public class EmailService {
                 helper.addAttachment(ticketPdfs.get(i).getName(), ticketPdfs.get(i));
             }
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return message;
     }
 
-    public List<File> generateTicketPdfs(List<Ticket> tickets) {
+    private List<File> generateTicketPdfs(Booking booking) {
+        List<Ticket> tickets = booking.getTickets();
 
         if (tickets == null) {
             return null;
@@ -95,12 +105,36 @@ public class EmailService {
                 PdfWriter.getInstance(document, fileOutputStream);
 
                 document.open();
-                Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
-                Chunk chunk1 = new Chunk("TODO: Message", font);
-                Chunk chunk2 = new Chunk("Ticket-" + (i+1), font);
+                document.addTitle("Kinoticket");
 
-                document.add(chunk1);
-                document.add(chunk2);
+                Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+
+                try {
+                    String paragraph1 =
+                          "Ticketnummer: " + tickets.get(i).getId() + "\n"
+                        + "Bestellnummer: " + booking.getId() + "\n";
+                    String paragraph2 =
+                          "Vorstellung: " + tickets.get(i).getFilmShow().getMovie().getTitle() + "\n"
+                        + "Datum: " + tickets.get(i).getFilmShow().getDate() + "\n"
+                        + "Uhrzeit: " + tickets.get(i).getFilmShow().getTime() + "\n";
+                    String paragraph3 = 
+                          "Kinosaal: " + tickets.get(i).getFilmShow().getCinemaHall().getId() + "\n"
+                        + "Reihe: " + tickets.get(i).getFilmShowSeat().getSeat().getRow() + "\n"
+                        + "Sitznummer: " + tickets.get(i).getFilmShowSeat().getSeat().getSeatNumber() + "\n";
+                    String paragraph4 =
+                          "Preis: " + tickets.get(i).getPrice() +"€\n";
+
+                    document.add(new Paragraph(paragraph1, font));
+                    document.add(new Paragraph(paragraph2, font));
+                    document.add(new Paragraph(paragraph3, font));
+                    document.add(new Paragraph(paragraph4, font));
+                } catch(NullPointerException e) {
+                    logger.error("Invalid Ticket!", e);
+                    document.close();
+                    f.delete();
+                    for (File alreadyCreatedTicket : ticketPdfs) alreadyCreatedTicket.delete();
+                    return null;
+                }
                 document.close();
             } catch (IOException e) {
                 e.printStackTrace();

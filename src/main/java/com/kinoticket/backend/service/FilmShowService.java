@@ -1,7 +1,12 @@
 package com.kinoticket.backend.service;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import com.kinoticket.backend.model.*;
@@ -53,6 +58,13 @@ public class FilmShowService {
         return filmShowRepository.findById(filmShowId).get();
     }
 
+    public List<FilmShow> getFutureFilmShows(){
+        LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("CET"));
+        return filmShowRepository.findFutureFilmShows(
+                java.sql.Date.valueOf(dateTime.toLocalDate()),
+                java.sql.Time.valueOf(dateTime.toLocalTime())
+        );
+    }
 
     public Iterable<FilmShow> getAllFilmShows() {
         return filmShowRepository.findAll();

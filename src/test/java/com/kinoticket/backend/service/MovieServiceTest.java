@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -50,13 +52,14 @@ public class MovieServiceTest {
         movieService.postMovie(m);
 
         int count = 0;
-        when(movieRepository.findById(4711l)).thenReturn(Optional.of(m));
+        when(movieRepository.findById(4711L)).thenReturn(Optional.of(m));
+        when(filmShowRepository.findFutureFilmShowsByMovie(eq(4711L), any(), any())).thenReturn(shows);
         Iterator<FilmShow> iterator = movieService.getFilmShows(4711).iterator();
         while(iterator.hasNext()) {
             count++;
             iterator.next();
         }
-        assertEquals(count, 2);
+        assertEquals(2, count);
     }
 
     @Test

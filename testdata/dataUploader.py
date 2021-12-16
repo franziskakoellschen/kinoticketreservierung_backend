@@ -15,16 +15,12 @@ def getConnection():
     pwd = ""
 
     if selection == "1":
-        host = "ec2-63-33-14-215.eu-west-1.compute.amazonaws.com"
-        database = "deb1hdv5c2raku"
-        user = "kzzxpuxgvekjkp"
-        pwd = "30ebd9a2f009b4f89ced5c39d85639db6efd44a0378d172fce95c97a58cebec9"
+        import secrets
+        host, database, user, pwd = secrets.getProdCreds()
 
     if selection == "2":
-        host = "ec2-34-243-180-8.eu-west-1.compute.amazonaws.com"
-        database = "d5iqk6nl9urqqb"
-        user = "gucosqewklsdkh"
-        pwd = "eb29e2d78d1da0fb670cfc921e1684364c781fde54fbf00687289626167c5e76"
+        import secrets
+        host, database, user, pwd = secrets.getDevCreds()
 
     if selection == "3":
         print("Database host (z.B. 'localhost'):")

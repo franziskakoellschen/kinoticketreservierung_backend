@@ -22,13 +22,13 @@ import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.model.Ticket;
 
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 @SpringBootTest
 @Import(UnitTestConfiguration.class)
@@ -41,18 +41,14 @@ public class EmailServiceTest {
     JavaMailSender emailSender;
 
     @Test
+    @SetEnvironmentVariable(key = "KINOTICKET_EMAIL", value = "test@test.com")
     void testSendBookingConfirmation() throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
-        MimeMessageHelper mockMimeMessageHelper = Mockito.mock(MimeMessageHelper.class);
 
         Mockito.doNothing()
             .when(emailSender)
             .send(Mockito.any(MimeMessage.class));
-        Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
-        Mockito.doNothing()
-            .when(mockMimeMessageHelper)
-            .setFrom(Mockito.anyString(), Mockito.anyString());
         Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
         assertTrue(
             emailService.sendBookingConfirmation(

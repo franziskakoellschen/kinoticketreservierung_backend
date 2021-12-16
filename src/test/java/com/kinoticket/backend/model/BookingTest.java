@@ -24,11 +24,13 @@ public class BookingTest {
         FilmShow filmShow = new FilmShow();
         filmShow.setId(53252);
 
+        FilmShowSeat fss = new FilmShowSeat();
         Seat seat = new Seat();
 
         seat.setId(2);
         seat.setRow(5);
         seat.setSeatNumber(3);
+        fss.setSeat(seat);
 
         double price= 10.2;
 
@@ -50,7 +52,7 @@ public class BookingTest {
 
         ticket.setFilmShow(filmShow);
         ticket.setMovie(movie);
-        ticket.setSeat(seat);
+        ticket.setFilmShowSeat(fss);
         ticket.setPrice(price);
         List<Ticket> ticketList = new ArrayList<>();
         ticketList.add(ticket);
@@ -68,7 +70,7 @@ public class BookingTest {
 
         assertEquals(filmShow.getId(), booking.getTickets().get(0).getFilmShow().getId());
         assertEquals(movie, booking.getTickets().get(0).getMovie());
-        assertEquals(seat, booking.getTickets().get(0).getSeat());
+        assertEquals(fss, booking.getTickets().get(0).getFilmShowSeat());
         assertEquals(price, booking.getTickets().get(0).getPrice());
 
         assertEquals(title, booking.getTickets().get(0).getMovie().getTitle());

@@ -24,7 +24,7 @@ public class Ticket {
 
         @OneToOne
         @NonNull
-        private FilmShowSeat seat;
+        private FilmShowSeat filmShowSeat;
 
         @Column
         @NonNull

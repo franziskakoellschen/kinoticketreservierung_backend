@@ -16,6 +16,7 @@ import java.util.Locale;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.FilmShow;
+import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.model.Ticket;
@@ -92,6 +93,9 @@ public class BookingControllerTests {
         seat.setRow(5);
         seat.setSeatNumber(3);
 
+        FilmShowSeat fss = new FilmShowSeat();
+        fss.setSeat(seat);
+
         double price= 10.2;
 
         Movie movie = new Movie();
@@ -102,6 +106,7 @@ public class BookingControllerTests {
         String shortDescription = "This is a Description";
         String description = "This is a full Description";
         String trailer = "someTrailerUrl";
+        String email = "dummy";
 
         movie.setTitle(title);
         movie.setYear(year);
@@ -112,7 +117,7 @@ public class BookingControllerTests {
 
         ticket.setFilmShow(filmShow);
         ticket.setMovie(movie);
-        ticket.setSeat(seat);
+        ticket.setFilmShowSeat(fss);
         ticket.setPrice(price);
         List<Ticket> ticketList = new ArrayList<>();
         ticketList.add(ticket);
@@ -122,6 +127,7 @@ public class BookingControllerTests {
         booking.setActive(isActive);
         booking.setCustomerId(customerID);
         booking.setTickets(ticketList);
+        booking.setEmail(email);
 
         return booking;
     }

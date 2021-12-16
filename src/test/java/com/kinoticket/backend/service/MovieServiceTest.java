@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.FilmShowRepository;
@@ -19,8 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 public class MovieServiceTest {
     
     @MockBean

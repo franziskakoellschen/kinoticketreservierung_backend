@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.initData.ImageDataLoader;
 import com.kinoticket.backend.model.Image;
 import com.kinoticket.backend.repositories.ImageDbRepository;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 public class ImageControllerTest{
 
     @Autowired

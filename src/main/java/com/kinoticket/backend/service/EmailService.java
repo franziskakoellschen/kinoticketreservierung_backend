@@ -130,12 +130,13 @@ public class EmailService {
                     document.add(new Paragraph(paragraph4, font));
                 } catch(NullPointerException e) {
                     logger.error("Invalid Ticket!", e);
-                    document.close();
+                    fileOutputStream.close();
                     f.delete();
                     for (File alreadyCreatedTicket : ticketPdfs) alreadyCreatedTicket.delete();
                     return null;
                 }
                 document.close();
+                fileOutputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (DocumentException e1) {

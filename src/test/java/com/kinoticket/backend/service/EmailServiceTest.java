@@ -2,14 +2,14 @@ package com.kinoticket.backend.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.kinoticket.backend.UnitTestConfiguration;
@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 @SpringBootTest
 @Import(UnitTestConfiguration.class)
@@ -40,13 +41,18 @@ public class EmailServiceTest {
     JavaMailSender emailSender;
 
     @Test
-    void testSendBookingConfirmation() {
+    void testSendBookingConfirmation() throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
+        MimeMessageHelper mockMimeMessageHelper = Mockito.mock(MimeMessageHelper.class);
 
         Mockito.doNothing()
             .when(emailSender)
             .send(Mockito.any(MimeMessage.class));
+        Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+        Mockito.doNothing()
+            .when(mockMimeMessageHelper)
+            .setFrom(Mockito.anyString(), Mockito.anyString());
         Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
         assertTrue(
             emailService.sendBookingConfirmation(
@@ -108,7 +114,7 @@ public class EmailServiceTest {
         Booking b = new Booking();
         b.setId(9087L);
         b.setTickets(tickets);
-        String email = "dummy";
+        String email = "test@test.com";
         b.setEmail(email);
 
         return b;

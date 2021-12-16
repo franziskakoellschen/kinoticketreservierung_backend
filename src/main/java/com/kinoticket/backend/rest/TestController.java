@@ -33,7 +33,7 @@ public class TestController {
         return "Hello from Backendiius!";
     }
 
-    @PostMapping("/email")
+    @PostMapping("/test/email")
     public HttpStatus sendEmail(@RequestBody String email) {
         
 

@@ -34,9 +34,8 @@ class FilmShowRepositoryTest {
         LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("CET"));
         java.sql.Date sqlDate = java.sql.Date.valueOf(dateTime.toLocalDate());
         java.sql.Time sqlTime = java.sql.Time.valueOf(dateTime.toLocalTime());
-        List<FilmShow> filmShows = filmShowRepository.findFutureFilmShowsByMovie(141, sqlDate, sqlTime);
+        List<FilmShow> filmShows = filmShowRepository.findFutureFilmShowsByMovie(2000, sqlDate, sqlTime);
         for (FilmShow f : filmShows) {
-            System.out.println(f.getDate() + " " + f.getTime());
             java.sql.Date dateSql = new java.sql.Date(f.getDate().getTime());
             assertTrue( sqlDate.before(dateSql) || (sqlDate.equals(dateSql) && sqlTime.before(f.getTime())));
         }

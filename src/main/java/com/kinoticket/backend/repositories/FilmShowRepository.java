@@ -15,7 +15,7 @@ public interface FilmShowRepository extends CrudRepository<FilmShow, Long> {
             nativeQuery = true)
     List<FilmShow> findFutureFilmShows(Date currentDate, Time currentTime);
 
-    @Query(value = "SELECT * FROM FilmShow f WHERE f.movie_id = ?1 AND date(f.date) > ?2 OR(date(f.date) = ?2 AND f.time >= ?3)",
+    @Query(value = "SELECT * FROM FilmShow f WHERE f.movie_id = ?1 AND (date(f.date) > ?2 OR(date(f.date) = ?2 AND f.time >= ?3))",
             nativeQuery = true)
     List<FilmShow> findFutureFilmShowsByMovie(long id, Date currentDate, Time currentTime);
 }

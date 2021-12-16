@@ -76,9 +76,15 @@ public class ApplicationConfig {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		mailSender.setHost("smtp.gmail.com");
 		mailSender.setPort(587);
-		
-		mailSender.setUsername(System.getenv("KINOTICKET_EMAIL"));
-		mailSender.setPassword(System.getenv("KINOTICKET_EMAIL_PW"));
+
+		String email = System.getenv("KINOTICKET_EMAIL");
+		String pw = System.getenv("KINOTICKET_EMAIL_PW");
+		if (email == null || pw == null) {
+			logger.error("JavaMailSender could not be configured properly. Check your environment variables (needs 'KINOTICKET_EMAIL', 'KINOTICKET_EMAIL_PW'");
+			return null;
+		}
+		mailSender.setUsername(email);
+		mailSender.setPassword(pw);
 
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");

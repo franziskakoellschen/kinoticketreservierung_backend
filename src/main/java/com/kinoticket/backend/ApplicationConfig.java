@@ -80,7 +80,7 @@ public class ApplicationConfig {
 		String email = System.getenv("KINOTICKET_EMAIL");
 		String pw = System.getenv("KINOTICKET_EMAIL_PW");
 		if (email == null || pw == null) {
-			logger.error("JavaMailSender could not be configured properly. Check your environment variables (needs 'KINOTICKET_EMAIL', 'KINOTICKET_EMAIL_PW'");
+			logger.error("JavaMailSender could not be configured properly. Check your environment variables (needs 'KINOTICKET_EMAIL', 'KINOTICKET_EMAIL_PW').");
 			return null;
 		}
 		mailSender.setUsername(email);

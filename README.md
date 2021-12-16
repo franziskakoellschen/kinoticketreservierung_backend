@@ -6,9 +6,9 @@
 
 ### Required System Environment Variables
 
-`DATABASE_URL` with value like `postgres://test:password@localhost:5432/test`.
-`KINOTICKET_EMAIL` containing a valid email address.
-`KINOTICKET_EMAIL_PW` containing the associated password for this email address.
+- `DATABASE_URL` with value like `postgres://test:password@localhost:5432/test`.
+- `KINOTICKET_EMAIL` containing a valid email address.
+- `KINOTICKET_EMAIL_PW` containing the associated password for this email address.
 
 ### Install dependencies
 

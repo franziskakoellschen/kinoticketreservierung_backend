@@ -77,8 +77,8 @@ public class ApplicationConfig {
 		mailSender.setHost("smtp.gmail.com");
 		mailSender.setPort(587);
 		
-		mailSender.setUsername(System.getenv("KinoticketEmail"));
-		mailSender.setPassword(System.getenv("KinoticketPassword"));
+		mailSender.setUsername(System.getenv("KINOTICKET_EMAIL"));
+		mailSender.setPassword(System.getenv("KINOTICKET_EMAIL_PW"));
 
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");

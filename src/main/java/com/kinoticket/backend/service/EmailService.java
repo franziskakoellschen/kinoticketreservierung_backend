@@ -59,7 +59,7 @@ public class EmailService {
         try {
             helper = new MimeMessageHelper(message, true);
         
-            helper.setFrom(System.getenv("KinoticketEmail"));
+            helper.setFrom(System.getenv("KINOTICKET_EMAIL"));
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(text);

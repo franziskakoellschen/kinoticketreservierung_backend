@@ -16,6 +16,8 @@ public class FilmShowInformationDTO {
     private MovieDTO movie;
     private CinemaHallDTO cinemaHall;
 
+    private List<List<FilmShowSeat>> filmShowSeats;
+
     public FilmShowInformationDTO(FilmShow filmShow) {
         this.id = filmShow.getId();
         this.date = filmShow.getDate();

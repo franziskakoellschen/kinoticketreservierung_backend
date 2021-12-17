@@ -33,7 +33,10 @@ public class FilmShowService {
     @Autowired
     MovieRepository movieRepository;
 
-    public FilmShow postFilmShow(Date date, Time time, long movieId, long cinemaHallId){
+    @Autowired
+    FilmShowSeatService filmShowSeatService;
+
+    public FilmShow postFilmShow(Date date, Time time, long movieId, long cinemaHallId) {
         Optional<CinemaHall> cinemaHallR = cinemaHallRepository.findById(cinemaHallId);
         Optional<Movie> movieR = movieRepository.findById(movieId);
         if (cinemaHallR.isPresent() && movieR.isPresent()) {
@@ -60,9 +63,11 @@ public class FilmShowService {
 
     public Optional<FilmShowInformationDTO> getFilmShowInformation(long filmShowId) {
         if (filmShowRepository.findById(filmShowId).isPresent()) {
-            return Optional.of(new FilmShowInformationDTO(
-                filmShowRepository.findById(filmShowId).get())
-            );
+            FilmShowInformationDTO filmShowInformationDTO = new FilmShowInformationDTO(
+                    filmShowRepository.findById(filmShowId).get());
+            filmShowInformationDTO
+                    .setFilmShowSeats(filmShowSeatService.getFilmShowSeats(filmShowInformationDTO.getId()));
+            return Optional.of(filmShowInformationDTO);
         }
         return Optional.empty();
     }

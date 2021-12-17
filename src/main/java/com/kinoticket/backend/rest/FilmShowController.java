@@ -27,15 +27,13 @@ public class FilmShowController {
     @Autowired
     FilmShowService filmShowService;
 
-
     /*
-    NOTE: This endpoint provides admin functionality
+     * NOTE: This endpoint provides admin functionality
      */
     @PostMapping()
     public ResponseEntity<FilmShow> postFilmShow(@RequestBody FilmShowDTO filmShow) {
         FilmShow persistedFilmShow = filmShowService.postFilmShow(
-            filmShow.getDate(), filmShow.getTime(), filmShow.getMovieId(), filmShow.getCinemaHallId()
-        );
+                filmShow.getDate(), filmShow.getTime(), filmShow.getMovieId(), filmShow.getCinemaHallId());
 
         if (persistedFilmShow == null) {
             log.error("Issue while persisting");
@@ -47,12 +45,11 @@ public class FilmShowController {
 
     @GetMapping("{filmShowId}")
     public ResponseEntity<FilmShowInformationDTO> getFilmShowInformation(@PathVariable long filmShowId) {
-        Optional<FilmShowInformationDTO> filmShowInformation =
-            filmShowService.getFilmShowInformation(filmShowId);
+        Optional<FilmShowInformationDTO> filmShowInformation = filmShowService.getFilmShowInformation(filmShowId);
 
-            if (filmShowInformation.isPresent()) {
+        if (filmShowInformation.isPresent()) {
             return new ResponseEntity<FilmShowInformationDTO>(
-                filmShowInformation.get(), HttpStatus.OK);
+                    filmShowInformation.get(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

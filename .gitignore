@@ -6,6 +6,7 @@ target/
 
 ### Secrets for Python Data Uploader ###
 /testdata/secrets.py
+/testdata/__pycache__
 
 ### STS ###
 .apt_generated

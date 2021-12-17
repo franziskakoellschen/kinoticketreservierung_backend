@@ -4,12 +4,16 @@ package com.kinoticket.backend.rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.Exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.BookingDTO;
+import com.kinoticket.backend.model.FilmShowSeat;
+import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.service.BookingService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +36,20 @@ public class BookingController {
     @Autowired
     BookingService service;
 
+
     @PostMapping()
-    public ResponseEntity<Booking> postBooking(@RequestBody Booking booking) {
-       ResponseEntity<Booking> responseEntity = null;
+    public ResponseEntity<Booking> postBooking(@RequestBody BookingDTO bookingDTO) {
+
+
+        ResponseEntity<Booking> responseEntity = null;
        Booking sentBooking = null;
         try {
-            sentBooking = service.putBooking(booking);
+            sentBooking = service.putBooking(bookingDTO);
             responseEntity = new ResponseEntity<Booking>(sentBooking,HttpStatus.OK);
         }
         catch (MissingParameterException mp){
             log.error("Invalid Parameter: " + mp.getMessage());
-            responseEntity = new ResponseEntity<Booking>(booking,HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<Booking>(sentBooking,HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }

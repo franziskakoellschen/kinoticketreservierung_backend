@@ -3,7 +3,7 @@ package com.kinoticket.backend.service;
 
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.Exceptions.MissingParameterException;
-import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.MovieRepository;
 import com.kinoticket.backend.repositories.TicketRepository;
@@ -11,7 +11,9 @@ import com.kinoticket.backend.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,23 +30,61 @@ public class BookingService {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Autowired
+    private FilmShowService filmShowService;
 
-    public Booking putBooking(Booking booking) throws MissingParameterException{
+    private List<Ticket> createTickets (List<FilmShowSeat> filmShowSeatList, FilmShow filmShow){
+        List<Ticket> ticketList = new ArrayList<>();
+
+        Iterator<FilmShowSeat> filmShowSeatIterator = filmShowSeatList.iterator();
+        while(filmShowSeatIterator.hasNext()){
+            Ticket ticket = new Ticket();
+            FilmShowSeat filmShowSeat = filmShowSeatIterator.next();
+            Seat seat = filmShowSeat.getSeat();
+            ticket.setMovie(filmShow.getMovie());
+            ticket.setFilmShow(filmShow);
+            filmShowSeat.setFilmShow(filmShow);
+            ticket.setFilmShowSeat(filmShowSeat);
+            ticket.setPriceForSeat();
+            ticketList.add(ticket);
+        }
+    return ticketList;
+    }
+
+
+    private Booking createBookingFromDTO (BookingDTO dto){
+        Booking booking = new Booking();
+        FilmShow filmShow = filmShowService.findById(dto.getFilmShowID());
+        booking.setActive(true);
+        booking.setBookingAddress(dto.getBookingAddress());
+        booking.setPaid(dto.isPaid());
+        booking.setTotalSum(dto.getTotalSum());
+        booking.setTickets(createTickets(dto.getFilmShowSeatList(), filmShow));
+        booking.setMeansOfPayment("Mastercard");
+        return booking;
+    }
+
+
+    public Booking putBooking(BookingDTO bookingDTO) throws MissingParameterException{
+
+        Booking booking = createBookingFromDTO(bookingDTO);
+
        if(booking.getTickets() == null){
            throw new MissingParameterException("Tickets are missing");
        }
-       AtomicBoolean missingTicket = new AtomicBoolean(false);
+       AtomicBoolean missingMovie = new AtomicBoolean(false);
        booking.getTickets().stream().forEach( e -> {
            if(e.getMovie() == null) {
-                  missingTicket.set(true);
-           } else {
-               movieRepository.save(e.getMovie());
+                  missingMovie.set(true);
            }
        });
-       if(missingTicket.get()){
+       if(missingMovie.get()){
            throw new MissingParameterException("Movie is missing");
        }
-       ticketRepository.saveAll(booking.getTickets());
+      try{
+       ticketRepository.saveAll(booking.getTickets());}catch (Exception e){
+          System.out.println(e.getMessage());
+      }
         return bookingRepository.save(booking);
     }
 

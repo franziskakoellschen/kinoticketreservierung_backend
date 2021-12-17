@@ -24,7 +24,7 @@ public class Ticket {
 
         @OneToOne
         @NonNull
-        private Seat seat;
+        private FilmShowSeat filmShowSeat;
 
         @Column
         @NonNull
@@ -32,4 +32,14 @@ public class Ticket {
 
         @OneToOne
         private Movie movie;
+
+        @PrePersist
+        public void setPriceForSeat(){
+                if(filmShowSeat== null) return;
+                switch (filmShowSeat.getSeat().getPriceCategory()){
+                        case 1: this.price = 9.0D;break;
+                        case 2: this.price = 12.0D;break;
+                        case 3: this.price = 14.0D;break;
+                        default: this.price = 15.0D; break;
+                } }
 }

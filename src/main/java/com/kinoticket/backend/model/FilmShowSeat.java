@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Table(name = "FILMSHOW_SEAT")
 @IdClass(FilmshowSeatPK.class)
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class FilmShowSeat {
 
     @Id
@@ -28,6 +28,21 @@ public class FilmShowSeat {
 
     @Column
     private boolean reserved;
+
+    private double price;
+
+    @PrePersist
+    private void setPrice(){
+        if(seat!=null){
+            switch (seat.getPriceCategory()){
+                case 1: this.price = 9.0D;break;
+                case 2: this.price = 12.0D;break;
+                case 3: this.price = 14.0D;break;
+                default: this.price = 15.0D; break;
+            }
+        }
+    }
+
 
     public Seat getSeat() {
         return seat;
@@ -52,4 +67,12 @@ public class FilmShowSeat {
     public void setReserved(boolean reserved) {
         this.reserved = reserved;
     }
+
+    public FilmShowSeat(Seat seat, FilmShow filmShow, boolean reserved) {
+        this.seat = seat;
+        this.filmShow = filmShow;
+        this.reserved = reserved;
+    }
+
+
 }

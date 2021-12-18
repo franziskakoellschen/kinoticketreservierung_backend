@@ -1,11 +1,8 @@
 package com.kinoticket.backend.initData;
 
 
-import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Image;
-import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.ImageDbRepository;
-import com.kinoticket.backend.repositories.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -14,10 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component

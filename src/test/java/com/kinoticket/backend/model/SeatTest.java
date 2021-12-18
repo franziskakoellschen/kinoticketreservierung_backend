@@ -13,7 +13,6 @@ public class SeatTest {
 
         int row = 3;
         int seatNumber = 20;
-        boolean reserved = true;
         int priceCategory = 2;
 
         Seat seat = new Seat(1, row, seatNumber, cinemaHall, null, priceCategory);

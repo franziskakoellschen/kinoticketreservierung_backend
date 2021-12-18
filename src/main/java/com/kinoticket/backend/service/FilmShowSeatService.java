@@ -29,6 +29,9 @@ public class FilmShowSeatService {
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
 
+    @Autowired
+    EmailService emailService;
+
     public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound{
         Optional<FilmShowSeat> filmShowSeat = filmShowSeatRepository.findBySeat_idAndFilmShow_id(seat_id, filmshow_id);
         if (filmShowSeat.isPresent()) {

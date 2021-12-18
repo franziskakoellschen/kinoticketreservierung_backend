@@ -34,6 +34,9 @@ public class Booking {
     @NonNull
     private long customerId;
 
+    @Column
+    @NonNull
+    private String email;
 
     @OneToMany()
     private List<Ticket> tickets;

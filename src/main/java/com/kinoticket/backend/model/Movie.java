@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
-
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 import org.springframework.lang.NonNull;
 
 import lombok.AllArgsConstructor;

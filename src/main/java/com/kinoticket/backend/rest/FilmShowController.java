@@ -42,6 +42,6 @@ public class FilmShowController {
 
     @GetMapping()
     public Iterable<FilmShow> getAllFilmShows() {
-        return filmShowService.getAllFilmShows();
+        return filmShowService.getFutureFilmShows();
     }
 }

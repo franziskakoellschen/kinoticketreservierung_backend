@@ -32,7 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest
 @Import(UnitTestConfiguration.class)
 public class MoviesControllerTests {
-    
+
     @Autowired
     WebApplicationContext webApplicationContext;
 
@@ -44,9 +44,7 @@ public class MoviesControllerTests {
 
     MockMvc mvc;
 
-    
     private JacksonTester<Movie> jsonMovie;
-
 
     @BeforeEach
     void before() {
@@ -62,7 +60,7 @@ public class MoviesControllerTests {
         movie.setShortDescription("FooBar");
         movie.setDescription("This is the long description");
         movie.setFsk(16);
-        
+
         return movie;
     }
 
@@ -79,9 +77,9 @@ public class MoviesControllerTests {
 
         when(movieRepository.findAll()).thenReturn(movies);
         MvcResult result = this.mvc.perform(get("/movies"))
-            .andExpect(status().isOk())
-            .andReturn();
-        
+                .andExpect(status().isOk())
+                .andReturn();
+
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":4711"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":9876"));
     }
@@ -111,27 +109,27 @@ public class MoviesControllerTests {
     void testPostWithFilmShow() throws Exception {
 
         this.mvc.perform(
-            post("/movies")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"title\": \"foo\",\"filmShows\":[{\"date\":\"2021-09-20\"}]}"))
-            .andExpect(status().isOk());
+                post("/movies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\": \"foo\",\"filmShows\":[{\"date\":\"2021-09-20\"}]}"))
+                .andExpect(status().isOk());
 
     }
 
     @Test
     void testGetNonPresentId() throws Exception {
         this.mvc.perform(
-            get("/movies/4711"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(""));
+                get("/movies/4711"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
 
     @Test
     void testGetFilmShowForNonPresentId() throws Exception {
         this.mvc.perform(
-            get("/movies/4711/filmShows"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(""));
+                get("/movies/4711/filmShows"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
 
     @Test

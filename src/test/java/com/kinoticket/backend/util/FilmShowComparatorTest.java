@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class FilmShowComparatorTest {
     @Test
     void testCompare() throws ParseException {
-        
+
         ArrayList<FilmShow> filmShows = new ArrayList<FilmShow>();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -20,26 +20,24 @@ import static org.hamcrest.Matchers.containsString;
 @SpringBootTest
 @Import(UnitTestConfiguration.class)
 public class TestContollerTests {
-    
+
 	@Autowired
 	WebApplicationContext webApplicationContext;
 
-    MockMvc mvc;
+	MockMvc mvc;
 
-    @BeforeEach
-    void before() {
-        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
+	@BeforeEach
+	void before() {
+		mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+	}
 
 	@Test
-	void getTest() throws Exception{
+	void getTest() throws Exception {
 		this.mvc.perform(get("/testRequest"))
-		.andExpect(status().isOk())
-		.andExpect(
-			content().string(
-				containsString("Hello from Backend")
-			)
-		);
+				.andExpect(status().isOk())
+				.andExpect(
+						content().string(
+								containsString("Hello from Backend")));
 	}
 
 }

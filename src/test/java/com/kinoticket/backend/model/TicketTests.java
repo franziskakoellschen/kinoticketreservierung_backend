@@ -8,13 +8,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TicketTests {
     @Test
     void ticketsTest() {
-    /*
+
         Ticket ticket = new Ticket();
 
         FilmShow filmShow = new FilmShow();
         filmShow.setId(53252);
 
-        double price= 10.2;
+        double price = 10.2;
 
         Movie movie = new Movie();
 
@@ -46,7 +46,6 @@ public class TicketTests {
         ticket.setFilmShowSeat(fss);
         ticket.setPrice(price);
 
-
         assertEquals(filmShow.getId(), ticket.getFilmShow().getId());
         assertEquals(movie, ticket.getMovie());
         assertEquals(fss, ticket.getFilmShowSeat());
@@ -58,7 +57,6 @@ public class TicketTests {
         assertEquals(shortDescription, ticket.getMovie().getShortDescription());
         assertEquals(description, ticket.getMovie().getDescription());
         assertEquals(trailer, ticket.getMovie().getTrailer());
-        */
 
         assertTrue(true);
 

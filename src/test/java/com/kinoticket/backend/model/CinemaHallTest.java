@@ -12,7 +12,6 @@ public class CinemaHallTest {
     @Test
     void cinemaHallTest() {
 
-
         CinemaHall cinemaHall = new CinemaHall();
 
         int squareMeters = 50;

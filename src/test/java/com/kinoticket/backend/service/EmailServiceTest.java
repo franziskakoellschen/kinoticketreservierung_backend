@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 
 import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.BookingAddress;
 import com.kinoticket.backend.model.CinemaHall;
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.FilmShowSeat;
@@ -47,14 +48,12 @@ public class EmailServiceTest {
         MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
 
         Mockito.doNothing()
-            .when(emailSender)
-            .send(Mockito.any(MimeMessage.class));
+                .when(emailSender)
+                .send(Mockito.any(MimeMessage.class));
         Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
         assertTrue(
-            emailService.sendBookingConfirmation(
-                createExampleBooking()
-            )
-        );
+                emailService.sendBookingConfirmation(
+                        createExampleBooking()));
     }
 
     @Test
@@ -63,8 +62,7 @@ public class EmailServiceTest {
         booking.setTickets(null);
 
         assertFalse(
-            emailService.sendBookingConfirmation(booking)
-        );
+                emailService.sendBookingConfirmation(booking));
     }
 
     @Test
@@ -73,11 +71,9 @@ public class EmailServiceTest {
         booking.getTickets().add(new Ticket());
 
         assertFalse(
-            emailService.sendBookingConfirmation(booking)
-        );
+                emailService.sendBookingConfirmation(booking));
     }
 
-    
     private Booking createExampleBooking() {
         Ticket t1 = new Ticket();
 
@@ -103,7 +99,6 @@ public class EmailServiceTest {
         t1.setFilmShowSeat(fss);
         t1.setPrice(9);
 
-
         List<Ticket> tickets = new ArrayList<>();
         tickets.add(t1);
 
@@ -111,11 +106,11 @@ public class EmailServiceTest {
         b.setId(9087L);
         b.setTickets(tickets);
         String email = "test@test.com";
-        b.setEmail(email);
+        BookingAddress bookingAdress = new BookingAddress();
+        bookingAdress.setEmailAddress(email);
+        b.setBookingAddress(bookingAdress);
 
         return b;
     }
-
-
 
 }

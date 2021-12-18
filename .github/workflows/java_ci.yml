@@ -44,8 +44,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: TestsAndCoverage
     runs-on: ubuntu-latest
-    environment: 
-      name: kinoticket-backend-prod 
+    environment:
+      name: kinoticket-backend-prod
       url: https://kinoticket-backend-prod.herokuapp.com/
 
     steps:
@@ -54,7 +54,7 @@ jobs:
       - name: Heroku Deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_api_key: "${{ secrets.HEROKU_API_KEY_PROD }}"
           heroku_email: kinoticketbuchung@gmail.com
           heroku_app_name: kinoticket-backend-prod
           buildpack: heroku/java
@@ -63,8 +63,8 @@ jobs:
     if: github.ref == 'refs/heads/dev'
     needs: TestsAndCoverage
     runs-on: ubuntu-latest
-    environment: 
-      name: kinoticket-backend-dev 
+    environment:
+      name: kinoticket-backend-dev
       url: https://kinoticket-backend-dev.herokuapp.com/
 
     steps:
@@ -73,7 +73,7 @@ jobs:
       - name: Heroku Deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_api_key: "${{ secrets.HEROKU_API_KEY_DEV }}"
           heroku_email: kinoticketbuchung@gmail.com
           heroku_app_name: kinoticket-backend-dev
           buildpack: heroku/java

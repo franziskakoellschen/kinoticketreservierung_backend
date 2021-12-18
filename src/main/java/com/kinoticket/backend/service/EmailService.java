@@ -145,7 +145,7 @@ public class EmailService {
                     f.delete();
                     for (File alreadyCreatedTicket : ticketPdfs)
                         alreadyCreatedTicket.delete();
-                    return null;
+                    throw new MissingParameterException("EmailService: Invalid Ticket");
                 }
                 document.close();
                 fileOutputStream.close();

@@ -29,29 +29,25 @@ public class FilmShowSeatController {
     @Autowired
     FilmShowService filmShowService;
 
-    @GetMapping()
-    public List<List<FilmShowSeat>> getSeats(@PathVariable(value= "filmshowId") long filmShowId) {
-        return filmShowSeatService.getFilmShowSeats(filmShowId);
-    }
-
     @PutMapping("/{id}/reserved/{reserved}")
     public ResponseEntity<FilmShowSeat> updateFilmShowSeat(@PathVariable(value = "filmshowId") int filmShowId,
-                                                           @PathVariable(value= "id")  int seatId,
-                                                           @PathVariable(value = "reserved") boolean reserved) {
+            @PathVariable(value = "id") int seatId,
+            @PathVariable(value = "reserved") boolean reserved) {
         ResponseEntity<FilmShowSeat> responseEntity;
         try {
             FilmShowSeat filmShowSeat = filmShowSeatService.findBySeatAndFilmShow(seatId, filmShowId);
             filmShowSeat = filmShowSeatService.changeSeat(filmShowSeat, reserved);
             responseEntity = new ResponseEntity<>(filmShowSeat, HttpStatus.OK);
-        } catch (EntityNotFound enf){
+        } catch (EntityNotFound enf) {
             responseEntity = new ResponseEntity<>((FilmShowSeat) null, HttpStatus.BAD_REQUEST);
         }
-            return responseEntity;
+        return responseEntity;
     }
 
     @PostMapping
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    ResponseEntity<Iterable<FilmShowSeat>> reserveSeats(@RequestBody List<FilmShowSeat> filmShowSeats, @PathVariable(value = "filmshowId") long filmShowId) {
+    ResponseEntity<Iterable<FilmShowSeat>> reserveSeats(@RequestBody List<FilmShowSeat> filmShowSeats,
+            @PathVariable(value = "filmshowId") long filmShowId) {
 
         Iterable<FilmShowSeat> reservedFSS = filmShowSeatService.reserve(filmShowSeats, filmShowId);
         if (reservedFSS != null) {

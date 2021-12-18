@@ -2,7 +2,7 @@
 [![Java CI](https://github.com/franziskakoellschen/kinoticketreservierung_backend/actions/workflows/java_ci.yml/badge.svg)](https://github.com/franziskakoellschen/kinoticketreservierung_backend/actions/workflows/java_ci.yml)
 
 ## Current test coverage
-[![codecov](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend/branch/master/graph/badge.svg)](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend)
+![Coverage](.github/badges/jacoco.svg)
 
 ## Setup
 ### Add Value to DATABASE_URL

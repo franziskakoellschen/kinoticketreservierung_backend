@@ -1,10 +1,8 @@
 package com.kinoticket.backend.service;
 
 import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;

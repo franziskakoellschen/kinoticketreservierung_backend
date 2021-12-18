@@ -1,11 +1,11 @@
 package com.kinoticket.backend.model;
 
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Data
 @Entity
@@ -32,17 +32,24 @@ public class FilmShowSeat {
     private double price;
 
     @PrePersist
-    private void setPrice(){
-        if(seat!=null){
-            switch (seat.getPriceCategory()){
-                case 1: this.price = 9.0D;break;
-                case 2: this.price = 12.0D;break;
-                case 3: this.price = 14.0D;break;
-                default: this.price = 15.0D; break;
+    private void setPrice() {
+        if (seat != null) {
+            switch (seat.getPriceCategory()) {
+                case 1:
+                    this.price = 9.0D;
+                    break;
+                case 2:
+                    this.price = 12.0D;
+                    break;
+                case 3:
+                    this.price = 14.0D;
+                    break;
+                default:
+                    this.price = 15.0D;
+                    break;
             }
         }
     }
-
 
     public Seat getSeat() {
         return seat;
@@ -73,6 +80,5 @@ public class FilmShowSeat {
         this.filmShow = filmShow;
         this.reserved = reserved;
     }
-
 
 }

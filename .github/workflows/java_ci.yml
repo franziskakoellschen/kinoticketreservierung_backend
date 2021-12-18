@@ -39,6 +39,10 @@ jobs:
           fail-if-branches-less-than: 60
       - name: Print Coverage
         run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
 
   DeployProd:
     if: github.ref == 'refs/heads/main'

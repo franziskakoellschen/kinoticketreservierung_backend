@@ -64,6 +64,47 @@ public class EmailServiceTest {
     }
 
     @Test
+    void testThrowsIfNullBooking() {
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(null);
+                
+            }
+            
+        });
+    }
+
+    @Test
+    void testThrowsIfNoEmailProvided() {
+
+        Booking b = new Booking();
+
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(b);
+                
+            }
+            
+        });
+
+        b.setBookingAddress(new BookingAddress());
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(b);
+                
+            }
+            
+        });
+    }
+
+
+    @Test
     void testBookingWthMissingTickets() {
         Booking booking = createExampleBooking();
         booking.setTickets(null);

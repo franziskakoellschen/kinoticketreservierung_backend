@@ -1,5 +1,7 @@
 package com.kinoticket.backend.rest;
 
+import java.util.Optional;
+
 import com.kinoticket.backend.model.Coupon;
 import com.kinoticket.backend.repositories.CouponRepository;
 
@@ -20,14 +22,15 @@ public class CouponController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Coupon> getBooking(@PathVariable long id) {
-        Coupon coupon = couponRepository.findById(id);
-        if (coupon != null) {
+        Optional<Coupon> optionalCoupon = couponRepository.findById(id);
+        if (optionalCoupon.isPresent()) {
+            Coupon coupon = optionalCoupon.get();
             coupon.setActive(false);
             couponRepository.save(coupon);
             return new ResponseEntity<Coupon>(coupon, HttpStatus.OK);
         }
 
-        return new ResponseEntity<Coupon>(coupon, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Coupon>(HttpStatus.BAD_REQUEST);
 
     }
 

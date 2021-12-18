@@ -3,6 +3,7 @@ package com.kinoticket.backend.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TicketTests {
@@ -59,6 +60,35 @@ public class TicketTests {
         assertEquals(trailer, ticket.getMovie().getTrailer());
 
         assertTrue(true);
+
+    }
+
+    void priceCategoriesTest() {
+        Ticket t = new Ticket();
+        t.setPriceForSeat();
+        assertNull(t.getPrice());
+        FilmShowSeat fss = new FilmShowSeat();
+
+        Seat s = new Seat();
+        s.setPriceCategory(1);
+        fss.setSeat(s);
+        t.setFilmShowSeat(fss);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 9.0);
+
+        t.getFilmShowSeat().getSeat().setPriceCategory(2);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 12.0);
+
+        
+        t.getFilmShowSeat().getSeat().setPriceCategory(3);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 14.0);
+
+        
+        t.getFilmShowSeat().getSeat().setPriceCategory(0);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 14.0);
 
     }
 

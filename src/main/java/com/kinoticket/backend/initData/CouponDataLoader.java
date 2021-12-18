@@ -29,7 +29,7 @@ public class CouponDataLoader implements ApplicationRunner {
         List<Coupon> couponList = new ArrayList<>();
         couponList = (List<Coupon>) couponRepository.findAll();
 
-        if(couponList.size() ==0){
+        if(couponList.isEmpty()){
             Coupon coupon1 = new Coupon(29382952028l, 5.0);
             Coupon coupon2 = new Coupon(29382952021l, 5.0);
             Coupon coupon3 = new Coupon(29382952628l, 4.0);

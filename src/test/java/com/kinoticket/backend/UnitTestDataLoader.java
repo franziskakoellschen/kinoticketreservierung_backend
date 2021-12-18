@@ -1,5 +1,6 @@
 package com.kinoticket.backend;
 
+import com.kinoticket.backend.initData.CouponDataLoader;
 import com.kinoticket.backend.initData.ImageDataLoader;
 import com.kinoticket.backend.initData.MovieDataLoader;
 
@@ -14,4 +15,7 @@ public class UnitTestDataLoader {
 
     @MockBean
     public MovieDataLoader movieDataLoader;
+
+    @MockBean
+    public CouponDataLoader couponDataLoader;
 }

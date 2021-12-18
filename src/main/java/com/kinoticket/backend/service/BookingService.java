@@ -1,17 +1,20 @@
 package com.kinoticket.backend.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.Exceptions.MissingParameterException;
-import com.kinoticket.backend.model.*;
+import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.BookingDTO;
+import com.kinoticket.backend.model.FilmShowSeat;
+import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.repositories.TicketRepository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +32,6 @@ public class BookingService {
 
     @Autowired
     private FilmShowRepository filmShowRepository;
-
-    private Logger logger = LoggerFactory.getLogger(BookingService.class);
 
     private List<Ticket> createTickets(List<FilmShowSeat> filmShowSeatList) {
         List<Ticket> ticketList = new ArrayList<>();
@@ -63,9 +64,13 @@ public class BookingService {
 
     public Booking putBooking(BookingDTO bookingDTO) throws MissingParameterException {
 
+        if (bookingDTO.getFilmShowSeatList() == null || bookingDTO.getFilmShowSeatList().isEmpty()) {
+            throw new MissingParameterException("No FilmShowSeats provided");
+        }
+
         Booking booking = createBookingFromDTO(bookingDTO);
 
-        if (booking.getTickets() == null) {
+        if (booking.getTickets() == null || booking.getTickets().isEmpty()) {
             throw new MissingParameterException("Tickets are missing");
         }
         AtomicBoolean missingMovie = new AtomicBoolean(false);
@@ -77,18 +82,11 @@ public class BookingService {
         if (missingMovie.get()) {
             throw new MissingParameterException("Movie is missing");
         }
-        try {
-            ticketRepository.saveAll(booking.getTickets());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
 
+        ticketRepository.saveAll(booking.getTickets());
         Booking persistedBooking = bookingRepository.save(booking);
 
-        if (!emailService.sendBookingConfirmation(persistedBooking)) {
-            logger.error("Issue while sending booking confirmation");
-            return null;
-        }
+        emailService.sendBookingConfirmation(persistedBooking);
 
         return persistedBooking;
     }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.kinoticket.backend.Exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Ticket;
 
@@ -44,12 +46,13 @@ public class EmailService {
      * @return An indication wether the email was sent successful.
      */
 
-    public boolean sendBookingConfirmation(Booking booking) {
+    public void sendBookingConfirmation(Booking booking) throws MissingParameterException {
+
+        if (booking == null) {
+            throw new MissingParameterException("EmailService: booking is null");
+        }
 
         List<File> ticketPdfs = generateTicketPdfs(booking);
-        if (ticketPdfs == null) {
-            return false;
-        }
 
         String messageBody = createMessageBody(booking);
 
@@ -59,7 +62,6 @@ public class EmailService {
 
         emailSender.send(message);
         removeFromDisk(ticketPdfs);
-        return true;
     }
 
     private void removeFromDisk(List<File> ticketPdfs) {
@@ -99,11 +101,13 @@ public class EmailService {
         return message;
     }
 
-    private List<File> generateTicketPdfs(Booking booking) {
+    private List<File> generateTicketPdfs(Booking booking) throws MissingParameterException {
         List<Ticket> tickets = booking.getTickets();
 
         if (tickets == null) {
-            return null;
+            throw new MissingParameterException(
+                "EmailService: PDF Tickets could not be generated. Tickets are null"
+            );
         }
 
         List<File> ticketPdfs = new ArrayList<>();

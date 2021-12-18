@@ -53,7 +53,9 @@ public class EmailService {
 
         String messageBody = createMessageBody(booking);
 
-        MimeMessage message = createBookingConfirmationMessage(booking.getEmail(), messageBody, ticketPdfs);
+        MimeMessage message = createBookingConfirmationMessage(
+                booking.getBookingAddress().getEmailAddress(),
+                messageBody, ticketPdfs);
 
         emailSender.send(message);
         removeFromDisk(ticketPdfs);

@@ -161,9 +161,11 @@ public class FilmShowControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
 
-        String expectedContent = "[[{\"seat\":{\"id\":2,\"row\":1,\"seatNumber\":1,\"priceCategory\":0},\"reserved\":false}";
-        expectedContent += ",{\"seat\":{\"id\":2,\"row\":1,\"seatNumber\":2,\"priceCategory\":0},\"reserved\":false}]";
-        expectedContent += ",[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":0},\"reserved\":false}]]";
+        String expectedContent = "[[{\"seat\":{\"id\":2,\"row\":1,\"seatNumber\":1,\"priceCategory\":0},\"reserved\":false,\"price\":0.0}";
+        expectedContent += ",{\"seat\":{\"id\":2,\"row\":1,\"seatNumber\":2,\"priceCategory\":0},\"reserved\":false,\"price\":0.0}]";
+        expectedContent += ",[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":0},\"reserved\":false,\"price\":0.0}]]";
+
+        System.out.println(response.getContentAsString());
 
         assertTrue(response.getContentAsString().contains(expectedContent));
         assertTrue(response.getContentAsString().contains("Test Movie"));

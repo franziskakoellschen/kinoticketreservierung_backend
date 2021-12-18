@@ -4,12 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.FilmShowRepository;
@@ -19,8 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 public class MovieServiceTest {
     
     @MockBean
@@ -47,13 +52,14 @@ public class MovieServiceTest {
         movieService.postMovie(m);
 
         int count = 0;
-        when(movieRepository.findById(4711l)).thenReturn(Optional.of(m));
+        when(movieRepository.findById(4711L)).thenReturn(Optional.of(m));
+        when(filmShowRepository.findFutureFilmShowsByMovie(eq(4711L), any(), any())).thenReturn(shows);
         Iterator<FilmShow> iterator = movieService.getFilmShows(4711).iterator();
         while(iterator.hasNext()) {
             count++;
             iterator.next();
         }
-        assertEquals(count, 2);
+        assertEquals(2, count);
     }
 
     @Test

@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.Locale;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.FilmShow;
+import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.model.Ticket;
@@ -32,6 +34,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +42,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 @AutoConfigureMockMvc
 public class BookingControllerTests {
 
@@ -92,6 +96,9 @@ public class BookingControllerTests {
         seat.setRow(5);
         seat.setSeatNumber(3);
 
+        FilmShowSeat fss = new FilmShowSeat();
+        fss.setSeat(seat);
+
         double price= 10.2;
 
         Movie movie = new Movie();
@@ -102,6 +109,7 @@ public class BookingControllerTests {
         String shortDescription = "This is a Description";
         String description = "This is a full Description";
         String trailer = "someTrailerUrl";
+        String email = "dummy";
 
         movie.setTitle(title);
         movie.setYear(year);
@@ -112,7 +120,7 @@ public class BookingControllerTests {
 
         ticket.setFilmShow(filmShow);
         ticket.setMovie(movie);
-        ticket.setSeat(seat);
+        ticket.setFilmShowSeat(fss);
         ticket.setPrice(price);
         List<Ticket> ticketList = new ArrayList<>();
         ticketList.add(ticket);
@@ -122,6 +130,7 @@ public class BookingControllerTests {
         booking.setActive(isActive);
         booking.setCustomerId(customerID);
         booking.setTickets(ticketList);
+        booking.setEmail(email);
 
         return booking;
     }

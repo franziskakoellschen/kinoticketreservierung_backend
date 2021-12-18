@@ -1,10 +1,10 @@
 package com.kinoticket.backend.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
-
 import org.springframework.lang.NonNull;
 
 import lombok.AllArgsConstructor;
@@ -30,13 +30,13 @@ public class Movie implements Serializable {
     @NonNull
     private int year;
 
-    @Column
+    @Column(length=10485760)
     @NonNull
     private String shortDescription;
     
-    @Column
+    @Column(length=10485760)
     private String description;
-    
+
     @Column
     @NonNull
     private int fsk;
@@ -50,4 +50,27 @@ public class Movie implements Serializable {
 
     @Column
     private String imageUrl;
+
+    @Column
+    private String actors;
+
+    @Column
+    private Date startDate;
+
+    @Column
+    private int filmLength;
+
+    @Column
+    private String originCountry;
+
+    @Column
+    private String genre;
+
+    @Column
+    private long image_id;
+
+
+
+
+
 }

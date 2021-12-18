@@ -29,6 +29,9 @@ public class FilmShowSeatService {
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
 
+    @Autowired
+    EmailService emailService;
+
     public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound{
         Optional<FilmShowSeat> filmShowSeat = filmShowSeatRepository.findBySeat_idAndFilmShow_id(seat_id, filmshow_id);
         if (filmShowSeat.isPresent()) {
@@ -69,32 +72,35 @@ public class FilmShowSeatService {
         return filmShowSeat;
     }
 
-    public boolean canReserve(List<FilmShowSeat> seats) {
+    public boolean canReserve(List<FilmShowSeat> seats, long filmShowId) {
         for (FilmShowSeat fss : seats) {
             FilmShowSeat fssFromRepo = 
                 filmShowSeatRepository.findBySeat_idAndFilmShow_id(
-                    fss.getSeat().getId(), fss.getFilmShow().getId()
+                    fss.getSeat().getId(), filmShowId
                 ).get();
             if (fssFromRepo.isReserved()) {
                 return false;
             }
         }
-
         return true;
     }
 
-    public boolean reserve(List<FilmShowSeat> seats) {
-        for (FilmShowSeat fss : seats) {
-            FilmShowSeat fssFromRepo = 
-                filmShowSeatRepository.findBySeat_idAndFilmShow_id(
-                    fss.getSeat().getId(), fss.getFilmShow().getId()
-                ).get();
-            
-            fssFromRepo.setReserved(true);
+    public Iterable<FilmShowSeat> reserve(List<FilmShowSeat> seats, long filmShowId) {
+        if (!canReserve(seats, filmShowId)) return null;
 
-            filmShowSeatRepository.save(fssFromRepo);
+        ArrayList<FilmShowSeat> reservedSeats = new ArrayList<FilmShowSeat>();
+
+        for (FilmShowSeat fss : seats) {
+            FilmShowSeat fssFromRepo =
+                filmShowSeatRepository.findBySeat_idAndFilmShow_id(
+                    fss.getSeat().getId(), filmShowId
+                ).get();
+
+            fssFromRepo.setReserved(true);
+            reservedSeats.add(fssFromRepo);
         }
 
-        return true;
+        filmShowSeatRepository.saveAll(reservedSeats);
+        return reservedSeats;
     }
 }

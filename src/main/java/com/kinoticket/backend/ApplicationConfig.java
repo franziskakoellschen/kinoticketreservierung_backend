@@ -2,6 +2,7 @@ package com.kinoticket.backend;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -66,5 +69,36 @@ public class ApplicationConfig {
 				);
 			}
 		};
+	}
+
+	/**
+	 * Configures a JavaMailSender for email communication.
+	 * Requires environment variables "KINOTICKET_EMAIL"
+	 * and "KINOTICKET_EMAIL_PW" to be set.
+	 * 
+	 * @return A JavaMailSender Object.
+	 */
+	@Bean
+	public JavaMailSender getJavaMailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost("smtp.gmail.com");
+		mailSender.setPort(587);
+
+		String email = System.getenv("KINOTICKET_EMAIL");
+		String pw = System.getenv("KINOTICKET_EMAIL_PW");
+		if (email == null || pw == null) {
+			logger.error("JavaMailSender could not be configured properly. Check your environment variables (needs 'KINOTICKET_EMAIL', 'KINOTICKET_EMAIL_PW').");
+			return null;
+		}
+		mailSender.setUsername(email);
+		mailSender.setPassword(pw);
+
+		Properties props = mailSender.getJavaMailProperties();
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.debug", "true");
+		
+		return mailSender;
 	}
 }

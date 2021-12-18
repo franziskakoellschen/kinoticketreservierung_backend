@@ -15,11 +15,14 @@ import org.junit.jupiter.api.function.Executable;
 import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 public class ApplicationConfigTests {
 
 	@Autowired
@@ -48,6 +51,18 @@ public class ApplicationConfigTests {
             }
         });
     }
+
+	@Test
+    @ClearEnvironmentVariable(key = "KINOTICKET_EMAIL")
+	void testMissingMailConfig() {
+		assertDoesNotThrow(new Executable() {
+			@Override
+			public void execute() throws Throwable {
+				JavaMailSender ms = new ApplicationConfig().getJavaMailSender();
+				assertNull(ms);
+			}
+		});
+	}
 
 	@Test
 	void corsOriginsAllowed() throws Exception {

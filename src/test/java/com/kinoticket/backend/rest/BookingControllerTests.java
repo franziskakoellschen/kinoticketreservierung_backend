@@ -3,6 +3,7 @@ package com.kinoticket.backend.rest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -14,25 +15,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.mail.internet.MimeMessage;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.UnitTestConfiguration;
-import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.model.BookingAddress;
-import com.kinoticket.backend.model.BookingDTO;
-import com.kinoticket.backend.model.FilmShow;
-import com.kinoticket.backend.model.FilmShowSeat;
-import com.kinoticket.backend.model.Movie;
-import com.kinoticket.backend.model.Seat;
-import com.kinoticket.backend.model.Ticket;
-import com.kinoticket.backend.repositories.BookingRepository;
-import com.kinoticket.backend.repositories.FilmShowRepository;
-import com.kinoticket.backend.repositories.MovieRepository;
-import com.kinoticket.backend.repositories.TicketRepository;
+import com.kinoticket.backend.model.*;
+import com.kinoticket.backend.repositories.*;
 import com.kinoticket.backend.service.BookingService;
+import com.kinoticket.backend.service.EmailService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +35,7 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -70,6 +66,12 @@ public class BookingControllerTests {
 
         @MockBean
         FilmShowRepository filmShowRepository;
+
+        @MockBean
+        EmailService emailService;
+
+        @MockBean
+        JavaMailSender emailSender;
 
         private JacksonTester<Booking> jsonBooking;
         private JacksonTester<BookingDTO> jsonBookingDTO;
@@ -151,38 +153,59 @@ public class BookingControllerTests {
                 return dto;
         }
 
-        public FilmShow mockedFilmShow() {
-                FilmShow fs = new FilmShow();   
+        public FilmShow createValidFilmShow() {
+                FilmShow fs = new FilmShow();
                 fs.setId(123);
-                return fs;             
+                fs.setMovie(new Movie());
+                return fs;
         }
 
         public BookingDTO createValidBookingDTO() {
 
-                long filmShowID = mockedFilmShow().getId();
+                long filmShowID = createValidFilmShow().getId();
                 List<FilmShowSeat> filmShowSeatList = new ArrayList<FilmShowSeat>();
-                FilmShowSeat fs = new FilmShowSeat();
+                FilmShowSeat fss = new FilmShowSeat();
                 Seat s = new Seat();
                 s.setPriceCategory(2);
-                fs.setFilmShow(mockedFilmShow());
-                fs.setSeat(s);
-                filmShowSeatList.add(fs);
+                fss.setFilmShow(createValidFilmShow());
+                fss.setSeat(s);
+                filmShowSeatList.add(fss);
                 boolean isPaid = true;
                 double totalSum = 10;
                 BookingAddress bookingAddress = new BookingAddress();
 
                 BookingDTO dto = new BookingDTO(
-                        filmShowID,
-                        filmShowSeatList,
-                        isPaid,
-                        totalSum,
-                        bookingAddress
-                );
+                                filmShowID,
+                                filmShowSeatList,
+                                isPaid,
+                                totalSum,
+                                bookingAddress);
 
                 return dto;
         }
-        public Booking mockedBookingFromRepository() {
-                return new Booking();
+
+        public Ticket createTicketValidForPdfGenerator() {
+                Ticket t = new Ticket();
+                FilmShow fs = new FilmShow();
+                fs.setMovie(new Movie());
+                t.setFilmShow(fs);
+                fs.setCinemaHall(new CinemaHall());
+                FilmShowSeat fss = new FilmShowSeat();
+                fss.setSeat(new Seat());
+                t.setFilmShowSeat(fss);
+
+                return t;
+        }
+
+        public Booking mockedValidBookingFromRepository() {
+                Booking b = new Booking();
+                List<Ticket> ticketList = new ArrayList<Ticket>();
+                ticketList.add(createTicketValidForPdfGenerator());
+                b.setTickets(ticketList);
+                BookingAddress ba = new BookingAddress();
+                ba.setEmailAddress("test@test.com");
+                b.setBookingAddress(ba);
+                return b;
         }
 
         @Test
@@ -219,9 +242,9 @@ public class BookingControllerTests {
                                 .andExpect(status().isBadRequest());
 
                 mvc.perform(
-                        post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                                        jsonBookingDTO.write(createInvalidBookingDto()).getJson()))
-                        .andExpect(status().isBadRequest());
+                                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                                                jsonBookingDTO.write(createInvalidBookingDto()).getJson()))
+                                .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -242,36 +265,42 @@ public class BookingControllerTests {
         public void pdfCreationReturnsBadRequest() throws Exception {
 
                 when(bookingRepository.save(any())).thenReturn(new Booking());
+                when(filmShowRepository.findById(any())).thenReturn(Optional.of(new FilmShow()));
                 mvc.perform(
-                        post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                                jsonBookingDTO.write(createValidBookingDTO()).getJson()))
+                                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                                                jsonBookingDTO.write(createValidBookingDTO()).getJson()))
                                 .andExpect(status().isBadRequest());
         }
 
         @Test
         public void canCreateBooking() throws Exception {
 
-                when(bookingRepository.save(any())).thenReturn(mockedBookingFromRepository());
-                when(filmShowRepository.findById(any())).thenReturn(Optional.of(mockedFilmShow()));
+                MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
+
+                when(bookingRepository.save(any())).thenReturn(mockedValidBookingFromRepository());
+                when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
+                when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+                doNothing().when(emailSender).send(Mockito.any(MimeMessage.class));
+
                 mvc.perform(
-                        post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                                jsonBookingDTO.write(createValidBookingDTO()).getJson()))
+                                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                                                jsonBookingDTO.write(createValidBookingDTO()).getJson()))
                                 .andExpect(status().isOk());
         }
 
         @Test
         public void testPostSameBookingAgain() throws Exception {
 
-                Booking createdBooking = createBooking();
-                // when
+                when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
+                when(bookingRepository.save(any())).thenReturn(mockedValidBookingFromRepository());
+                doNothing().when(emailService).sendBookingConfirmation(any());
                 mvc.perform(
                                 post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                                                jsonBooking.write(createdBooking).getJson()));
+                                                jsonBookingDTO.write(createValidBookingDTO()).getJson()));
 
-                // when
                 mvc.perform(
                                 post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                                                jsonBooking.write(createdBooking).getJson()))
+                                                jsonBookingDTO.write(createValidBookingDTO()).getJson()))
                                 .andExpect(status().isOk());
 
         }

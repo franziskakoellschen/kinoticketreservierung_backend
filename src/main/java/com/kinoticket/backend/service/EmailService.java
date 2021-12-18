@@ -51,14 +51,16 @@ public class EmailService {
         if (booking == null) {
             throw new MissingParameterException("EmailService: booking is null");
         }
+        if (booking.getBookingAddress() == null || booking.getBookingAddress().getEmailAddress() == null) {
+            throw new MissingParameterException("EmailService: Cannot get Email Address!");
+        }
 
         List<File> ticketPdfs = generateTicketPdfs(booking);
 
         String messageBody = createMessageBody(booking);
 
         MimeMessage message = createBookingConfirmationMessage(
-                booking.getBookingAddress().getEmailAddress(),
-                messageBody, ticketPdfs);
+                booking.getBookingAddress().getEmailAddress(), messageBody, ticketPdfs);
 
         emailSender.send(message);
         removeFromDisk(ticketPdfs);
@@ -106,8 +108,7 @@ public class EmailService {
 
         if (tickets == null) {
             throw new MissingParameterException(
-                "EmailService: PDF Tickets could not be generated. Tickets are null"
-            );
+                    "EmailService: PDF Tickets could not be generated. Tickets are null");
         }
 
         List<File> ticketPdfs = new ArrayList<>();

@@ -95,7 +95,7 @@ public class FilmShowSeatService {
         if (fs.getStatus() == FilmShowSeatStatus.BOOKED)
             return false;
 
-        return !overdueBlockSetToFreeAgain(fs);
+        return overdueBlockSetToFreeAgain(fs);
     }
 
     public boolean overdueBlockSetToFreeAgain(FilmShowSeat seat) {

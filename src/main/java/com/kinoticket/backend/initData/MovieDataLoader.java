@@ -60,6 +60,7 @@ public class MovieDataLoader implements ApplicationRunner {
         m.setOriginCountry("USA");
         m.setGenre("Comedy");
         m.setImage_id(99l);
+        m.setTemplateUrl("https://img.welt.de/img/icon/news/mobile235403144/4322500277-ci102l-w1024/2021-House-of-Gucci-Movie-Set.jpg");
 
         movieRepository.save(m);
 

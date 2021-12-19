@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.FilmShowSeatStatus;
@@ -21,8 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 public class FilmShowSeatServiceTest {
 
     @Autowired

@@ -45,7 +45,7 @@ def uploadCSVs(conn):
         ["seats.csv", "INSERT INTO seats VALUES (%s, %s, %s, %s, %s)"],
         ["movie.csv", "INSERT INTO movies VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"],
         ["filmshow.csv", "INSERT INTO filmshow VALUES (%s, %s, %s, %s, %s)"],
-        ["filmshow_seat.csv", "INSERT INTO filmshow_seat VALUES (%s, %s, %s)"]
+        ["filmshow_seat.csv", "INSERT INTO filmshow_seat VALUES (%s, %s, %s, %s, %s)"]
     ]
 
     for csvFile, sql in data:
@@ -63,6 +63,8 @@ def uploadCSVs(conn):
 def cleanTables(conn):
     cur = conn.cursor()
     tables = [
+        "booking_tickets",
+        "ticket",
         "filmshow_seat",
         "filmshow",
         "movies",

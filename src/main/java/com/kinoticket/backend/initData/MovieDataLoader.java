@@ -47,7 +47,7 @@ public class MovieDataLoader implements ApplicationRunner {
         m.setDescription("Maurizio Gucci, verwöhnter und verschwenderischer Enkel des Gründers der berühmten Modemarke, heiratet 1972 die ehrgeizige Patricia Reggiani und residiert mit ihr in New York. Nach dem Tod des Vaters kämpft er mit allen Mitteln um die Vorherrschaft im Imperium und trennt sich von Patricia. Die will sich mit dieser Abfuhr nicht zufrieden geben und kämpft ihrerseits um weiteren Einfluss und Abfindung.");
         m.setFsk(16);
         m.setTrailer("https://www.youtube.com/watch?v=pGi3Bgn7U5U");
-        m.setImageUrl("someImageUrl");
+        m.setImageUrl("https://de.web.img3.acsta.net/pictures/21/10/26/10/23/0875634.jpg");
         m.setActors("Peter Pan, Rafael Martin, Gregor Münker");
         m.setStartDate(new Date());
         m.setFilmLength(221);

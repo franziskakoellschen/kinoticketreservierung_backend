@@ -21,6 +21,8 @@ jobs:
           distribution: 'adopt'
       - name: Run Unit Tests
         run: mvn verify
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Archive Jacoco reports
         uses: actions/upload-artifact@v2.2.4
@@ -28,14 +30,15 @@ jobs:
           name: jacoco-reports
           path: target/site/jacoco
       - name: Check Coverage
+        id: jacoco-check
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
           on-missing-report: fail
-          fail-if-coverage-less-than: 80
-          fail-if-branches-less-than: 80
-          fail-on-coverage-decrease: true
-          fail-on-branches-decrease: true
+          fail-if-coverage-less-than: 60
+          fail-if-branches-less-than: 60
+      - name: Print Coverage
+        run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
 
   DeployProd:
     if: github.ref == 'refs/heads/main'
@@ -51,7 +54,7 @@ jobs:
       - name: Heroku Deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_api_key: "${{ secrets.HEROKU_API_KEY_PROD }}"
           heroku_email: kinoticketbuchung@gmail.com
           heroku_app_name: kinoticket-backend-prod
           buildpack: heroku/java
@@ -70,7 +73,7 @@ jobs:
       - name: Heroku Deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: 8a20555b-903b-4259-a8d1-77b660c63e4c
+          heroku_api_key: "${{ secrets.HEROKU_API_KEY_DEV }}"
           heroku_email: kinoticketbuchung@gmail.com
           heroku_app_name: kinoticket-backend-dev
           buildpack: heroku/java

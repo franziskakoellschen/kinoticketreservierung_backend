@@ -1,0 +1,8 @@
+POST /filmShows
+
+{
+    "date": "2021-12-13",
+    "time": "18:30:00",
+    "cinemaHallId": 1,
+    "movieId": 140
+}

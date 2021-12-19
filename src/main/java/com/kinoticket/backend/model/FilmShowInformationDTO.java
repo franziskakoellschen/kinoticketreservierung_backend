@@ -18,6 +18,8 @@ public class FilmShowInformationDTO {
 
     private List<List<FilmShowSeat>> filmShowSeats;
 
+    public FilmShowInformationDTO() {}
+
     public FilmShowInformationDTO(FilmShow filmShow) {
         this.id = filmShow.getId();
         this.date = filmShow.getDate();

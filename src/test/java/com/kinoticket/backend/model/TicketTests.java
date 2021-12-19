@@ -1,10 +1,10 @@
 package com.kinoticket.backend.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class TicketTests {
     @Test
@@ -63,14 +63,16 @@ public class TicketTests {
 
     }
 
+    @Test
     void priceCategoriesTest() {
         Ticket t = new Ticket();
         t.setPriceForSeat();
-        assertNull(t.getPrice());
-        FilmShowSeat fss = new FilmShowSeat();
+        assertNull(t.getFilmShowSeat());
+        assertEquals(t.getPrice(), 0);
 
         Seat s = new Seat();
         s.setPriceCategory(1);
+        FilmShowSeat fss = new FilmShowSeat(s, new FilmShow());
         fss.setSeat(s);
         t.setFilmShowSeat(fss);
         t.setPriceForSeat();
@@ -88,8 +90,6 @@ public class TicketTests {
         
         t.getFilmShowSeat().getSeat().setPriceCategory(0);
         t.setPriceForSeat();
-        assertEquals(t.getPrice(), 14.0);
-
+        assertEquals(t.getPrice(), 15.0);
     }
-
 }

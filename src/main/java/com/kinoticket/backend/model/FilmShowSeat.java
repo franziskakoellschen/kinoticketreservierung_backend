@@ -1,5 +1,7 @@
 package com.kinoticket.backend.model;
 
+import java.util.Date;
+
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,38 +29,29 @@ public class FilmShowSeat {
     private FilmShow filmShow;
 
     @Column
-    private boolean reserved;
+    private FilmShowSeatStatus status;
 
     private double price;
 
-    public Seat getSeat() {
-        return seat;
+    @Column
+    private Date lastChanged;
+
+    @PrePersist
+    private void setPrice(){
+        if(seat!=null){
+            switch (seat.getPriceCategory()){
+                case 1: this.price = 9.0D;break;
+                case 2: this.price = 12.0D;break;
+                case 3: this.price = 14.0D;break;
+                default: this.price = 15.0D; break;
+            }
+        }
     }
 
-    public void setSeat(Seat seat) {
-        this.seat = seat;
-    }
-
-    public FilmShow getFilmShow() {
-        return filmShow;
-    }
-
-    public void setFilmShow(FilmShow filmShow) {
-        this.filmShow = filmShow;
-    }
-
-    public boolean isReserved() {
-        return reserved;
-    }
-
-    public void setReserved(boolean reserved) {
-        this.reserved = reserved;
-    }
-
-    public FilmShowSeat(Seat seat, FilmShow filmShow, boolean reserved) {
+    public FilmShowSeat(Seat seat, FilmShow filmShow) {
         this.seat = seat;
         this.filmShow = filmShow;
-        this.reserved = reserved;
+        this.status = FilmShowSeatStatus.FREE;
+        this.lastChanged = new Date();
     }
-
 }

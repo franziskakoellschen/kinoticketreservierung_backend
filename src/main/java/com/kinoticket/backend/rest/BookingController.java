@@ -12,6 +12,8 @@ import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.BookingDTO;
 import com.kinoticket.backend.service.BookingService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
+    Logger logger = LoggerFactory.getLogger(BookingController.class);
 
     @Autowired
     BookingService service;
@@ -37,11 +40,18 @@ public class BookingController {
 
         ResponseEntity<Booking> responseEntity = null;
         Booking sentBooking = null;
+
+        if (!service.areSeatsStillBlocked(bookingDTO)) {
+            logger.warn("BookingController: Booking attempt faild: Seats are not blocked anymore.");
+            return new ResponseEntity<Booking>(HttpStatus.CONFLICT);
+        }
+
         try {
             sentBooking = service.putBooking(bookingDTO);
+            logger.info("BookingController: Booking " + sentBooking.getId() + " successful");
             responseEntity = new ResponseEntity<Booking>(sentBooking, HttpStatus.OK);
         } catch (MissingParameterException mp) {
-            log.error("Invalid Parameter: " + mp.getMessage());
+            logger.error("Invalid Parameter: " + mp.getMessage());
             responseEntity = new ResponseEntity<Booking>(sentBooking, HttpStatus.BAD_REQUEST);
         }
         return responseEntity;

@@ -17,4 +17,5 @@ public class CinemaHallDTO {
         this.screenSize = cinemaHall.getScreenSize();
     }
 
+    public CinemaHallDTO() {}
 }

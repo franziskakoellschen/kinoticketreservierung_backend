@@ -13,6 +13,7 @@ import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.FilmShowRepository;
+import com.kinoticket.backend.repositories.FilmShowSeatRepository;
 import com.kinoticket.backend.repositories.TicketRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,12 @@ public class BookingService {
 
     @Autowired
     private FilmShowRepository filmShowRepository;
+
+    @Autowired
+    private FilmShowSeatService filmShowSeatService;
+
+    @Autowired
+    FilmShowSeatRepository filmShowSeatRepository;
 
     private List<Ticket> createTickets(List<FilmShowSeat> filmShowSeatList) {
         List<Ticket> ticketList = new ArrayList<>();
@@ -67,6 +74,8 @@ public class BookingService {
         if (bookingDTO.getFilmShowSeatList() == null || bookingDTO.getFilmShowSeatList().isEmpty()) {
             throw new MissingParameterException("No FilmShowSeats provided");
         }
+
+        filmShowSeatService.book(bookingDTO.getFilmShowSeatList(), bookingDTO.getFilmShowID());
 
         Booking booking = createBookingFromDTO(bookingDTO);
 
@@ -134,5 +143,19 @@ public class BookingService {
         }
         return requestedBooking;
 
+    }
+
+    public boolean areSeatsStillBlocked(BookingDTO bookingDTO) {
+
+        List<FilmShowSeat> filmShowSeats = filmShowSeatRepository.findByFilmShow_id(bookingDTO.getFilmShowID());
+
+        boolean retVal = true;
+        for (FilmShowSeat seat : filmShowSeats) {
+            if (filmShowSeatService.overdueBlockSetToFreeAgain(seat)) {
+                retVal = false;
+            }
+        }
+
+        return retVal;
     }
 }

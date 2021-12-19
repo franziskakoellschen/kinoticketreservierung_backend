@@ -51,7 +51,7 @@ public class FilmShowService {
 
             // persisting seats
             for (Seat s : cinemaHall.getSeats()) {
-                FilmShowSeat filmShowSeat = new FilmShowSeat(s, filmShow, false);
+                FilmShowSeat filmShowSeat = new FilmShowSeat(s, filmShow);
                 filmShowSeatRepository.save(filmShowSeat);
             }
 

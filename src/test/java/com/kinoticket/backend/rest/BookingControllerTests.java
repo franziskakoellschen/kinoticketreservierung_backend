@@ -3,6 +3,7 @@ package com.kinoticket.backend.rest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -72,6 +73,9 @@ public class BookingControllerTests {
 
         @MockBean
         JavaMailSender emailSender;
+
+        @MockBean
+        FilmShowSeatRepository filmShowSeatRepository;
 
         private JacksonTester<Booking> jsonBooking;
         private JacksonTester<BookingDTO> jsonBookingDTO;
@@ -266,6 +270,7 @@ public class BookingControllerTests {
 
                 when(bookingRepository.save(any())).thenReturn(new Booking());
                 when(filmShowRepository.findById(any())).thenReturn(Optional.of(new FilmShow()));
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 mvc.perform(
                                 post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
                                                 jsonBookingDTO.write(createValidBookingDTO()).getJson()))
@@ -280,6 +285,7 @@ public class BookingControllerTests {
                 when(bookingRepository.save(any())).thenReturn(mockedValidBookingFromRepository());
                 when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
                 when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 doNothing().when(emailSender).send(Mockito.any(MimeMessage.class));
 
                 mvc.perform(
@@ -293,6 +299,7 @@ public class BookingControllerTests {
 
                 when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
                 when(bookingRepository.save(any())).thenReturn(mockedValidBookingFromRepository());
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 doNothing().when(emailService).sendBookingConfirmation(any());
                 mvc.perform(
                                 post("/booking/").contentType(MediaType.APPLICATION_JSON).content(

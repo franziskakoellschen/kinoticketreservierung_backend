@@ -1,20 +1,23 @@
 package com.kinoticket.backend.service;
 
-
-import com.kinoticket.backend.Exceptions.EntityNotFound;
-import com.kinoticket.backend.Exceptions.MissingParameterException;
-import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.repositories.BookingRepository;
-import com.kinoticket.backend.repositories.MovieRepository;
-import com.kinoticket.backend.repositories.TicketRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.kinoticket.backend.Exceptions.EntityNotFound;
+import com.kinoticket.backend.Exceptions.MissingParameterException;
+import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.BookingDTO;
+import com.kinoticket.backend.model.FilmShowSeat;
+import com.kinoticket.backend.model.Ticket;
+import com.kinoticket.backend.repositories.BookingRepository;
+import com.kinoticket.backend.repositories.FilmShowRepository;
+import com.kinoticket.backend.repositories.FilmShowSeatRepository;
+import com.kinoticket.backend.repositories.TicketRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class BookingService {
@@ -26,50 +29,98 @@ public class BookingService {
     private TicketRepository ticketRepository;
 
     @Autowired
-    private MovieRepository movieRepository;
+    private EmailService emailService;
 
+    @Autowired
+    private FilmShowRepository filmShowRepository;
 
-    public Booking putBooking(Booking booking) throws MissingParameterException{
-       if(booking.getTickets() == null){
-           throw new MissingParameterException("Tickets are missing");
-       }
-       AtomicBoolean missingTicket = new AtomicBoolean(false);
-       booking.getTickets().stream().forEach( e -> {
-           if(e.getMovie() == null) {
-                  missingTicket.set(true);
-           } else {
-               movieRepository.save(e.getMovie());
-           }
-       });
-       if(missingTicket.get()){
-           throw new MissingParameterException("Movie is missing");
-       }
-       ticketRepository.saveAll(booking.getTickets());
-        return bookingRepository.save(booking);
+    @Autowired
+    private FilmShowSeatService filmShowSeatService;
+
+    @Autowired
+    FilmShowSeatRepository filmShowSeatRepository;
+
+    private List<Ticket> createTickets(List<FilmShowSeat> filmShowSeatList) {
+        List<Ticket> ticketList = new ArrayList<>();
+
+        for (FilmShowSeat filmShowSeat : filmShowSeatList) {
+            Ticket ticket = new Ticket();
+            ticket.setMovie(filmShowSeat.getFilmShow().getMovie());
+            ticket.setFilmShow(filmShowSeat.getFilmShow());
+            ticket.setFilmShowSeat(filmShowSeat);
+            ticket.setPriceForSeat();
+            ticketList.add(ticket);
+        }
+        return ticketList;
+    }
+
+    private Booking createBookingFromDTO(BookingDTO dto) {
+        Booking booking = new Booking();
+        booking.setActive(true);
+        booking.setBookingAddress(dto.getBookingAddress());
+        booking.setPaid(dto.isPaid());
+        booking.setTotalSum(dto.getTotalSum());
+        for (FilmShowSeat filmShowSeat : dto.getFilmShowSeatList()) {
+            filmShowSeat.setFilmShow(
+                    filmShowRepository.findById(dto.getFilmShowID()).get());
+        }
+        booking.setTickets(createTickets(dto.getFilmShowSeatList()));
+        booking.setMeansOfPayment("Mastercard");
+        return booking;
+    }
+
+    public Booking putBooking(BookingDTO bookingDTO) throws MissingParameterException {
+
+        if (bookingDTO.getFilmShowSeatList() == null || bookingDTO.getFilmShowSeatList().isEmpty()) {
+            throw new MissingParameterException("No FilmShowSeats provided");
+        }
+
+        filmShowSeatService.book(bookingDTO.getFilmShowSeatList(), bookingDTO.getFilmShowID());
+
+        Booking booking = createBookingFromDTO(bookingDTO);
+
+        if (booking.getTickets() == null || booking.getTickets().isEmpty()) {
+            throw new MissingParameterException("Tickets are missing");
+        }
+        AtomicBoolean missingMovie = new AtomicBoolean(false);
+        booking.getTickets().stream().forEach(e -> {
+            if (e.getMovie() == null) {
+                missingMovie.set(true);
+            }
+        });
+        if (missingMovie.get()) {
+            throw new MissingParameterException("Movie is missing");
+        }
+
+        ticketRepository.saveAll(booking.getTickets());
+        Booking persistedBooking = bookingRepository.save(booking);
+
+        emailService.sendBookingConfirmation(persistedBooking);
+
+        return persistedBooking;
     }
 
     public Booking getBooking(long id) throws EntityNotFound {
         Booking requestedBooking = bookingRepository.findById(id);
-        if(requestedBooking == null) {
+        if (requestedBooking == null) {
             throw new EntityNotFound("Can't find Entity by Id" + id);
         }
         return requestedBooking;
     }
 
     public Iterable<Booking> getBookings() {
-    return bookingRepository.findAll();
+        return bookingRepository.findAll();
     }
-
 
     public Booking cancelBooking(long id) throws EntityNotFound {
         Booking updatedBooking = bookingRepository.findById(id);
-        if(updatedBooking == null) {
+        if (updatedBooking == null) {
             throw new EntityNotFound("Can't find Entity by Id" + id);
         }
 
-       updatedBooking.setActive(false);
+        updatedBooking.setActive(false);
 
-       return bookingRepository.save(updatedBooking);
+        return bookingRepository.save(updatedBooking);
 
     }
 
@@ -82,16 +133,29 @@ public class BookingService {
 
     public List<Booking> getBookingBetweenDates(Date dateFirst, Date dateAfter) {
 
-        return bookingRepository.findAllByCreatedBetween(dateFirst,dateAfter);
+        return bookingRepository.findAllByCreatedBetween(dateFirst, dateAfter);
     }
 
     public List<Booking> getBookingByCustomerId(long id) throws EntityNotFound {
-        List<Booking> requestedBooking =bookingRepository.findByCustomerId(id);
-        if(requestedBooking == null) {
+        List<Booking> requestedBooking = bookingRepository.findByCustomerId(id);
+        if (requestedBooking == null) {
             throw new EntityNotFound("Can't find Entity by CustomerId" + id);
         }
         return requestedBooking;
 
     }
-}
 
+    public boolean areSeatsStillBlocked(BookingDTO bookingDTO) {
+
+        List<FilmShowSeat> filmShowSeats = filmShowSeatRepository.findByFilmShow_id(bookingDTO.getFilmShowID());
+
+        boolean retVal = true;
+        for (FilmShowSeat seat : filmShowSeats) {
+            if (filmShowSeatService.overdueBlockSetToFreeAgain(seat)) {
+                retVal = false;
+            }
+        }
+
+        return retVal;
+    }
+}

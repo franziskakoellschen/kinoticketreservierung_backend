@@ -1,18 +1,20 @@
 package com.kinoticket.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Date;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "FILMSHOW_SEAT")
 @IdClass(FilmshowSeatPK.class)
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class FilmShowSeat {
 
     @Id
@@ -27,29 +29,29 @@ public class FilmShowSeat {
     private FilmShow filmShow;
 
     @Column
-    private boolean reserved;
+    private FilmShowSeatStatus status;
 
-    public Seat getSeat() {
-        return seat;
+    private double price;
+
+    @Column
+    private Date lastChanged;
+
+    @PrePersist
+    private void setPrice(){
+        if(seat!=null){
+            switch (seat.getPriceCategory()){
+                case 1: this.price = 9.0D;break;
+                case 2: this.price = 12.0D;break;
+                case 3: this.price = 14.0D;break;
+                default: this.price = 15.0D; break;
+            }
+        }
     }
 
-    public void setSeat(Seat seat) {
+    public FilmShowSeat(Seat seat, FilmShow filmShow) {
         this.seat = seat;
-    }
-
-    public FilmShow getFilmShow() {
-        return filmShow;
-    }
-
-    public void setFilmShow(FilmShow filmShow) {
         this.filmShow = filmShow;
-    }
-
-    public boolean isReserved() {
-        return reserved;
-    }
-
-    public void setReserved(boolean reserved) {
-        this.reserved = reserved;
+        this.status = FilmShowSeatStatus.FREE;
+        this.lastChanged = new Date();
     }
 }

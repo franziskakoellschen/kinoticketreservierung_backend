@@ -9,7 +9,7 @@ public class SeatTest {
     @Test
     void seatTest() {
 
-        CinemaHall cinemaHall = new CinemaHall( 20,80,100, null, null);
+        CinemaHall cinemaHall = new CinemaHall(20, 80, 100, null, null);
 
         int row = 3;
         int seatNumber = 20;

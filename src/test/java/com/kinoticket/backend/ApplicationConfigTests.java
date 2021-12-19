@@ -28,32 +28,32 @@ public class ApplicationConfigTests {
 	@Autowired
 	WebApplicationContext webApplicationContext;
 
-    @Test
-    void testDataSource() throws URISyntaxException {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                DataSource ds = new ApplicationConfig().dataSource();
-                assertNotNull(ds);
-            }
-        });
-    }
-
-    @Test
-    @ClearEnvironmentVariable(key = "DATABASE_URL")
-    void testMissingDBUrl() throws Exception {
-
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                DataSource ds = new ApplicationConfig().dataSource();
-                assertNull(ds);
-            }
-        });
-    }
+	@Test
+	void testDataSource() throws URISyntaxException {
+		assertDoesNotThrow(new Executable() {
+			@Override
+			public void execute() throws Throwable {
+				DataSource ds = new ApplicationConfig().dataSource();
+				assertNotNull(ds);
+			}
+		});
+	}
 
 	@Test
-    @ClearEnvironmentVariable(key = "KINOTICKET_EMAIL")
+	@ClearEnvironmentVariable(key = "DATABASE_URL")
+	void testMissingDBUrl() throws Exception {
+
+		assertDoesNotThrow(new Executable() {
+			@Override
+			public void execute() throws Throwable {
+				DataSource ds = new ApplicationConfig().dataSource();
+				assertNull(ds);
+			}
+		});
+	}
+
+	@Test
+	@ClearEnvironmentVariable(key = "KINOTICKET_EMAIL")
 	void testMissingMailConfig() {
 		assertDoesNotThrow(new Executable() {
 			@Override
@@ -70,27 +70,27 @@ public class ApplicationConfigTests {
 
 		// test forbidden origin
 		mockMvc.perform(
-			options("/test-cors")
-			.header("Access-Control-Request-Method", "GET")
-			.header("Origin", "http://www.someurl.com")
-		).andExpect(status().isForbidden());
+				options("/test-cors")
+						.header("Access-Control-Request-Method", "GET")
+						.header("Origin", "http://www.someurl.com"))
+				.andExpect(status().isForbidden());
 
 		// test allowed origins
 		String[] allowedOrigins = {
-			"http://localhost:3000",
-			"http://kinoticket-frontend-dev.herokuapp.com",
-			"http://kinoticket-frontend-prod.herokuapp.com",
-			"https://localhost:3000",
-			"https://kinoticket-frontend-dev.herokuapp.com",
-			"https://kinoticket-frontend-prod.herokuapp.com"
+				"http://localhost:3000",
+				"http://kinoticket-frontend-dev.herokuapp.com",
+				"http://kinoticket-frontend-prod.herokuapp.com",
+				"https://localhost:3000",
+				"https://kinoticket-frontend-dev.herokuapp.com",
+				"https://kinoticket-frontend-prod.herokuapp.com"
 		};
 
-		for(String origin : allowedOrigins) {
+		for (String origin : allowedOrigins) {
 			mockMvc.perform(
-				options("/test-cors")
-				.header("Access-Control-Request-Method", "GET")
-				.header("Origin", origin)
-			).andExpect(status().isOk());
+					options("/test-cors")
+							.header("Access-Control-Request-Method", "GET")
+							.header("Origin", origin))
+					.andExpect(status().isOk());
 		}
 	}
 }

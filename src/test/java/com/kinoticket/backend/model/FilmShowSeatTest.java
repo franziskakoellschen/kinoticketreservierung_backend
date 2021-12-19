@@ -11,14 +11,13 @@ public class FilmShowSeatTest {
         int row = 10;
         int seatNumber = 25;
         int priceCategory = 1;
-        boolean reserved = false;
         Seat seat = new Seat(5, row, seatNumber, null, null, priceCategory);
         FilmShow filmShow = new FilmShow();
-        FilmShowSeat filmShowSeat = new FilmShowSeat(seat, filmShow, false);
+        FilmShowSeat filmShowSeat = new FilmShowSeat(seat, filmShow);
         assertEquals(row, filmShowSeat.getSeat().getRow());
         assertEquals(seatNumber, filmShowSeat.getSeat().getSeatNumber());
         assertEquals(priceCategory, filmShowSeat.getSeat().getPriceCategory());
-        assertEquals(reserved, filmShowSeat.isReserved());
+        assertEquals(FilmShowSeatStatus.FREE, filmShowSeat.getStatus());
     }
 
     @Test

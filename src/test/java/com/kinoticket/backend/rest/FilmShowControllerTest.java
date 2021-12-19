@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.*;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -46,11 +48,15 @@ public class FilmShowControllerTest {
 
     @MockBean
     CinemaHallRepository cinemaHallRepository;
+
+    private JacksonTester<FilmShowInformationDTO> filmShowSeatJacksonTester;
+
     MockMvc mvc;
 
     @BeforeEach
     void before() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        JacksonTester.initFields(this, new ObjectMapper());
     }
 
     @Test
@@ -114,16 +120,13 @@ public class FilmShowControllerTest {
     @Test
     void testFilmShowSeatsArePresent() throws Exception {
 
-        FilmShowSeat testSeat1 = new FilmShowSeat();
         FilmShow fs = new FilmShow();
         fs.setId(1000);
-        testSeat1.setFilmShow(fs);
-        testSeat1.setReserved(false);
         Seat s1 = new Seat();
         s1.setId(2);
         s1.setRow(2);
         s1.setSeatNumber(4);
-        testSeat1.setSeat(s1);
+        FilmShowSeat testSeat1 = new FilmShowSeat(s1, fs);
         Movie m = new Movie();
         m.setTitle("Test Movie");
         fs.setMovie(m);
@@ -131,23 +134,17 @@ public class FilmShowControllerTest {
         ch.setId(7654);
         fs.setCinemaHall(ch);
 
-        FilmShowSeat testSeat2 = new FilmShowSeat();
-        testSeat2.setFilmShow(fs);
-        testSeat2.setReserved(false);
         Seat s2 = new Seat();
         s2.setId(2);
         s2.setRow(1);
         s2.setSeatNumber(2);
-        testSeat2.setSeat(s2);
+        FilmShowSeat testSeat2 = new FilmShowSeat(s2, fs);
 
-        FilmShowSeat testSeat3 = new FilmShowSeat();
-        testSeat3.setFilmShow(fs);
-        testSeat3.setReserved(false);
         Seat s3 = new Seat();
         s3.setId(2);
         s3.setRow(1);
         s3.setSeatNumber(1);
-        testSeat3.setSeat(s3);
+        FilmShowSeat testSeat3 = new FilmShowSeat(s3, fs);
 
         ArrayList<FilmShowSeat> seats = new ArrayList<>();
         seats.add(testSeat1);
@@ -161,13 +158,19 @@ public class FilmShowControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
 
-        String expectedContent = "[[{\"seat\":{\"id\":2,\"row\":1,\"seatNumber\":1,\"priceCategory\":0},\"reserved\":false}";
-        expectedContent += ",{\"seat\":{\"id\":2,\"row\":1,\"seatNumber\":2,\"priceCategory\":0},\"reserved\":false}]";
-        expectedContent += ",[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":0},\"reserved\":false}]]";
+        FilmShowInformationDTO parseObject = filmShowSeatJacksonTester.parseObject(response.getContentAsString());
 
-        assertTrue(response.getContentAsString().contains(expectedContent));
-        assertTrue(response.getContentAsString().contains("Test Movie"));
-        assertTrue(response.getContentAsString().contains("7654"));
+        assertTrue(parseObject.getFilmShowSeats().size() == 2);
+        assertTrue(parseObject.getFilmShowSeats().get(0).size() == 2);
+        assertTrue(parseObject.getFilmShowSeats().get(1).size() == 1);
 
+        assertTrue(parseObject.getFilmShowSeats().get(0).get(0).getSeat().getSeatNumber() == 1);
+        assertTrue(parseObject.getFilmShowSeats().get(0).get(1).getSeat().getSeatNumber() == 2);
+        assertTrue(parseObject.getFilmShowSeats().get(1).get(0).getSeat().getSeatNumber() == 4);
+
+        assertTrue(parseObject.getFilmShowSeats().get(0).get(0).getStatus() == FilmShowSeatStatus.FREE);
+
+        assertTrue(parseObject.getMovie().getTitle().equals("Test Movie"));
+        assertTrue(parseObject.getCinemaHall().getId() == 7654);
     }
 }

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest
 @Import(UnitTestConfiguration.class)
 public class MovieServiceTest {
-    
+
     @MockBean
     MovieRepository movieRepository;
 
@@ -55,7 +55,7 @@ public class MovieServiceTest {
         when(movieRepository.findById(4711L)).thenReturn(Optional.of(m));
         when(filmShowRepository.findFutureFilmShowsByMovie(eq(4711L), any(), any())).thenReturn(shows);
         Iterator<FilmShow> iterator = movieService.getFilmShows(4711).iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             count++;
             iterator.next();
         }
@@ -85,7 +85,7 @@ public class MovieServiceTest {
     void testGetMovies() {
         int count = 0;
         Iterator<Movie> iterator = movieService.getMovies().iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             count++;
             iterator.next();
         }
@@ -95,7 +95,7 @@ public class MovieServiceTest {
 
     @Test
     void testPostMovie() {
-        
+
         Movie m1 = new Movie();
         m1.setTitle("Foo");
         Movie retMovie1 = movieService.postMovie(m1);

@@ -11,13 +11,13 @@ public class BookingTest {
 
     @Test
     void bookingTest() {
+
         Booking booking = new Booking();
 
-         String meansOfPayment = "Visa";
-         boolean isPaid = true;
-         boolean isActive = true;
-         long customerID = 344646l;
-
+        String meansOfPayment = "Visa";
+        boolean isPaid = true;
+        boolean isActive = true;
+        long customerID = 344646l;
 
         Ticket ticket = new Ticket();
 
@@ -32,7 +32,7 @@ public class BookingTest {
         seat.setSeatNumber(3);
         fss.setSeat(seat);
 
-        double price= 10.2;
+        double price = 10.2;
 
         Movie movie = new Movie();
 
@@ -79,7 +79,6 @@ public class BookingTest {
         assertEquals(shortDescription, booking.getTickets().get(0).getMovie().getShortDescription());
         assertEquals(description, booking.getTickets().get(0).getMovie().getDescription());
         assertEquals(trailer, booking.getTickets().get(0).getMovie().getTrailer());
-
 
     }
 

@@ -1,18 +1,21 @@
 package com.kinoticket.backend.model;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 public class TicketTests {
     @Test
     void ticketsTest() {
+
         Ticket ticket = new Ticket();
 
         FilmShow filmShow = new FilmShow();
         filmShow.setId(53252);
 
-        double price= 10.2;
+        double price = 10.2;
 
         Movie movie = new Movie();
 
@@ -44,7 +47,6 @@ public class TicketTests {
         ticket.setFilmShowSeat(fss);
         ticket.setPrice(price);
 
-
         assertEquals(filmShow.getId(), ticket.getFilmShow().getId());
         assertEquals(movie, ticket.getMovie());
         assertEquals(fss, ticket.getFilmShowSeat());
@@ -57,6 +59,37 @@ public class TicketTests {
         assertEquals(description, ticket.getMovie().getDescription());
         assertEquals(trailer, ticket.getMovie().getTrailer());
 
+        assertTrue(true);
+
     }
 
+    @Test
+    void priceCategoriesTest() {
+        Ticket t = new Ticket();
+        t.setPriceForSeat();
+        assertNull(t.getFilmShowSeat());
+        assertEquals(t.getPrice(), 0);
+
+        Seat s = new Seat();
+        s.setPriceCategory(1);
+        FilmShowSeat fss = new FilmShowSeat(s, new FilmShow());
+        fss.setSeat(s);
+        t.setFilmShowSeat(fss);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 9.0);
+
+        t.getFilmShowSeat().getSeat().setPriceCategory(2);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 12.0);
+
+        
+        t.getFilmShowSeat().getSeat().setPriceCategory(3);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 14.0);
+
+        
+        t.getFilmShowSeat().getSeat().setPriceCategory(0);
+        t.setPriceForSeat();
+        assertEquals(t.getPrice(), 15.0);
+    }
 }

@@ -17,6 +17,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.kinoticket.backend.Exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Ticket;
 
@@ -44,20 +45,25 @@ public class EmailService {
      * @return An indication wether the email was sent successful.
      */
 
-    public boolean sendBookingConfirmation(Booking booking) {
+    public void sendBookingConfirmation(Booking booking) throws MissingParameterException {
+
+        if (booking == null) {
+            throw new MissingParameterException("EmailService: booking is null");
+        }
+        if (booking.getBookingAddress() == null || booking.getBookingAddress().getEmailAddress() == null) {
+            throw new MissingParameterException("EmailService: Cannot get Email Address!");
+        }
 
         List<File> ticketPdfs = generateTicketPdfs(booking);
-        if (ticketPdfs == null) {
-            return false;
-        }
 
         String messageBody = createMessageBody(booking);
 
-        MimeMessage message = createBookingConfirmationMessage(booking.getEmail(), messageBody, ticketPdfs);
+        MimeMessage message = createBookingConfirmationMessage(
+                booking.getBookingAddress().getEmailAddress(), messageBody, ticketPdfs);
 
         emailSender.send(message);
         removeFromDisk(ticketPdfs);
-        return true;
+        logger.info("EmailService: Booking Confirmation sent for Booking " + booking.getId());
     }
 
     private void removeFromDisk(List<File> ticketPdfs) {
@@ -97,11 +103,12 @@ public class EmailService {
         return message;
     }
 
-    private List<File> generateTicketPdfs(Booking booking) {
+    private List<File> generateTicketPdfs(Booking booking) throws MissingParameterException {
         List<Ticket> tickets = booking.getTickets();
 
         if (tickets == null) {
-            return null;
+            throw new MissingParameterException(
+                    "EmailService: PDF Tickets could not be generated. Tickets are null");
         }
 
         List<File> ticketPdfs = new ArrayList<>();
@@ -139,7 +146,7 @@ public class EmailService {
                     f.delete();
                     for (File alreadyCreatedTicket : ticketPdfs)
                         alreadyCreatedTicket.delete();
-                    return null;
+                    throw new MissingParameterException("EmailService: Invalid Ticket");
                 }
                 document.close();
                 fileOutputStream.close();

@@ -34,6 +34,8 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
+          badges-directory: badges
+          generate-branches-badge: true
           on-missing-report: fail
           fail-if-coverage-less-than: 60
           fail-if-branches-less-than: 60

@@ -39,4 +39,6 @@ public class MovieDTO {
         this.image_id = movie.getImage_id();
     }
 
+    public MovieDTO() {}
+
 }

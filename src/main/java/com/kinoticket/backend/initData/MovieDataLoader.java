@@ -39,6 +39,12 @@ public class MovieDataLoader implements ApplicationRunner {
 
     public void run(ApplicationArguments args) throws IOException, ParseException {
 
+        for (Movie m : movieRepository.findAll()) {
+            if (m.getTitle().equals("Test Movie")) {
+                return;
+            }
+        }
+
         Movie m = new Movie();
 
         m.setTitle("Test Movie");

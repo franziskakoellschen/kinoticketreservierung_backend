@@ -1,19 +1,23 @@
 package com.kinoticket.backend.rest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.internet.MimeMessage;
 
@@ -72,6 +76,9 @@ public class BookingControllerTests {
 
         @MockBean
         JavaMailSender emailSender;
+
+        @MockBean
+        FilmShowSeatRepository filmShowSeatRepository;
 
         private JacksonTester<Booking> jsonBooking;
         private JacksonTester<BookingDTO> jsonBookingDTO;
@@ -266,6 +273,7 @@ public class BookingControllerTests {
 
                 when(bookingRepository.save(any())).thenReturn(new Booking());
                 when(filmShowRepository.findById(any())).thenReturn(Optional.of(new FilmShow()));
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 mvc.perform(
                                 post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
                                                 jsonBookingDTO.write(createValidBookingDTO()).getJson()))
@@ -280,6 +288,7 @@ public class BookingControllerTests {
                 when(bookingRepository.save(any())).thenReturn(mockedValidBookingFromRepository());
                 when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
                 when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 doNothing().when(emailSender).send(Mockito.any(MimeMessage.class));
 
                 mvc.perform(
@@ -289,10 +298,39 @@ public class BookingControllerTests {
         }
 
         @Test
+        public void cannotCreateBookingWhenTimedOut() throws Exception {
+
+                BookingDTO bookingDtoWithTimedOutSeat = createValidBookingDTO();
+                FilmShow filmShow = new FilmShow();
+                filmShow.setId(bookingDtoWithTimedOutSeat.getFilmShowID());
+
+                Seat s = new Seat();
+                s.setId(bookingDtoWithTimedOutSeat.getFilmShowSeatList().get(0).getSeat().getId());
+
+                FilmShowSeat blockedButOverdueSeat = new FilmShowSeat(new Seat(), filmShow);
+                blockedButOverdueSeat.setStatus(FilmShowSeatStatus.BLOCKED);
+                blockedButOverdueSeat.setLastChanged(new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(6)));
+
+                List<FilmShowSeat> filmShowSeatListWithOverdueFilmShowSeat = new ArrayList<FilmShowSeat>();
+                filmShowSeatListWithOverdueFilmShowSeat.add(blockedButOverdueSeat);
+                bookingDtoWithTimedOutSeat.setFilmShowSeatList(filmShowSeatListWithOverdueFilmShowSeat);
+
+                when(filmShowSeatRepository.findByFilmShow_id(anyLong())).thenReturn(filmShowSeatListWithOverdueFilmShowSeat);
+                when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(blockedButOverdueSeat));
+                int status = mvc.perform(
+                                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                                                jsonBookingDTO.write(bookingDtoWithTimedOutSeat).getJson()))
+                                .andExpect(status().is4xxClientError()).andReturn().getResponse().getStatus();
+                assertEquals(status, 409);
+        }
+
+        @Test
         public void testPostSameBookingAgain() throws Exception {
 
                 when(filmShowRepository.findById(any())).thenReturn(Optional.of(createValidFilmShow()));
                 when(bookingRepository.save(any())).thenReturn(mockedValidBookingFromRepository());
+                when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 doNothing().when(emailService).sendBookingConfirmation(any());
                 mvc.perform(
                                 post("/booking/").contentType(MediaType.APPLICATION_JSON).content(

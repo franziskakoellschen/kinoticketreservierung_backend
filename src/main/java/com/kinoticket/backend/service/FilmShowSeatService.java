@@ -2,11 +2,14 @@ package com.kinoticket.backend.service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.model.FilmShowSeat;
+import com.kinoticket.backend.model.FilmShowSeatStatus;
 import com.kinoticket.backend.repositories.FilmShowSeatRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +35,23 @@ public class FilmShowSeatService {
     @Autowired
     EmailService emailService;
 
-    public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound{
+    public FilmShowSeat findBySeatAndFilmShow(long seat_id, long filmshow_id) throws EntityNotFound {
         Optional<FilmShowSeat> filmShowSeat = filmShowSeatRepository.findBySeat_idAndFilmShow_id(seat_id, filmshow_id);
         if (filmShowSeat.isPresent()) {
             return filmShowSeat.get();
-        }
-        else {
+        } else {
             throw new EntityNotFound("Can't find Entity");
         }
     }
 
-    public List<List<FilmShowSeat>> getFilmShowSeats(long filmShowId){
+    public List<List<FilmShowSeat>> getFilmShowSeats(long filmShowId) {
 
         List<List<FilmShowSeat>> rows = new ArrayList<>();
 
         List<FilmShowSeat> filmShowSeats = filmShowSeatRepository.findByFilmShow_id(filmShowId);
+        for (FilmShowSeat filmShowSeat : filmShowSeats) {
+            overdueBlockSetToFreeAgain(filmShowSeat);
+        }
 
         filmShowSeats.sort(new FilmShowSeatComparator());
 
@@ -66,41 +71,74 @@ public class FilmShowSeatService {
         return rows;
     }
 
-    public FilmShowSeat changeSeat(FilmShowSeat filmShowSeat, boolean reserved) {
-        filmShowSeat.setReserved(reserved);
+    public FilmShowSeat changeSeat(FilmShowSeat filmShowSeat, FilmShowSeatStatus status) {
+        filmShowSeat.setStatus(status);
+        filmShowSeat.setLastChanged(new Date());
         filmShowSeatRepository.save(filmShowSeat);
         return filmShowSeat;
     }
 
-    public boolean canReserve(List<FilmShowSeat> seats, long filmShowId) {
+    public boolean canBlock(List<FilmShowSeat> seats, long filmShowId) {
         for (FilmShowSeat fss : seats) {
-            FilmShowSeat fssFromRepo = 
-                filmShowSeatRepository.findBySeat_idAndFilmShow_id(
-                    fss.getSeat().getId(), filmShowId
-                ).get();
-            if (fssFromRepo.isReserved()) {
+            FilmShowSeat fssFromRepo = filmShowSeatRepository.findBySeat_idAndFilmShow_id(
+                    fss.getSeat().getId(), filmShowId).get();
+            if (!canSeatBeBlocked(fssFromRepo)) {
                 return false;
             }
         }
         return true;
     }
 
-    public Iterable<FilmShowSeat> reserve(List<FilmShowSeat> seats, long filmShowId) {
-        if (!canReserve(seats, filmShowId)) return null;
+    private boolean canSeatBeBlocked(FilmShowSeat fs) {
+        if (fs.getStatus() == FilmShowSeatStatus.FREE)
+            return true;
+        if (fs.getStatus() == FilmShowSeatStatus.BOOKED)
+            return false;
 
-        ArrayList<FilmShowSeat> reservedSeats = new ArrayList<FilmShowSeat>();
+        return overdueBlockSetToFreeAgain(fs);
+    }
 
-        for (FilmShowSeat fss : seats) {
-            FilmShowSeat fssFromRepo =
-                filmShowSeatRepository.findBySeat_idAndFilmShow_id(
-                    fss.getSeat().getId(), filmShowId
-                ).get();
-
-            fssFromRepo.setReserved(true);
-            reservedSeats.add(fssFromRepo);
+    public boolean overdueBlockSetToFreeAgain(FilmShowSeat seat) {
+        if (seat.getStatus() != FilmShowSeatStatus.BLOCKED) {
+            return false;
         }
 
-        filmShowSeatRepository.saveAll(reservedSeats);
-        return reservedSeats;
+        Date lastChanged = seat.getLastChanged();
+        Date fiveMinutesAgo = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(5));
+
+        if (lastChanged.before(fiveMinutesAgo)) {
+            filmShowSeatRepository.save(changeSeat(seat, FilmShowSeatStatus.FREE));
+            return true;
+        }
+
+        return false;
+    }
+
+    public Iterable<FilmShowSeat> block(List<FilmShowSeat> seats, long filmShowId) {
+        if (!canBlock(seats, filmShowId))
+            return null;
+
+        ArrayList<FilmShowSeat> blockedSeats = new ArrayList<FilmShowSeat>();
+
+        for (FilmShowSeat fss : seats) {
+            FilmShowSeat fssFromRepo = filmShowSeatRepository.findBySeat_idAndFilmShow_id(
+                    fss.getSeat().getId(), filmShowId).get();
+
+            blockedSeats.add(changeSeat(fssFromRepo, FilmShowSeatStatus.BLOCKED));
+        }
+
+        filmShowSeatRepository.saveAll(blockedSeats);
+        return blockedSeats;
+    }
+
+    public void book(List<FilmShowSeat> seats, long filmShowId) {
+        ArrayList<FilmShowSeat> bookedSeats = new ArrayList<FilmShowSeat>();
+
+        for (FilmShowSeat fss : seats) {
+            FilmShowSeat fssFromRepo = filmShowSeatRepository.findBySeat_idAndFilmShow_id(
+                    fss.getSeat().getId(), filmShowId).get();
+            bookedSeats.add(changeSeat(fssFromRepo, FilmShowSeatStatus.BOOKED));
+        }
+        filmShowSeatRepository.saveAll(bookedSeats);
     }
 }

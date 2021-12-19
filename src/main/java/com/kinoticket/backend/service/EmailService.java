@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +63,7 @@ public class EmailService {
 
         emailSender.send(message);
         removeFromDisk(ticketPdfs);
+        logger.info("EmailService: Booking Confirmation sent for Booking " + booking.getId());
     }
 
     private void removeFromDisk(List<File> ticketPdfs) {

@@ -64,6 +64,7 @@ public class MovieTests {
         movieB.setOriginCountry("USA");
         movieB.setGenre("Comedy");
         movieB.setImage_id(1l);
+        movieB.setTemplateUrl("someTemplateUrl");
 
         assertEquals(movieA, movieB);
         assertEquals(movieA.hashCode(), movieB.hashCode());

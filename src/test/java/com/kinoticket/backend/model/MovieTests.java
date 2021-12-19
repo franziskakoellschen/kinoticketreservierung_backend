@@ -37,7 +37,7 @@ public class MovieTests {
     void equalsTest() {
         Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16,
                 "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl", "Peter Maffay", null, 222, "USA", "Comedy",
-                1l);
+                1l,"someTemplateUrl");
         Movie movieB = new Movie();
 
         long id = 15;
@@ -73,9 +73,9 @@ public class MovieTests {
     void toStringTest() {
         Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16,
                 "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl", "Peter Maffay", null, 222, "USA", "Comedy",
-                1l);
+                1l,"someTemplateUrl");
         assertEquals(
-                "Movie(id=15, title=Test Movie, year=2000, shortDescription=This is a Description, description=This is a full Description, fsk=16, trailer=someTrailerUrl, filmShows=[], imageUrl=someImageUrl, actors=Peter Maffay, startDate=null, filmLength=222, originCountry=USA, genre=Comedy, image_id=1)",
+                "Movie(id=15, title=Test Movie, year=2000, shortDescription=This is a Description, description=This is a full Description, fsk=16, trailer=someTrailerUrl, filmShows=[], imageUrl=someImageUrl, actors=Peter Maffay, startDate=null, filmLength=222, originCountry=USA, genre=Comedy, image_id=1, templateUrl=someTemplateUrl)",
                 movieA.toString());
     }
 }

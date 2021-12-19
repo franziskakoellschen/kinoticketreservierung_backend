@@ -69,6 +69,8 @@ public class Movie implements Serializable {
     @Column
     private long image_id;
 
+    @Column
+    private String templateUrl;
 
 
 

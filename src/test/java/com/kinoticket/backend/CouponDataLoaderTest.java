@@ -1,7 +1,6 @@
 package com.kinoticket.backend;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -13,14 +12,14 @@ import com.kinoticket.backend.model.Coupon;
 import com.kinoticket.backend.repositories.CouponRepository;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 
 @SpringBootTest
+@Import(UnitTestConfiguration.class)
 public class CouponDataLoaderTest {
 
     @Autowired

@@ -1,7 +1,7 @@
 package com.kinoticket.backend.service;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
@@ -13,7 +13,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.kinoticket.backend.UnitTestConfiguration;
+import com.kinoticket.backend.Exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.BookingAddress;
 import com.kinoticket.backend.model.CinemaHall;
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.FilmShowSeat;
@@ -22,6 +24,7 @@ import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.model.Ticket;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,24 +50,72 @@ public class EmailServiceTest {
         MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
 
         Mockito.doNothing()
-            .when(emailSender)
-            .send(Mockito.any(MimeMessage.class));
+                .when(emailSender)
+                .send(Mockito.any(MimeMessage.class));
         Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
-        assertTrue(
-            emailService.sendBookingConfirmation(
-                createExampleBooking()
-            )
-        );
+        
+        assertDoesNotThrow(new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(createExampleBooking());
+            }   
+        });
     }
+
+    @Test
+    void testThrowsIfNullBooking() {
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(null);
+                
+            }
+            
+        });
+    }
+
+    @Test
+    void testThrowsIfNoEmailProvided() {
+
+        Booking b = new Booking();
+
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(b);
+                
+            }
+            
+        });
+
+        b.setBookingAddress(new BookingAddress());
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(b);
+                
+            }
+            
+        });
+    }
+
 
     @Test
     void testBookingWthMissingTickets() {
         Booking booking = createExampleBooking();
         booking.setTickets(null);
 
-        assertFalse(
-            emailService.sendBookingConfirmation(booking)
-        );
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(booking);
+            }   
+        });
     }
 
     @Test
@@ -72,12 +123,16 @@ public class EmailServiceTest {
         Booking booking = createExampleBooking();
         booking.getTickets().add(new Ticket());
 
-        assertFalse(
-            emailService.sendBookingConfirmation(booking)
-        );
+        assertThrows(MissingParameterException.class, new Executable() {
+
+            @Override
+            public void execute() throws Throwable {
+                emailService.sendBookingConfirmation(booking);
+            }   
+        });
+                
     }
 
-    
     private Booking createExampleBooking() {
         Ticket t1 = new Ticket();
 
@@ -103,7 +158,6 @@ public class EmailServiceTest {
         t1.setFilmShowSeat(fss);
         t1.setPrice(9);
 
-
         List<Ticket> tickets = new ArrayList<>();
         tickets.add(t1);
 
@@ -111,11 +165,11 @@ public class EmailServiceTest {
         b.setId(9087L);
         b.setTickets(tickets);
         String email = "test@test.com";
-        b.setEmail(email);
+        BookingAddress bookingAdress = new BookingAddress();
+        bookingAdress.setEmailAddress(email);
+        b.setBookingAddress(bookingAdress);
 
         return b;
     }
-
-
 
 }

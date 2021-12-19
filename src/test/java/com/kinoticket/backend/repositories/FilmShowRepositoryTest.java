@@ -22,26 +22,26 @@ class FilmShowRepositoryTest {
     FilmShowRepository filmShowRepository;
 
     @Test
-    void getFilmShows(){
+    void getFilmShows() {
         LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("CET"));
         java.sql.Date sqlDate = java.sql.Date.valueOf(dateTime.toLocalDate());
         java.sql.Time sqlTime = java.sql.Time.valueOf(dateTime.toLocalTime());
         List<FilmShow> filmShows = filmShowRepository.findFutureFilmShows(sqlDate, sqlTime);
         for (FilmShow f : filmShows) {
             java.sql.Date dateSql = new java.sql.Date(f.getDate().getTime());
-            assertTrue( sqlDate.before(dateSql) || (sqlDate.equals(dateSql) && sqlTime.before(f.getTime())));
+            assertTrue(sqlDate.before(dateSql) || (sqlDate.equals(dateSql) && sqlTime.before(f.getTime())));
         }
     }
 
     @Test
-    void getFilmShowsByMovie(){
+    void getFilmShowsByMovie() {
         LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("CET"));
         java.sql.Date sqlDate = java.sql.Date.valueOf(dateTime.toLocalDate());
         java.sql.Time sqlTime = java.sql.Time.valueOf(dateTime.toLocalTime());
         List<FilmShow> filmShows = filmShowRepository.findFutureFilmShowsByMovie(2000, sqlDate, sqlTime);
         for (FilmShow f : filmShows) {
             java.sql.Date dateSql = new java.sql.Date(f.getDate().getTime());
-            assertTrue( sqlDate.before(dateSql) || (sqlDate.equals(dateSql) && sqlTime.before(f.getTime())));
+            assertTrue(sqlDate.before(dateSql) || (sqlDate.equals(dateSql) && sqlTime.before(f.getTime())));
         }
     }
 

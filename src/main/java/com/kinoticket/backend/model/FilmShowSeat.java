@@ -1,18 +1,18 @@
 package com.kinoticket.backend.model;
 
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "FILMSHOW_SEAT")
 @IdClass(FilmshowSeatPK.class)
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class FilmShowSeat {
 
     @Id
@@ -28,6 +28,8 @@ public class FilmShowSeat {
 
     @Column
     private boolean reserved;
+
+    private double price;
 
     public Seat getSeat() {
         return seat;
@@ -52,4 +54,11 @@ public class FilmShowSeat {
     public void setReserved(boolean reserved) {
         this.reserved = reserved;
     }
+
+    public FilmShowSeat(Seat seat, FilmShow filmShow, boolean reserved) {
+        this.seat = seat;
+        this.filmShow = filmShow;
+        this.reserved = reserved;
+    }
+
 }

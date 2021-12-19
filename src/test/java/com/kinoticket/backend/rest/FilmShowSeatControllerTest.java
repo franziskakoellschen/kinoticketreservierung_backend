@@ -3,12 +3,10 @@ package com.kinoticket.backend.rest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,7 +112,7 @@ public class FilmShowSeatControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedContent = "[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1},\"reserved\":true}]";
+        String expectedContent = "[{\"seat\":{\"id\":2,\"row\":2,\"seatNumber\":4,\"priceCategory\":1},\"reserved\":true,\"price\":0.0}]";
 
         assertEquals(expectedContent, contentAsString);
 

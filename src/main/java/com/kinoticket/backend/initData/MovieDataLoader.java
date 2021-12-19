@@ -60,11 +60,13 @@ public class MovieDataLoader implements ApplicationRunner {
         CinemaHall cinemaHall = createCinemaHall(5, 6, 20, 20);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date result  = dateFormat.parse("2021-12-15 00:00:00");
+        Date date1  = dateFormat.parse("2022-01-01 00:00:00");
+        Date date2  = dateFormat.parse("2022-01-03 00:00:00");
+        Date date3  = dateFormat.parse("2022-01-05 00:00:00");
 
-        filmShowService.postFilmShow(new Date(), new Time(2,4,5), m.getId(), cinemaHall.getId());
-        filmShowService.postFilmShow(result,     new Time(2,4,5), m.getId(), cinemaHall.getId());
-        filmShowService.postFilmShow(new Date(), new Time(2,4,5), m.getId(), cinemaHall.getId());
+        filmShowService.postFilmShow(date1, new Time(2,4,5), m.getId(), cinemaHall.getId());
+        filmShowService.postFilmShow(date2,     new Time(2,4,5), m.getId(), cinemaHall.getId());
+        filmShowService.postFilmShow(date3, new Time(2,4,5), m.getId(), cinemaHall.getId());
     }
 
     private CinemaHall createCinemaHall(int rows, int seatsPerRow, int squareMeters, int screenSize) {

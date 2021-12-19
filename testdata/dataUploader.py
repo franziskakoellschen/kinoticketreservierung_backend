@@ -64,6 +64,9 @@ def uploadCSVs(conn):
 def cleanTables(conn):
     cur = conn.cursor()
     tables = [
+        "booking",
+        "booking_tickets",
+        "booking_address",
         "image",
         "booking_tickets",
         "ticket",

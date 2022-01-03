@@ -34,13 +34,17 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
-          badges-directory: badges
-          generate-branches-badge: true
           on-missing-report: fail
           fail-if-coverage-less-than: 60
           fail-if-branches-less-than: 60
       - name: Print Coverage
         run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
+      - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v2
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            directory: target/site/jacoco
+            files: jacoco.xml
 
   DeployProd:
     if: github.ref == 'refs/heads/main'

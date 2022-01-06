@@ -7,9 +7,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.kinoticket.backend.dto.FilmShowInformationDTO;
 import com.kinoticket.backend.model.CinemaHall;
 import com.kinoticket.backend.model.FilmShow;
-import com.kinoticket.backend.model.FilmShowInformationDTO;
 import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Seat;

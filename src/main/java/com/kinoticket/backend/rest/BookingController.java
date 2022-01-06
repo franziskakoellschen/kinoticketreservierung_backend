@@ -8,8 +8,8 @@ import java.util.Locale;
 
 import com.kinoticket.backend.Exceptions.EntityNotFound;
 import com.kinoticket.backend.Exceptions.MissingParameterException;
+import com.kinoticket.backend.dto.BookingDTO;
 import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.model.BookingDTO;
 import com.kinoticket.backend.service.BookingService;
 
 import org.slf4j.Logger;

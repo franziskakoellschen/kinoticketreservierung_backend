@@ -2,6 +2,8 @@ package com.kinoticket.backend.model;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.kinoticket.backend.dto.FilmShowInformationDTO;
+
 import org.junit.jupiter.api.Test;
 
 public class FilmShowInformationDTOTest {

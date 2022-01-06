@@ -1,4 +1,4 @@
-package com.kinoticket.backend.model;
+package com.kinoticket.backend.dto;
 
 import java.sql.Time;
 import java.util.Date;

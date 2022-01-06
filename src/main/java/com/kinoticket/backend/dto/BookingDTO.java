@@ -1,6 +1,9 @@
-package com.kinoticket.backend.model;
+package com.kinoticket.backend.dto;
 
 import java.util.List;
+
+import com.kinoticket.backend.model.BookingAddress;
+import com.kinoticket.backend.model.FilmShowSeat;
 
 import lombok.Data;
 

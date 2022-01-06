@@ -1,6 +1,8 @@
-package com.kinoticket.backend.model;
+package com.kinoticket.backend.dto;
 
 import java.util.Date;
+
+import com.kinoticket.backend.model.Movie;
 
 import lombok.Data;
 

@@ -23,6 +23,7 @@ import javax.mail.internet.MimeMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.UnitTestConfiguration;
+import com.kinoticket.backend.dto.BookingDTO;
 import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.*;
 import com.kinoticket.backend.service.BookingService;

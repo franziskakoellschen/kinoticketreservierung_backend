@@ -1,4 +1,6 @@
-package com.kinoticket.backend.model;
+package com.kinoticket.backend.dto;
+
+import com.kinoticket.backend.model.CinemaHall;
 
 import lombok.Data;
 

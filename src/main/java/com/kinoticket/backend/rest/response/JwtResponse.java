@@ -1,4 +1,4 @@
-package com.kinoticket.backend.dto;
+package com.kinoticket.backend.rest.response;
 
 import java.util.List;
 

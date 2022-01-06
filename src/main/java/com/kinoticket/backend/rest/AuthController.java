@@ -8,12 +8,13 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.kinoticket.backend.dto.*;
 import com.kinoticket.backend.model.ERole;
 import com.kinoticket.backend.model.Role;
 import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.RoleRepository;
 import com.kinoticket.backend.repositories.UserRepository;
+import com.kinoticket.backend.rest.request.*;
+import com.kinoticket.backend.rest.response.*;
 import com.kinoticket.backend.security.JwtUtils;
 import com.kinoticket.backend.security.UserDetailsImpl;
 

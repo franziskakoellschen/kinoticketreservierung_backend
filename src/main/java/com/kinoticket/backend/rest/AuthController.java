@@ -7,11 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
-import com.kinoticket.backend.dto.JwtResponse;
-import com.kinoticket.backend.dto.LoginRequest;
-import com.kinoticket.backend.dto.MessageResponse;
-import com.kinoticket.backend.dto.SignupRequest;
-import com.kinoticket.backend.dto.UsernameCheckRequest;
+
+import com.kinoticket.backend.dto.*;
 import com.kinoticket.backend.model.ERole;
 import com.kinoticket.backend.model.Role;
 import com.kinoticket.backend.model.User;
@@ -27,30 +24,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
     
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
+    @Autowired AuthenticationManager authenticationManager;
+    @Autowired RoleRepository roleRepository;
+    @Autowired UserRepository userRepository;
+    @Autowired PasswordEncoder encoder;
+    @Autowired JwtUtils jwtUtils;
 
     @PostMapping("/isUserRegistered")
     public ResponseEntity<?> isUserRegistered(@RequestBody UsernameCheckRequest request) {
@@ -77,14 +61,12 @@ public class AuthController {
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(
-            new JwtResponse(
-                jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles
-            )
-        );
+            new JwtResponse(jwt,
+                            userDetails.getId(),
+                            userDetails.getUsername(),
+                            userDetails.getEmail(),
+                            roles
+        ));
     }
 
     @PostMapping("/signup")
@@ -102,48 +84,46 @@ public class AuthController {
         }
 
         // Create new user account
-        User user = new User(
-            signUpRequest.getUsername(),
-            signUpRequest.getEmail(),
-            encoder.encode(
-                signUpRequest.getPassword()
-            )
+        User user = new User(signUpRequest.getUsername(),
+                             signUpRequest.getEmail(),
+                             encoder.encode(
+                                signUpRequest.getPassword())
         );
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
         if (strRoles == null) {
-            Optional<Role> role = roleRepository.findByName(ERole.ROLE_USER);
-            if (role.isPresent()) {
-                roles.add(role.get());
-            } else {
-                roles.add(roleRepository.save(new Role(ERole.ROLE_USER)));
-            }
+            roles.add(getRoleFromERole(ERole.ROLE_USER));
         } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Optional<Role> oRole = roleRepository.findByName(ERole.ROLE_ADMIN);
-                        if (oRole.isPresent()) {
-                            roles.add(oRole.get());
-                        } else {
-                            roles.add(roleRepository.save(new Role(ERole.ROLE_ADMIN)));
-                        }
-                        break;
-                    default:
-                        oRole = roleRepository.findByName(ERole.ROLE_USER);
-                        if (oRole.isPresent()) {
-                            roles.add(oRole.get());
-                        } else {
-                            roles.add(roleRepository.save(new Role(ERole.ROLE_USER)));
-                        }
-                }
-            });
+            roles.addAll(getRolesFromString(strRoles));
         }
 
         user.setRoles(roles);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private Set<Role> getRolesFromString(Set<String> strRoles) {
+        Set<Role> roles = new HashSet<>();
+        strRoles.forEach(role -> {
+            switch (role) {
+                case "admin":
+                    roles.add(getRoleFromERole(ERole.ROLE_ADMIN));
+                    break;
+                default:
+                    roles.add(getRoleFromERole(ERole.ROLE_USER));
+            }
+        });
+        return roles;
+    }
+
+    private Role getRoleFromERole(ERole role) {
+        Optional<Role> oRole = roleRepository.findByName(role);
+        if (oRole.isPresent()) {
+            return oRole.get();
+        } else {
+            return roleRepository.save(new Role(role));
+        }
     }
 }

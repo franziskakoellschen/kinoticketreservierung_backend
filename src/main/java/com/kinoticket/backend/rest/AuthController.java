@@ -23,10 +23,9 @@ import com.kinoticket.backend.rest.request.UsernameCheckRequest;
 import com.kinoticket.backend.rest.response.JwtResponse;
 import com.kinoticket.backend.rest.response.MessageResponse;
 import com.kinoticket.backend.security.JwtUtils;
-import com.kinoticket.backend.security.UserDetailsImpl;
-import com.kinoticket.backend.security.UserDetailsServiceImpl;
 import com.kinoticket.backend.security.VerificationToken;
 import com.kinoticket.backend.service.EmailService;
+import com.kinoticket.backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +52,7 @@ public class AuthController {
     @Autowired JwtUtils jwtUtils;
     @Autowired EmailService emailService;
     @Autowired VerificationTokenRepository verTokenrepository;
-    @Autowired UserDetailsServiceImpl userDetailsServiceImpl;
+    @Autowired UserService userDetailsServiceImpl;
 
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
@@ -89,7 +88,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User userDetails = (User) authentication.getPrincipal();
         List<String> roles = userDetails
             .getAuthorities()
             .stream()

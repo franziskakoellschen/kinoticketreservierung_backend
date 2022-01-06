@@ -2,6 +2,8 @@ package com.kinoticket.backend.security;
 
 import java.util.Date;
 
+import com.kinoticket.backend.model.User;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -25,7 +27,7 @@ public class JwtUtils {
     private long jwtExpirationMs = 3600000;
 
     public String generateJwtToken(Authentication authentication) {
-        UserDetailsImpl userPrincial = (UserDetailsImpl)authentication.getPrincipal();
+        User userPrincial = (User)authentication.getPrincipal();
 
         return Jwts.builder()
             .setSubject(userPrincial.getUsername())

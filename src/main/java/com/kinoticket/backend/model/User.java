@@ -37,9 +37,13 @@ public class User {
     @ManyToMany
     private Set<Role> roles = new HashSet<>();
 
+    @NonNull
+    private boolean active;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.active = false;
     }
 }

@@ -20,6 +20,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.kinoticket.backend.Exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Ticket;
+import com.kinoticket.backend.model.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,30 @@ public class EmailService {
         emailSender.send(message);
         removeFromDisk(ticketPdfs);
         logger.info("EmailService: Booking Confirmation sent for Booking " + booking.getId());
+    }
+
+    public void sendRegistrationEmail(User user, String registrationLink) {
+
+        String messageBody =
+              "Hallo "
+            + user.getUsername() + "!\n"
+            + "Zur Aktivierung deines Accounts auf folgenden Link klicken:\n"
+            + registrationLink;
+        MimeMessage message = emailSender.createMimeMessage();
+
+        MimeMessageHelper helper;
+        try {
+            helper = new MimeMessageHelper(message, true);
+            helper.setFrom(System.getenv("KINOTICKET_EMAIL"), "Theatery");
+            helper.setTo(user.getEmail());
+            helper.setSubject("Ihre Registrierung bei Theatery");
+            helper.setText(messageBody);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        emailSender.send(message);
+        logger.info("EmailService: Registration Email sent for User " + user.getId());
     }
 
     private void removeFromDisk(List<File> ticketPdfs) {

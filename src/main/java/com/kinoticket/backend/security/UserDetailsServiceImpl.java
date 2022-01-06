@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 
 import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.UserRepository;
+import com.kinoticket.backend.repositories.VerificationTokenRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    VerificationTokenRepository verificationTokenRepository;
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -25,5 +29,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return UserDetailsImpl.build(user);
     }
-    
+
+    public void createVerificationToken(User user, String token) {
+        VerificationToken myToken = new VerificationToken(user, token);
+        verificationTokenRepository.save(myToken);
+    }
+
+    @Transactional
+    public void activateUser(VerificationToken token) {
+        User user = token.getUser();
+        user.setActive(true);
+        verificationTokenRepository.deleteById(token.getId());
+    }
 }

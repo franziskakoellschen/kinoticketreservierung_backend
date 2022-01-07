@@ -40,11 +40,11 @@ jobs:
       - name: Print Coverage
         run: echo "coverage = ${{ steps.jacoco-check.outputs.coverage }}"
       - name: Upload coverage to Codecov
-          uses: codecov/codecov-action@v2
-          with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-            directory: target/site/jacoco
-            files: jacoco.xml
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: target/site/jacoco
+          files: jacoco.xml
 
   DeployProd:
     if: github.ref == 'refs/heads/main'

@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.kinoticket.backend.Exceptions.EntityNotFound;
-import com.kinoticket.backend.Exceptions.MissingParameterException;
 import com.kinoticket.backend.dto.BookingDTO;
+import com.kinoticket.backend.exceptions.EntityNotFound;
+import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Ticket;

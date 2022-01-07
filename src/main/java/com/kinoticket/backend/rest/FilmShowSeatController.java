@@ -3,7 +3,7 @@ package com.kinoticket.backend.rest;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kinoticket.backend.Exceptions.EntityNotFound;
+import com.kinoticket.backend.exceptions.EntityNotFound;
 import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.FilmShowSeatStatus;
 import com.kinoticket.backend.service.FilmShowSeatService;

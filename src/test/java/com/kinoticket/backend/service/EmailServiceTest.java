@@ -13,7 +13,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.kinoticket.backend.UnitTestConfiguration;
-import com.kinoticket.backend.Exceptions.MissingParameterException;
+import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.BookingAddress;
 import com.kinoticket.backend.model.CinemaHall;

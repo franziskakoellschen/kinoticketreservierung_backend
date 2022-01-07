@@ -56,11 +56,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests()
+            .authorizeRequests()/*
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/movies").permitAll()
-                .antMatchers("/test/**").permitAll()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/test/**").permitAll() */
+                .antMatchers("**").permitAll()
             .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

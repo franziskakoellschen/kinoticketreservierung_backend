@@ -4,7 +4,7 @@
 ## Current test coverage
 [![Main Branch](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend/branch/main/graph/badge.svg)](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend)
 
-[![Dev Branch](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend/branch/feature/CodeCovBadge/graph/badge.svg)](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend)
+[![Dev Branch](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend/branch/dev/graph/badge.svg)](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend)
 
 ## Setup
 ### Add Value to DATABASE_URL

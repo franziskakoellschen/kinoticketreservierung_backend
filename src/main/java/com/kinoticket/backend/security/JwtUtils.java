@@ -24,7 +24,7 @@ public class JwtUtils {
     private String jwtSecret = "my-32-character-ultra-secure-and-ultra-long-secret";
 
     //@Value("${kinoticket.backend.jwtExpirationMs}")
-    private long jwtExpirationMs = 3600000;
+    private long jwtExpirationMs = 1800000;
 
     public String generateJwtToken(Authentication authentication) {
         User userPrincial = (User)authentication.getPrincipal();

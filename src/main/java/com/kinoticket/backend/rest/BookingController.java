@@ -36,7 +36,8 @@ public class BookingController {
     BookingService service;
 
     @PostMapping()
-    public ResponseEntity<Booking> postBooking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<Booking> postBooking(@RequestBody BookingDTO , //token) {
+
 
         ResponseEntity<Booking> responseEntity = null;
         Booking sentBooking = null;
@@ -48,6 +49,8 @@ public class BookingController {
 
         try {
             sentBooking = service.putBooking(bookingDTO);
+            
+        if (token) --> user.setBooking()
             logger.info("BookingController: Booking " + sentBooking.getId() + " successful");
             responseEntity = new ResponseEntity<Booking>(sentBooking, HttpStatus.OK);
         } catch (MissingParameterException mp) {

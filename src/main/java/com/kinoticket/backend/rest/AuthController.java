@@ -113,7 +113,7 @@ public class AuthController {
             new JwtResponse(jwt,
                             userDetails.getId(),
                             userDetails.getUsername(),
-                            userDetails.getEmail(),
+                            userDetails.getAddress().getEmailAddress(),
                             roles
         ));
     }
@@ -126,7 +126,7 @@ public class AuthController {
                 .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userService.existsUserWithEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: Email is already in use!"));

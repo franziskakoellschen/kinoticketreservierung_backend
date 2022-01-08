@@ -79,7 +79,7 @@ public class EmailService {
             + "Zur Aktivierung deines Accounts auf folgenden Link klicken:\n"
             + registrationLink;
 
-        sendEmail(user.getEmail(), messageBody, "Ihre Registrierung bei Theatery", null);
+        sendEmail(user.getAddress().getEmailAddress(), messageBody, "Ihre Registrierung bei Theatery", null);
         logger.info("EmailService: Registration Email sent for User " + user.getId());
     }
 

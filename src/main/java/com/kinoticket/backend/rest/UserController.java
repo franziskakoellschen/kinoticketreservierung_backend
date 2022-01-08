@@ -1,6 +1,8 @@
 package com.kinoticket.backend.rest;
 
 import com.kinoticket.backend.dto.UserDTO;
+import com.kinoticket.backend.exceptions.EntityNotFound;
+import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.*;
 
 import com.kinoticket.backend.repositories.AddressRepository;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,8 +48,9 @@ public class UserController {
     public ResponseEntity<User> getUserInformation() {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User requestedUser = (User) authentication.getPrincipal();
+
+        Optional<User> user = userRepository.findById(requestedUser.getId());
 
         if(user.isPresent()){
             return ResponseEntity.ok().body(user.get());
@@ -58,11 +60,12 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> setUserInformation(@RequestBody UserDTO newUser) throws com.kinoticket.backend.exceptions.EntityNotFound {
+    public ResponseEntity<User> setUserInformation(@RequestBody UserDTO newUser) throws EntityNotFound {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username  = (String) authentication.getPrincipal();
-        if (newUser.getUsername().equals(username)) {
-            User updatedUser = userService.updateUser(username, newUser);
+        User requestedUser  = (User) authentication.getPrincipal();
+
+        if (newUser.getUsername().equals(requestedUser.getUsername())) {
+            User updatedUser = userService.updateUser(requestedUser.getUsername(), newUser);
             return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -72,35 +75,22 @@ public class UserController {
     @GetMapping("/bookings")
     public ResponseEntity<List<Booking>> getBookings() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User requestedUser = (User) authentication.getPrincipal();
+
+        Optional<User> user = userRepository.findByUsername(requestedUser.getUsername());
 
         if(user.isPresent()){
             List<Booking> bookings = user.get().getBookings();
             return ResponseEntity.ok().body(bookings);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-
     }
 
-    
-    @PostMapping("/tickets")
-    public ResponseEntity<?> getTickets(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
-        
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
-        if(booking.isPresent()){
-            Booking bookingUnwrapped = booking.get();
-            emailService.sendBookingConfirmation(bookingUnwrapped);
-            return ResponseEntity.ok().build();
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @GetMapping("/ticketPdfs")
-    public ResponseEntity<?> sendBookingConfirmationAgain(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
+    @GetMapping("/tickets")
+    public ResponseEntity<?> sendBookingConfirmationAgain(@RequestParam("bookingId") long bookingId) throws MissingParameterException {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User requestedUser = (User) authentication.getPrincipal();
+        Optional<User> user = userRepository.findByUsername(requestedUser.getUsername());
 
         if (user.isPresent()){
             for (Booking b : user.get().getBookings()) {

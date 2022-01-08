@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User createUser(String username, String email, String password) {
-        User newUser = new User(username, email, password);
+        User newUser = new User(username, password);
 
         Address address = new Address();
         address.setEmailAddress(email);
@@ -85,5 +85,14 @@ public class UserService implements UserDetailsService {
 
         addressRepository.save(address);
         return userRepository.save(user);
+    }
+
+    public boolean existsUserWithEmail(String email) {
+        for (User user : userRepository.findAll()) {
+            if (user.getAddress().getEmailAddress().equals(email)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

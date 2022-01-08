@@ -1,11 +1,16 @@
 package com.kinoticket.backend.rest;
 
+import com.kinoticket.backend.dto.UserDTO;
+import com.kinoticket.backend.exceptions.EntityNotFound;
+import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.*;
 
 import com.kinoticket.backend.repositories.AddressRepository;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.service.EmailService;
+import com.kinoticket.backend.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,83 +41,62 @@ public class UserController {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    UserService userService;
 
     @GetMapping()
     public ResponseEntity<User> getUserInformation() {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        User requestedUser = (User) authentication.getPrincipal();
 
-        return ResponseEntity.ok().body(user);
+        Optional<User> user = userRepository.findById(requestedUser.getId());
 
 
     }
 
     @PostMapping()
-    public ResponseEntity<User> setUserInformation(@RequestBody User user) throws com.kinoticket.backend.exceptions.EntityNotFound {
+    public ResponseEntity<User> setUserInformation(@RequestBody UserDTO newUser) throws EntityNotFound {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        User userLoggedIn  = (User) authentication.getPrincipal();
-        if(user.getUsername().equals(userLoggedIn.getUsername())){
+        User requestedUser  = (User) authentication.getPrincipal();
 
-            addressRepository.save(user.getAddress());
-            userRepository.save(user);
-            return new ResponseEntity<User>(user, HttpStatus.OK);
-        }else{return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);}
+        if (newUser.getUsername().equals(requestedUser.getUsername())) {
+            User updatedUser = userService.updateUser(requestedUser.getUsername(), newUser);
+            return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping("/bookings")
     public ResponseEntity<List<Booking>> getBookings() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        User requestedUser = (User) authentication.getPrincipal();
 
-        List<Booking> bookings = user.getBookings();
-        return ResponseEntity.ok().body(bookings);
+        Optional<User> user = userRepository.findByUsername(requestedUser.getUsername());
 
-    }
-
-    
-    @GetMapping("/tickets")
-    public ResponseEntity<List<Ticket>> getTickets(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
-        if(booking.isPresent()){
-            Booking bookingUnwrapped = booking.get();
-
-            if(bookingUnwrapped.getCustomerId() == (user.getId())){
-                List<Ticket> tickets = bookingUnwrapped.getTickets();
-
-                return ResponseEntity.ok().body(tickets);
-            }
+        if(user.isPresent()){
+            List<Booking> bookings = user.get().getBookings();
+            return ResponseEntity.ok().body(bookings);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @GetMapping("/ticketPdfs")
-    public ResponseEntity<List<File>> getTicketPdfs(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
+    @GetMapping("/tickets")
+    public ResponseEntity<?> sendBookingConfirmationAgain(@RequestParam("bookingId") long bookingId) throws MissingParameterException {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        User requestedUser = (User) authentication.getPrincipal();
+        Optional<User> user = userRepository.findByUsername(requestedUser.getUsername());
 
-        if(booking.isPresent()){
-            Booking bookingUnwrapped = booking.get();
-
-            if(bookingUnwrapped.getCustomerId() == (user.getId())) {
-                List<File> files = emailService.generateTicketPdfs(bookingUnwrapped);
-
-                try {
-                    return ResponseEntity.ok().body(files);
-                }catch (Exception e){}
-                finally {
-                    emailService.removeFromDisk(files);
+        if (user.isPresent()){
+            for (Booking b : user.get().getBookings()) {
+                if(b.getId() == bookingId) {
+                    emailService.sendBookingConfirmation(b);
+                    return ResponseEntity.ok().build();
                 }
             }
-
         }
+
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-
-
-
 }

@@ -1,8 +1,13 @@
 package com.kinoticket.backend.service;
 
+import java.util.ArrayList;
+
 import javax.transaction.Transactional;
 
+import com.kinoticket.backend.dto.UserDTO;
+import com.kinoticket.backend.model.Address;
 import com.kinoticket.backend.model.User;
+import com.kinoticket.backend.repositories.AddressRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.repositories.VerificationTokenRepository;
 import com.kinoticket.backend.security.VerificationToken;
@@ -21,6 +26,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
     @Transactional
@@ -41,5 +49,50 @@ public class UserService implements UserDetailsService {
         User user = token.getUser();
         user.setActive(true);
         verificationTokenRepository.deleteById(token.getId());
+    }
+
+    public User createUser(String username, String email, String password) {
+        User newUser = new User(username, password);
+
+        Address address = new Address();
+        address.setEmailAddress(email);
+        addressRepository.save(address);        
+        newUser.setAddress(address);
+
+        newUser.setBookings(new ArrayList<>());
+
+        return userRepository.save(newUser);
+    }
+
+    public User updateUser(String username, UserDTO newUser) {
+        User user = userRepository.findByUsername(username).get();
+        
+        /*
+            For now, we don't allow update of
+            * username
+            * email
+            * password
+        */
+
+        Address address = user.getAddress();
+        address.setSurName(newUser.getSurName());
+        address.setLastName(newUser.getLastName());
+        address.setStreet(newUser.getStreet());
+        address.setHouseNumber(newUser.getHouseNumber());
+        address.setPostCode(newUser.getPostCode());
+        address.setCity(newUser.getCity());
+        address.setPhoneNumber(newUser.getPhoneNumber());
+
+        addressRepository.save(address);
+        return userRepository.save(user);
+    }
+
+    public boolean existsUserWithEmail(String email) {
+        for (User user : userRepository.findAll()) {
+            if (user.getAddress().getEmailAddress().equals(email)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

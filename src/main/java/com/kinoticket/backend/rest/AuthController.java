@@ -13,6 +13,9 @@ import javax.validation.Valid;
 
 import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.AddressRepository;
+import com.kinoticket.backend.model.ERole;
+import com.kinoticket.backend.model.Role;
+import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.RoleRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.repositories.VerificationTokenRepository;
@@ -50,6 +53,7 @@ public class AuthController {
     @Autowired AuthenticationManager authenticationManager;
     @Autowired RoleRepository roleRepository;
     @Autowired UserRepository userRepository;
+    @Autowired UserService userService;
     @Autowired PasswordEncoder encoder;
     @Autowired JwtUtils jwtUtils;
     @Autowired EmailService emailService;
@@ -91,10 +95,10 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (BadCredentialsException ex) {
             log.error("Invalid Password: " + ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (DisabledException ex) {
             log.error("Account is disabled: " + ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.LOCKED);
+            return new ResponseEntity<>(HttpStatus.LOCKED);
         }
 
 
@@ -118,8 +122,7 @@ public class AuthController {
             new JwtResponse(jwt,
                             userDetails.getId(),
                             userDetails.getUsername(),
-                            userDetails.getEmail(),
-                            //address.getEmailAddress(),
+                            userDetails.getAddress().getEmailAddress(),
                             roles
         ));
     }
@@ -132,17 +135,17 @@ public class AuthController {
                 .body(new MessageResponse("Error: Username is already taken!"));
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userService.existsUserWithEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                 .badRequest()
                 .body(new MessageResponse("Error: Email is already in use!"));
         }
 
         // Create new user account
-        User user = new User(signUpRequest.getUsername(),
-                             signUpRequest.getEmail(),
-                             encoder.encode(
-                                signUpRequest.getPassword())
+        User user = userService.createUser(
+            signUpRequest.getUsername(),
+            signUpRequest.getEmail(),
+            encoder.encode(signUpRequest.getPassword())
         );
 
         //Address address = new Address();

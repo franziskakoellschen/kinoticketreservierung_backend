@@ -12,18 +12,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "BookingAddress")
+@Table
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @OneToOne(mappedBy = "bookingAddress")
-    private Booking booking;
-
-    @OneToOne(mappedBy = "address")
-    private User belongingUser;
 
     @Column
     private String surName;

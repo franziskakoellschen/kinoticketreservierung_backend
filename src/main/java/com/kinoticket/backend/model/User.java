@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,13 +30,9 @@ public class User implements UserDetails {
     private String username;
 
     @NonNull
-    @Email
-    private String email;
-
-    @NonNull
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
@@ -50,9 +45,8 @@ public class User implements UserDetails {
     @NonNull
     private boolean active;
 
-    public User(String username, String email, String password) {
+    public User(String username, String password) {
         this.username = username;
-        this.email = email;
         this.password = password;
         this.active = false;
     }

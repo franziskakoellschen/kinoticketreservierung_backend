@@ -79,7 +79,7 @@ public class EmailService {
             + "Zur Aktivierung deines Accounts auf folgenden Link klicken:\n"
             + registrationLink;
 
-        sendEmail(user.getEmail(), messageBody, "Ihre Registrierung bei Theatery", null);
+        sendEmail(user.getAddress().getEmailAddress(), messageBody, "Ihre Registrierung bei Theatery", null);
         logger.info("EmailService: Registration Email sent for User " + user.getId());
     }
 
@@ -122,7 +122,7 @@ public class EmailService {
      * 
      * @param ticketPdfs The files to be removed.
      */
-    public void removeFromDisk(List<File> files) {
+    private void removeFromDisk(List<File> files) {
         for (File f : files) {
             f.delete();
         }

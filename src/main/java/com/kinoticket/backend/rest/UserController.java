@@ -46,15 +46,21 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<User> getUserInformation() {
 
-        User user = getUserOutOfContext();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = (String) authentication.getPrincipal();
+        Optional<User> user = userRepository.findByUsername(username);
 
-        return ResponseEntity.ok().body(user);
+        if(user.isPresent()){
+            return ResponseEntity.ok().body(user.get());
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 
     @PostMapping()
     public ResponseEntity<User> setUserInformation(@RequestBody UserDTO newUser) throws com.kinoticket.backend.exceptions.EntityNotFound {
-
-        String username  = getUserOutOfContext().getUsername();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username  = (String) authentication.getPrincipal();
         if (newUser.getUsername().equals(username)) {
             User updatedUser = userService.updateUser(username, newUser);
             return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
@@ -65,9 +71,16 @@ public class UserController {
 
     @GetMapping("/bookings")
     public ResponseEntity<List<Booking>> getBookings() {
-        User user = getUserOutOfContext();
-        List<Booking> bookings = user.getBookings();
-        return ResponseEntity.ok().body(bookings);
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = (String) authentication.getPrincipal();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if(user.isPresent()){
+            List<Booking> bookings = user.get().getBookings();
+            return ResponseEntity.ok().body(bookings);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 
     
@@ -80,31 +93,24 @@ public class UserController {
             emailService.sendBookingConfirmation(bookingUnwrapped);
             return ResponseEntity.ok().build();
         }
-        else{return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/ticketPdfs")
-    public ResponseEntity<List<File>> getTicketPdfs(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
-
-        if(booking.isPresent()){
-            Booking bookingUnwrapped = booking.get();
-            List<File> files = emailService.generateTicketPdfs(bookingUnwrapped);
-
-            return ResponseEntity.ok().body(files);
-        }
-        else{return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
-
-
-
-
-    }
-
-
-
-    private User getUserOutOfContext(){
+    public ResponseEntity<?> sendBookingConfirmationAgain(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return user;
+        String username = (String) authentication.getPrincipal();
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isPresent()){
+            for (Booking b : user.get().getBookings()) {
+                if(b.getId() == bookingId) {
+                    emailService.sendBookingConfirmation(b);
+                    return ResponseEntity.ok().build();
+                }
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

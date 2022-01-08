@@ -42,21 +42,18 @@ public class UserController {
     public ResponseEntity<User> getUserInformation() {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = (User) authentication.getPrincipal();
 
-        if(user.isPresent()){
-            return ResponseEntity.ok().body(user.get());
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.ok().body(user);
+
 
     }
 
     @PostMapping()
     public ResponseEntity<User> setUserInformation(@RequestBody User user) throws com.kinoticket.backend.exceptions.EntityNotFound {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username  = (String) authentication.getPrincipal();
-        if(user.getUsername().equals(username)){
+        User userLoggedIn  = (User) authentication.getPrincipal();
+        if(user.getUsername().equals(userLoggedIn.getUsername())){
 
             addressRepository.save(user.getAddress());
             userRepository.save(user);
@@ -67,14 +64,10 @@ public class UserController {
     @GetMapping("/bookings")
     public ResponseEntity<List<Booking>> getBookings() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = (User) authentication.getPrincipal();
 
-        if(user.isPresent()){
-            List<Booking> bookings = user.get().getBookings();
-            return ResponseEntity.ok().body(bookings);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        List<Booking> bookings = user.getBookings();
+        return ResponseEntity.ok().body(bookings);
 
     }
 
@@ -82,14 +75,12 @@ public class UserController {
     @GetMapping("/tickets")
     public ResponseEntity<List<Ticket>> getTickets(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = (User) authentication.getPrincipal();
         Optional<Booking> booking = bookingRepository.findById(bookingId);
-        if(booking.isPresent()&&user.isPresent()){
+        if(booking.isPresent()){
             Booking bookingUnwrapped = booking.get();
-            User userUnwrapped = user.get();
 
-            if(bookingUnwrapped.getCustomerId() == (userUnwrapped.getId())){
+            if(bookingUnwrapped.getCustomerId() == (user.getId())){
                 List<Ticket> tickets = bookingUnwrapped.getTickets();
 
                 return ResponseEntity.ok().body(tickets);
@@ -102,14 +93,12 @@ public class UserController {
     public ResponseEntity<List<File>> getTicketPdfs(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = (String) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = (User) authentication.getPrincipal();
 
-        if(booking.isPresent() && user.isPresent()){
+        if(booking.isPresent()){
             Booking bookingUnwrapped = booking.get();
-            User userUnwrapped = user.get();
 
-            if(bookingUnwrapped.getCustomerId() == (userUnwrapped.getId())) {
+            if(bookingUnwrapped.getCustomerId() == (user.getId())) {
                 List<File> files = emailService.generateTicketPdfs(bookingUnwrapped);
 
                 try {

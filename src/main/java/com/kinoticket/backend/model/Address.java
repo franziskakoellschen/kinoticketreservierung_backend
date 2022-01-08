@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -30,6 +31,7 @@ public class Address {
     @Column
     private String lastName;
 
+    @NotNull
     @Column
     private String emailAddress;
 

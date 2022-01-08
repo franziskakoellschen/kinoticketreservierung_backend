@@ -11,10 +11,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.model.ERole;
-import com.kinoticket.backend.model.Role;
-import com.kinoticket.backend.model.User;
+import com.kinoticket.backend.model.*;
+import com.kinoticket.backend.repositories.AddressRepository;
 import com.kinoticket.backend.repositories.RoleRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.repositories.VerificationTokenRepository;
@@ -57,6 +55,7 @@ public class AuthController {
     @Autowired EmailService emailService;
     @Autowired VerificationTokenRepository verTokenrepository;
     @Autowired UserService userDetailsServiceImpl;
+    @Autowired AddressRepository addressRepository;
 
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
@@ -109,11 +108,18 @@ public class AuthController {
             .map(item -> item.getAuthority())
             .collect(Collectors.toList());
 
+        //Address address = userDetails.getAddress();
+
+        //if(address==null){
+        //    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //}
+
         return ResponseEntity.ok(
             new JwtResponse(jwt,
                             userDetails.getId(),
                             userDetails.getUsername(),
                             userDetails.getEmail(),
+                            //address.getEmailAddress(),
                             roles
         ));
     }
@@ -139,6 +145,10 @@ public class AuthController {
                                 signUpRequest.getPassword())
         );
 
+        //Address address = new Address();
+        //address.setEmailAddress(signUpRequest.email);
+        //address.setBelongingUser(user);
+
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
         if (strRoles == null) {
@@ -149,6 +159,7 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
+        //addressRepository.save(address);
 
         String registrationLink = createRegistrationLink(user, request.getRequestURL());
         emailService.sendRegistrationEmail(user, registrationLink);

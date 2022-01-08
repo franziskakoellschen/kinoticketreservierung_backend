@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @NonNull
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, optional = true)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 

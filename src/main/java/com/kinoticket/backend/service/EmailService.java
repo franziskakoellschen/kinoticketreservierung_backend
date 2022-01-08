@@ -122,7 +122,7 @@ public class EmailService {
      * 
      * @param ticketPdfs The files to be removed.
      */
-    private void removeFromDisk(List<File> files) {
+    public void removeFromDisk(List<File> files) {
         for (File f : files) {
             f.delete();
         }

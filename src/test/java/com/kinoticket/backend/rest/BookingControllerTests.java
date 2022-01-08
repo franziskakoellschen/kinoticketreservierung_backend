@@ -149,7 +149,7 @@ public class BookingControllerTests {
                 booking.setCustomerId(customerID);
                 booking.setTickets(ticketList);
 
-                BookingAddress ba = new BookingAddress();
+                Address ba = new Address();
                 ba.setEmailAddress(email);
                 booking.setBookingAddress(ba);
 
@@ -180,7 +180,7 @@ public class BookingControllerTests {
                 filmShowSeatList.add(fss);
                 boolean isPaid = true;
                 double totalSum = 10;
-                BookingAddress bookingAddress = new BookingAddress();
+                Address bookingAddress = new Address();
 
                 BookingDTO dto = new BookingDTO(
                                 filmShowID,
@@ -210,7 +210,7 @@ public class BookingControllerTests {
                 List<Ticket> ticketList = new ArrayList<Ticket>();
                 ticketList.add(createTicketValidForPdfGenerator());
                 b.setTickets(ticketList);
-                BookingAddress ba = new BookingAddress();
+                Address ba = new Address();
                 ba.setEmailAddress("test@test.com");
                 b.setBookingAddress(ba);
                 return b;

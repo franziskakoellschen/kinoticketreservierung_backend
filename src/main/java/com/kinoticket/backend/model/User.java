@@ -2,14 +2,11 @@ package com.kinoticket.backend.model;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 import org.springframework.lang.NonNull;
@@ -19,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @Entity
@@ -39,6 +37,13 @@ public class User implements UserDetails {
     @NonNull
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
+    @OneToMany()
+    private List<Booking> bookings;
+
     @ManyToMany
     private Set<Role> roles = new HashSet<>();
 
@@ -58,6 +63,8 @@ public class User implements UserDetails {
             .map(role -> new SimpleGrantedAuthority(role.getName().name()))
             .collect(Collectors.toList());
     }
+
+
 
     @Override
     public boolean isAccountNonExpired() {

@@ -10,6 +10,7 @@ import com.kinoticket.backend.dto.BookingDTO;
 import com.kinoticket.backend.exceptions.EntityNotFound;
 import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.service.BookingService;
 
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +39,7 @@ public class BookingController {
     BookingService service;
 
     @PostMapping()
-    public ResponseEntity<Booking> postBooking(@RequestBody BookingDTO , //token) {
+    public ResponseEntity<Booking> postBooking(@RequestBody BookingDTO bookingDTO) {
 
 
         ResponseEntity<Booking> responseEntity = null;
@@ -46,11 +49,8 @@ public class BookingController {
             logger.warn("BookingController: Booking attempt faild: Seats are not blocked anymore.");
             return new ResponseEntity<Booking>(HttpStatus.CONFLICT);
         }
-
         try {
             sentBooking = service.putBooking(bookingDTO);
-            
-        if (token) --> user.setBooking()
             logger.info("BookingController: Booking " + sentBooking.getId() + " successful");
             responseEntity = new ResponseEntity<Booking>(sentBooking, HttpStatus.OK);
         } catch (MissingParameterException mp) {

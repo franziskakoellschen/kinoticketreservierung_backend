@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMessage;
 import com.kinoticket.backend.UnitTestConfiguration;
 import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.model.BookingAddress;
+import com.kinoticket.backend.model.Address;
 import com.kinoticket.backend.model.CinemaHall;
 import com.kinoticket.backend.model.FilmShow;
 import com.kinoticket.backend.model.FilmShowSeat;
@@ -91,7 +91,7 @@ public class EmailServiceTest {
             
         });
 
-        b.setBookingAddress(new BookingAddress());
+        b.setBookingAddress(new Address());
         assertThrows(MissingParameterException.class, new Executable() {
 
             @Override
@@ -165,7 +165,7 @@ public class EmailServiceTest {
         b.setId(9087L);
         b.setTickets(tickets);
         String email = "test@test.com";
-        BookingAddress bookingAdress = new BookingAddress();
+        Address bookingAdress = new Address();
         bookingAdress.setEmailAddress(email);
         b.setBookingAddress(bookingAdress);
 

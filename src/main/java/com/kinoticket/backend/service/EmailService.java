@@ -137,7 +137,7 @@ public class EmailService {
         return message;
     }
 
-    private List<File> generateTicketPdfs(Booking booking) throws MissingParameterException {
+    public List<File> generateTicketPdfs(Booking booking) throws MissingParameterException {
         List<Ticket> tickets = booking.getTickets();
 
         if (tickets == null) {

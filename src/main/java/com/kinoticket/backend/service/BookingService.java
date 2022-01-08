@@ -11,12 +11,12 @@ import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Ticket;
-import com.kinoticket.backend.repositories.BookingRepository;
-import com.kinoticket.backend.repositories.FilmShowRepository;
-import com.kinoticket.backend.repositories.FilmShowSeatRepository;
-import com.kinoticket.backend.repositories.TicketRepository;
+import com.kinoticket.backend.model.User;
+import com.kinoticket.backend.repositories.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +39,9 @@ public class BookingService {
 
     @Autowired
     FilmShowSeatRepository filmShowSeatRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     private List<Ticket> createTickets(List<FilmShowSeat> filmShowSeatList) {
         List<Ticket> ticketList = new ArrayList<>();
@@ -94,6 +97,15 @@ public class BookingService {
 
         ticketRepository.saveAll(booking.getTickets());
         Booking persistedBooking = bookingRepository.save(booking);
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(!(authentication instanceof AnonymousAuthenticationToken)){
+            User user = (User) authentication.getPrincipal();
+            List<Booking> bookings = user.getBookings();
+            bookings.add(booking);
+            user.setBookings(bookings); //Braucht man das oder passiert das eh, da Referenz und nicht kopiert?
+            userRepository.save(user);
+        }
 
         emailService.sendBookingConfirmation(persistedBooking);
 

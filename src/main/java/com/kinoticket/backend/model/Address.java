@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "BookingAddress")
-public class BookingAddress {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,6 +20,9 @@ public class BookingAddress {
 
     @OneToOne(mappedBy = "bookingAddress")
     private Booking booking;
+
+    @OneToOne(mappedBy = "address")
+    private User belongingUser;
 
     @Column
     private String surName;

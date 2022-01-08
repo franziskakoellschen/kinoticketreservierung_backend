@@ -18,7 +18,6 @@ public class MoviesController {
     MovieService service;
 
     @GetMapping()
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public Iterable<Movie> getMovies() {
         return service.getMovies();
     }

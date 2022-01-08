@@ -99,11 +99,9 @@ public class BookingService {
         Booking persistedBooking = bookingRepository.save(booking);
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!(authentication instanceof AnonymousAuthenticationToken)){
+        if((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)){
             User user = (User) authentication.getPrincipal();
-            List<Booking> bookings = user.getBookings();
-            bookings.add(booking);
-            user.setBookings(bookings); //Braucht man das oder passiert das eh, da Referenz und nicht kopiert?
+            user.getBookings().add(booking);
             userRepository.save(user);
         }
 

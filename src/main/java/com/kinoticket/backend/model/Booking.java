@@ -43,7 +43,7 @@ public class Booking {
 
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "bookingAddress_id", referencedColumnName = "id")
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address bookingAddress;
 
     @Column

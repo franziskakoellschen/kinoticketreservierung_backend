@@ -1,11 +1,14 @@
 package com.kinoticket.backend.rest;
 
+import com.kinoticket.backend.dto.UserDTO;
 import com.kinoticket.backend.model.*;
 
 import com.kinoticket.backend.repositories.AddressRepository;
 import com.kinoticket.backend.repositories.BookingRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.service.EmailService;
+import com.kinoticket.backend.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +40,8 @@ public class UserController {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    UserService userService;
 
     @GetMapping()
     public ResponseEntity<User> getUserInformation() {
@@ -47,15 +52,15 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> setUserInformation(@RequestBody User user) throws com.kinoticket.backend.exceptions.EntityNotFound {
+    public ResponseEntity<User> setUserInformation(@RequestBody UserDTO newUser) throws com.kinoticket.backend.exceptions.EntityNotFound {
 
         String username  = getUserOutOfContext().getUsername();
-        if(user.getUsername().equals(username)){
-
-            addressRepository.save(user.getAddress());
-            userRepository.save(user);
-            return new ResponseEntity<User>(user, HttpStatus.OK);
-        }else{return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);}
+        if (newUser.getUsername().equals(username)) {
+            User updatedUser = userService.updateUser(username, newUser);
+            return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping("/bookings")
@@ -66,14 +71,14 @@ public class UserController {
     }
 
     
-    @GetMapping("/tickets")
-    public ResponseEntity<List<Ticket>> getTickets(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
+    @PostMapping("/tickets")
+    public ResponseEntity<?> getTickets(@RequestParam("bookingId") Long bookingId) throws com.kinoticket.backend.exceptions.MissingParameterException {
+        
         Optional<Booking> booking = bookingRepository.findById(bookingId);
         if(booking.isPresent()){
             Booking bookingUnwrapped = booking.get();
-            List<Ticket> tickets = bookingUnwrapped.getTickets();
-
-            return ResponseEntity.ok().body(tickets);
+            emailService.sendBookingConfirmation(bookingUnwrapped);
+            return ResponseEntity.ok().build();
         }
         else{return new ResponseEntity<>(HttpStatus.BAD_REQUEST);}
     }

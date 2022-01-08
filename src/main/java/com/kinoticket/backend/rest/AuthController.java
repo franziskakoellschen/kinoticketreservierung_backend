@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.ERole;
 import com.kinoticket.backend.model.Role;
 import com.kinoticket.backend.model.User;
@@ -52,6 +51,7 @@ public class AuthController {
     @Autowired AuthenticationManager authenticationManager;
     @Autowired RoleRepository roleRepository;
     @Autowired UserRepository userRepository;
+    @Autowired UserService userService;
     @Autowired PasswordEncoder encoder;
     @Autowired JwtUtils jwtUtils;
     @Autowired EmailService emailService;
@@ -92,10 +92,10 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (BadCredentialsException ex) {
             log.error("Invalid Password: " + ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (DisabledException ex) {
             log.error("Account is disabled: " + ex.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.LOCKED);
+            return new ResponseEntity<>(HttpStatus.LOCKED);
         }
 
 
@@ -133,10 +133,10 @@ public class AuthController {
         }
 
         // Create new user account
-        User user = new User(signUpRequest.getUsername(),
-                             signUpRequest.getEmail(),
-                             encoder.encode(
-                                signUpRequest.getPassword())
+        User user = userService.createUser(
+            signUpRequest.getUsername(),
+            signUpRequest.getEmail(),
+            encoder.encode(signUpRequest.getPassword())
         );
 
         Set<String> strRoles = signUpRequest.getRoles();

@@ -112,12 +112,6 @@ public class AuthController {
             .map(item -> item.getAuthority())
             .collect(Collectors.toList());
 
-        //Address address = userDetails.getAddress();
-
-        //if(address==null){
-        //    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        //}
-
         return ResponseEntity.ok(
             new JwtResponse(jwt,
                             userDetails.getId(),
@@ -148,10 +142,6 @@ public class AuthController {
             encoder.encode(signUpRequest.getPassword())
         );
 
-        //Address address = new Address();
-        //address.setEmailAddress(signUpRequest.email);
-        //address.setBelongingUser(user);
-
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
         if (strRoles == null) {
@@ -162,7 +152,6 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
-        //addressRepository.save(address);
 
         String registrationLink = createRegistrationLink(user, request.getRequestURL());
         emailService.sendRegistrationEmail(user, registrationLink);

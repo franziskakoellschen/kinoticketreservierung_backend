@@ -71,12 +71,9 @@ public class MovieService {
 
     public List<FilmShow> getFilmShowsWithFilters(long id, Date date1, Date date2, String dimension , String language) {
 
-
-        if (movieRepository.findById(id).isPresent()) {
                 LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("CET"));
                 List<FilmShow> filmShows = new ArrayList<>();
                 if(date1 == null && date2 == null){
-
                     filmShows = filmShowRepository.findFutureFilmShowsByMovieWithFilter(
                             id,
                             java.sql.Date.valueOf(dateTime.toLocalDate()),
@@ -120,9 +117,7 @@ public class MovieService {
                 filmShows.sort(new FilmShowComparator());
             }
             return filmShows;
-        } else {
-            return null;
-        }
+
     }
 
     public Iterable<Movie> getMoviesWithFilters(Date date1, Date date2, String genre, String dimension, String language, String searchString) {

@@ -39,13 +39,13 @@ public class FilmShowService {
     @Autowired
     FilmShowSeatService filmShowSeatService;
 
-    public FilmShow postFilmShow(Date date, Time time, long movieId, long cinemaHallId) {
+    public FilmShow postFilmShow(Date date, Time time, long movieId, long cinemaHallId, String dimension, String language) {
         Optional<CinemaHall> cinemaHallR = cinemaHallRepository.findById(cinemaHallId);
         Optional<Movie> movieR = movieRepository.findById(movieId);
         if (cinemaHallR.isPresent() && movieR.isPresent()) {
             CinemaHall cinemaHall = cinemaHallR.get();
             Movie movie = movieR.get();
-            FilmShow filmShow = new FilmShow(date, time, movie, cinemaHall);
+            FilmShow filmShow = new FilmShow(date, time, movie, cinemaHall ,dimension, language);
             filmShow.setCinemaHall(cinemaHall);
             filmShowRepository.save(filmShow);
 

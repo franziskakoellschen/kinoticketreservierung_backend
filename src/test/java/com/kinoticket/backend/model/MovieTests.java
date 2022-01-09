@@ -37,7 +37,7 @@ public class MovieTests {
     void equalsTest() {
         Movie movieA = new Movie(15, "Test Movie", 2000, "This is a Description", "This is a full Description", 16,
                 "someTrailerUrl", new ArrayList<FilmShow>(), "someImageUrl", "Peter Maffay", null, 222, "USA", "Comedy",
-                1l,"someTemplateUrl");
+                1l,"someTemplateUrl" );
         Movie movieB = new Movie();
 
         long id = 15;

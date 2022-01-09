@@ -9,6 +9,13 @@ public class FilmShowDTO {
     private Time time;
     private long cinemaHallId;
     private long movieId;
+    private String dimension;
+    private String language;
+
+
+    public String getLanguage() {
+        return language;
+    }
 
     public Date getDate() {
         return date;
@@ -24,5 +31,9 @@ public class FilmShowDTO {
 
     public long getMovieId() {
         return movieId;
+    }
+
+    public String getDimension() {
+        return dimension;
     }
 }

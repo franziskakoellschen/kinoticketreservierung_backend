@@ -19,7 +19,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-@Component
 public class MovieDataLoader implements ApplicationRunner {
 
     private MovieRepository movieRepository;
@@ -58,7 +57,7 @@ public class MovieDataLoader implements ApplicationRunner {
         m.setStartDate(new Date());
         m.setFilmLength(221);
         m.setOriginCountry("USA");
-        m.setGenre("Comedy");
+        m.setGenre("Action");
         m.setImage_id(99l);
         m.setTemplateUrl("https://img.welt.de/img/icon/news/mobile235403144/4322500277-ci102l-w1024/2021-House-of-Gucci-Movie-Set.jpg");
 
@@ -71,9 +70,9 @@ public class MovieDataLoader implements ApplicationRunner {
         Date date2  = dateFormat.parse("2022-01-03 00:00:00");
         Date date3  = dateFormat.parse("2022-01-05 00:00:00");
 
-        filmShowService.postFilmShow(date1, new Time(2,4,5), m.getId(), cinemaHall.getId());
-        filmShowService.postFilmShow(date2,     new Time(2,4,5), m.getId(), cinemaHall.getId());
-        filmShowService.postFilmShow(date3, new Time(2,4,5), m.getId(), cinemaHall.getId());
+        filmShowService.postFilmShow(date1, new Time(2,4,5), m.getId(), cinemaHall.getId(), "2D", "DE");
+        filmShowService.postFilmShow(date2,     new Time(2,4,5), m.getId(), cinemaHall.getId() ,"2D", "DE");
+        filmShowService.postFilmShow(date3, new Time(2,4,5), m.getId(), cinemaHall.getId(), "3D", "DE");
     }
 
     private CinemaHall createCinemaHall(int rows, int seatsPerRow, int squareMeters, int screenSize) {

@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+
 public class ImageDataLoader implements ApplicationRunner {
 
     private ImageDbRepository imageDbRepository;

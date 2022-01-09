@@ -125,8 +125,8 @@ public class MovieService {
         }
     }
 
-    public Iterable<Movie> getMoviesWithFilters(Date date1, Date date2, String genre, String dimension, String language) {
-        Iterable<Movie> movies = movieRepository.findMovieWithFilters(genre);
+    public Iterable<Movie> getMoviesWithFilters(Date date1, Date date2, String genre, String dimension, String language, String searchString) {
+        Iterable<Movie> movies = movieRepository.findMovieWithFilters(genre, searchString);
         Iterator<Movie> movieIterator = movies.iterator();
 
         while (movieIterator.hasNext()) {

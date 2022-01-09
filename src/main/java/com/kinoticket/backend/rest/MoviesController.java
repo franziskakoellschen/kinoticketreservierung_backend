@@ -32,7 +32,10 @@ public class MoviesController {
     @ResponseBody
     public Iterable<Movie> getWithFilters(@RequestBody FilterDTO dto){
 
-        return service.getMoviesWithFilters(dto.getDate1(), dto.getDate2(), dto.getGenre(), dto.getDimension(), dto.getLanguage());
+        return service.getMoviesWithFilters(
+                dto.getDate1(), dto.getDate2(),
+                dto.getGenre(), dto.getDimension(),
+                dto.getLanguage(), dto.getSearchString());
 
     }
 

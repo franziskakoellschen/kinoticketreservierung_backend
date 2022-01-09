@@ -12,6 +12,6 @@ import java.sql.Date;
 import java.util.List;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-    @Query("SELECT m FROM Movie m WHERE (:genre IS NULL or upper(m.genre) = :genre) ")
-    List<Movie> findMovieWithFilters(@Param("genre") String genre);
+    @Query("SELECT m FROM Movie m WHERE (:genre IS NULL or upper(m.genre) = :genre) AND (:searchString IS NULL or upper(m.title) like %:searchString%) ")
+    List<Movie> findMovieWithFilters(@Param("genre") String genre, @Param("searchString") String searchString);
 }

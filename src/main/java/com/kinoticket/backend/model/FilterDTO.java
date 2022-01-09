@@ -16,6 +16,15 @@ private Date date2;
 private String genre;
 private String dimension;
 private String language;
+private String searchString;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String getSearchString() {
+        return searchString;
+    }
 
     public String getDimension() {
         return dimension;

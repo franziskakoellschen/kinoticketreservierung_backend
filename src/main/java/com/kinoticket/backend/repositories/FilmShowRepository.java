@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface FilmShowRepository extends JpaRepository<FilmShow, Long> {
 
-    @Query("SELECT f FROM FilmShow f WHERE date(f.date) > :currentDate OR(date(f.date) = :current AND f.time >= :currentTime)")
+    @Query("SELECT f FROM FilmShow f WHERE date(f.date) > :currentDate OR(date(f.date) = :currentDate AND f.time >= :currentTime)")
     List<FilmShow> findFutureFilmShows(@Param("currentDate") Date currentDate, @Param("currentTime") Time currentTime);
 
     @Query("SELECT f FROM FilmShow f WHERE movie_id = :id AND (date(f.date) > :currentDate OR(date(f.date) = :currentDate AND f.time >= :currentTime)) ")

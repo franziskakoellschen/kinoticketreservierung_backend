@@ -2,7 +2,6 @@ package com.kinoticket.backend.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.model.Seat;
 import com.kinoticket.backend.model.Ticket;
+import com.kinoticket.backend.model.User;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -170,6 +170,38 @@ public class EmailServiceTest {
         b.setBookingAddress(bookingAdress);
 
         return b;
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "KINOTICKET_EMAIL", value = "test@test.com")
+    void testSendPasswordResetLink() {
+        MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
+
+        Mockito.doNothing()
+                .when(emailSender)
+                .send(Mockito.any(MimeMessage.class));
+        Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+        emailService.sendPasswordResetEmail(createUser(), "testLink");
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "KINOTICKET_EMAIL", value = "test@test.com")
+    void testSendRegistrationEmail() {
+        MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
+
+        Mockito.doNothing()
+                .when(emailSender)
+                .send(Mockito.any(MimeMessage.class));
+        Mockito.when(emailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+        emailService.sendRegistrationEmail(createUser(), "testLink");
+    }
+
+    private User createUser() {
+        User user = new User();
+        Address address = new Address();
+        address.setEmailAddress("testMail");
+        user.setAddress(address);
+        return user;
     }
 
 }

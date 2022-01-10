@@ -32,6 +32,7 @@ import com.kinoticket.backend.service.EmailService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -248,8 +249,8 @@ public class AuthControllerTests {
         signupRequest.setUsername("testUser");
         signupRequest.setPassword("testPW");
         Set<String> roles = new HashSet<>();
-        roles.add("ROLE_ADMIN");
-        roles.add("ROLE_USER");
+        roles.add("user");
+        roles.add("admin");
         signupRequest.setRoles(roles);
 
         User mockUser = Mockito.mock(User.class);
@@ -265,6 +266,52 @@ public class AuthControllerTests {
 
         assertTrue(result.getResponse().getContentAsString().contains("User registered successfully!"));
     }
+
+    
+    @Test
+	@SetEnvironmentVariable(key = "STAGE", value="PROD")
+    public void testSignupProd() throws Exception {
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setEmail("testMail");
+        signupRequest.setUsername("testUser");
+        signupRequest.setPassword("testPW");
+
+        User mockUser = Mockito.mock(User.class);
+
+        when(userRepository.save(any())).thenReturn(mockUser);
+        when(mockUser.getAddress()).thenReturn(Mockito.mock(Address.class));
+        doNothing().when(emailService).sendRegistrationEmail(any(), any());
+        MvcResult result = mvc.perform(
+            post("/auth/signup").contentType(MediaType.APPLICATION_JSON).content(
+                jsonSuR.write(signupRequest).getJson())
+            )
+            .andExpect(status().isOk()).andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("User registered successfully!"));
+    }
+
+    @Test
+	@SetEnvironmentVariable(key = "STAGE", value="DEV")
+    public void testSignupDev() throws Exception {
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setEmail("testMail");
+        signupRequest.setUsername("testUser");
+        signupRequest.setPassword("testPW");
+
+        User mockUser = Mockito.mock(User.class);
+
+        when(userRepository.save(any())).thenReturn(mockUser);
+        when(mockUser.getAddress()).thenReturn(Mockito.mock(Address.class));
+        doNothing().when(emailService).sendRegistrationEmail(any(), any());
+        MvcResult result = mvc.perform(
+            post("/auth/signup").contentType(MediaType.APPLICATION_JSON).content(
+                jsonSuR.write(signupRequest).getJson())
+            )
+            .andExpect(status().isOk()).andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("User registered successfully!"));
+    }
+
 
     @Test
     public void testBadCredentials() throws Exception {

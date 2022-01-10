@@ -1,6 +1,7 @@
 package com.kinoticket.backend.rest;
 
 import com.kinoticket.backend.model.FilmShow;
+import com.kinoticket.backend.model.FilterDTO;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.service.MovieService;
 
@@ -21,6 +22,18 @@ public class MoviesController {
     public Iterable<Movie> getMovies() {
         return service.getMovies();
     }
+
+    @RequestMapping(
+            value = "/filters",
+            method = RequestMethod.POST)
+    @ResponseBody
+    public Iterable<Movie> getWithFilters(@RequestBody FilterDTO dto){
+        return service.getMoviesWithFilters(
+                dto.getDate1(), dto.getDate2(),
+                dto.getGenre(), dto.getDimension(),
+                dto.getLanguage(), dto.getSearchString());
+    }
+
 
     @PostMapping()
     public Movie postMovie(@RequestBody Movie movie) {

@@ -326,6 +326,8 @@ public class BookingControllerTests {
                 assertEquals(status, 409);
         }
 
+
+
         @Test
         public void testPostSameBookingAgain() throws Exception {
 
@@ -334,11 +336,9 @@ public class BookingControllerTests {
                 when(filmShowSeatRepository.findBySeat_idAndFilmShow_id(anyLong(), anyLong())).thenReturn(Optional.of(new FilmShowSeat()));
                 doNothing().when(emailService).sendBookingConfirmation(any());
                 mvc.perform(
-                                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
-                                                jsonBookingDTO.write(createValidBookingDTO()).getJson()));
+                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(jsonBookingDTO.write(createValidBookingDTO()).getJson()));
 
-                mvc.perform(
-                                post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
+                mvc.perform(post("/booking/").contentType(MediaType.APPLICATION_JSON).content(
                                                 jsonBookingDTO.write(createValidBookingDTO()).getJson()))
                                 .andExpect(status().isOk());
 
@@ -467,7 +467,6 @@ public class BookingControllerTests {
                 mvc.perform(get("/booking/btw/Juli 2013/Juli 2021")
                                 .accept(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isBadRequest());
-
         }
 
         @Test

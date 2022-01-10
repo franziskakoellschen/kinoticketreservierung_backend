@@ -33,7 +33,7 @@ public class FilmShowController {
     @PostMapping()
     public ResponseEntity<FilmShow> postFilmShow(@RequestBody FilmShowDTO filmShow) {
         FilmShow persistedFilmShow = filmShowService.postFilmShow(
-                filmShow.getDate(), filmShow.getTime(), filmShow.getMovieId(), filmShow.getCinemaHallId());
+                filmShow.getDate(), filmShow.getTime(), filmShow.getMovieId(), filmShow.getCinemaHallId(), filmShow.getDimension(), filmShow.getLanguage());
 
         if (persistedFilmShow == null) {
             log.error("Issue while persisting");

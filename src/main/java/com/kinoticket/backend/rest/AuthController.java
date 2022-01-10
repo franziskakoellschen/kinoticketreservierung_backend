@@ -13,9 +13,6 @@ import javax.validation.Valid;
 
 import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.AddressRepository;
-import com.kinoticket.backend.model.ERole;
-import com.kinoticket.backend.model.Role;
-import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.RoleRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.repositories.VerificationTokenRepository;

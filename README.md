@@ -2,6 +2,11 @@
 
 [![Java CI](https://github.com/franziskakoellschen/kinoticketreservierung_backend/actions/workflows/java_ci.yml/badge.svg)](https://github.com/franziskakoellschen/kinoticketreservierung_backend/actions/workflows/java_ci.yml)
 
+## Current test coverage
+Main Branch [![Main Branch](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend/branch/main/graph/badge.svg)](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend)
+
+Dev Branch [![Dev Branch](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend/branch/dev/graph/badge.svg)](https://codecov.io/gh/franziskakoellschen/kinoticketreservierung_backend)
+
 ## Setup
 
 ### Required System Environment Variables

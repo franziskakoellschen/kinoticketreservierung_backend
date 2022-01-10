@@ -6,6 +6,7 @@ import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.service.MovieService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -84,6 +84,26 @@ public class EmailService {
     }
 
     /**
+     * This methods sends a link for resetting
+     * a user's password.
+     * 
+     * @param user             The user who wants to reset his
+     *                         password.
+     * @param registrationLink The link under which the password 
+     *                         can be reset.
+     */
+    public void sendPasswordResetEmail(User user, String passwordRestLink) {
+        String messageBody =
+              "Hallo "
+            + user.getUsername() + "!\n"
+            + "Zum zurücksetzen Ihres Passwortes hier klicken:\n"
+            + passwordRestLink;
+
+        sendEmail(user.getAddress().getEmailAddress(), messageBody, "Passwort zurücksetzten", null);
+        logger.info("EmailService: Password reset Email sent for User " + user.getId());
+    }
+
+    /**
      * Sends an email to the specified email, containing a subject,
      * a message in it's body and optional attachements.
      * 

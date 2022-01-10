@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.AddressRepository;
-import com.kinoticket.backend.model.ERole;
-import com.kinoticket.backend.model.Role;
-import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.RoleRepository;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.repositories.VerificationTokenRepository;
 import com.kinoticket.backend.rest.request.LoginRequest;
+import com.kinoticket.backend.rest.request.PasswordChangeRequest;
+import com.kinoticket.backend.rest.request.PasswordResetRequest;
 import com.kinoticket.backend.rest.request.SignupRequest;
 import com.kinoticket.backend.rest.request.UsernameCheckRequest;
 import com.kinoticket.backend.rest.response.JwtResponse;
@@ -59,6 +59,43 @@ public class AuthController {
     @Autowired VerificationTokenRepository verTokenrepository;
     @Autowired UserService userDetailsServiceImpl;
     @Autowired AddressRepository addressRepository;
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody PasswordResetRequest passwordResetRequest) {
+        
+        Optional<User> findByEmail = userService.findByEmail(passwordResetRequest.getEmail());
+        if (findByEmail.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        emailService.sendPasswordResetEmail(
+            findByEmail.get(), createPasswordResetLink(findByEmail.get(), request.getRequestURL())
+        );
+        return ResponseEntity.ok().build();        
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest) {
+
+        VerificationToken verificationToken = verTokenrepository.findByToken(passwordChangeRequest.getToken());
+        if (verificationToken == null) {
+            return ResponseEntity.badRequest().body("Invalid Token");
+        }
+
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return ResponseEntity.badRequest().body("Token expired");
+        }
+
+        User user = verificationToken.getUser();
+        userService.changeUserPassword(
+            user,
+            encoder.encode(passwordChangeRequest.getNewPassword())
+        );
+        
+        verTokenrepository.delete(verificationToken);
+
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
@@ -165,6 +202,18 @@ public class AuthController {
         String path = "/auth/registrationConfirm?token=" + token;
 
         return getHost() + path;
+    }
+
+    private String createPasswordResetLink(User user, StringBuffer requestUrl) {
+        String token = UUID.randomUUID().toString();
+        userDetailsServiceImpl.createVerificationToken(user, token);
+
+        String host = requestUrl.substring(0, requestUrl.indexOf("/auth"));
+        host = host.replace("localhost:8080", "localhost:3000");
+        host = host.replace("backend", "frontend");
+        String path = "/passwordReset?token=" + token;
+
+        return host + path;
     }
 
     private Set<Role> getRolesFromString(Set<String> strRoles) {

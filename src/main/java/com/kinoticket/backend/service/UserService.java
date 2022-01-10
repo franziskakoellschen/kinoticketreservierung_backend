@@ -1,6 +1,7 @@
 package com.kinoticket.backend.service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -94,5 +95,20 @@ public class UserService implements UserDetailsService {
             }
         }
         return false;
+    }
+
+    public Optional<User> findByEmail(String email) {
+        for (User user : userRepository.findAll()) {
+            if (user.getAddress().getEmailAddress().equals(email)) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void changeUserPassword(User user, String newPassword) {
+        User byId = userRepository.getById(user.getId());
+        byId.setPassword(newPassword);
+        userRepository.save(byId);
     }
 }

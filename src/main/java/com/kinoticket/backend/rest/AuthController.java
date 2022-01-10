@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.kinoticket.backend.model.*;
@@ -240,13 +239,8 @@ public class AuthController {
     }
 
     private String getHost() {
-        if (System.getenv("STAGE") != null) {
-            if (System.getenv("STAGE").equals("DEV")) {
-                return "https://kinoticket-backend-dev.herokuapp.com";
-            }
-            if (System.getenv("STAGE").equals("PROD")) {
-                return "https://kinoticket-backend-prod.herokuapp.com";
-            }
+        if (System.getenv("FRONTEND_URL") != null) {
+            return System.getenv("FRONTEND_URL");
         }
         return "http://localhost:8080";
     }

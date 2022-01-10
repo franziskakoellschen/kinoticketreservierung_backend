@@ -209,7 +209,7 @@ public class AuthController {
         userDetailsServiceImpl.createVerificationToken(user, token);
 
         String host = getHost();
-        host = host.replace("http://localhost:8080", "https://localhost:3000");
+        host = host.replace("http://localhost:8080", "http://localhost:3000");
         host = host.replace("backend", "frontend");
         String path = "/passwordReset?token=" + token;
 

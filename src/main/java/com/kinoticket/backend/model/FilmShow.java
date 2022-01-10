@@ -28,6 +28,12 @@ public class FilmShow {
     @Column
     private Time time;
 
+    @Column
+    private String dimension;
+
+    @Column
+    private String language;
+
     @ManyToOne(targetEntity = Movie.class)
     @JoinColumn(name = "movie_id", referencedColumnName = "id")
     @JsonIgnore
@@ -38,11 +44,21 @@ public class FilmShow {
     @JsonIgnore
     private CinemaHall cinemaHall;
 
-    public FilmShow (Date date, Time time, Movie movie, CinemaHall cinemaHall) {
+    public FilmShow (Date date, Time time, Movie movie, CinemaHall cinemaHall, String dimension, String language) {
         this.date = date;
         this.time = time;
         this.movie = movie;
         this.cinemaHall = cinemaHall;
+        this.dimension = dimension;
+        this.language = language;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public long getId() {
@@ -83,5 +99,13 @@ public class FilmShow {
 
     public void setCinemaHall(CinemaHall cinemaHall) {
         this.cinemaHall = cinemaHall;
+    }
+
+    public String getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(String dimension) {
+        this.dimension = dimension;
     }
 }

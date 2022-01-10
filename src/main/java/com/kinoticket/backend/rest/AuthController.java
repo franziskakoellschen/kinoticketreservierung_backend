@@ -240,11 +240,13 @@ public class AuthController {
     }
 
     private String getHost() {
-        if (System.getenv("STAGE") == "DEV") {
-            return "https://kinoticket-backend-dev.herokuapp.com";
-        }
-        if (System.getenv("STAGE") == "PROD") {
-            return "https://kinoticket-backend-prod.herokuapp.com";
+        if (System.getenv("STAGE") != null) {
+            if (System.getenv("STAGE").equals("DEV")) {
+                return "https://kinoticket-backend-dev.herokuapp.com";
+            }
+            if (System.getenv("STAGE").equals("PROD")) {
+                return "https://kinoticket-backend-prod.herokuapp.com";
+            }
         }
         return "http://localhost:8080";
     }

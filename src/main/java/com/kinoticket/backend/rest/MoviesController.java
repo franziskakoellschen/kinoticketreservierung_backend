@@ -5,17 +5,13 @@ import com.kinoticket.backend.model.FilterDTO;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.service.MovieService;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Filter;
 
 @RestController
 @RequestMapping("/movies")
-@Slf4j
 public class MoviesController {
 
     @Autowired

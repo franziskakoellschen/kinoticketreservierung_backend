@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import com.kinoticket.backend.Exceptions.EntityNotFound;
+import com.kinoticket.backend.exceptions.EntityNotFound;
 import com.kinoticket.backend.model.FilmShowSeat;
 import com.kinoticket.backend.model.FilmShowSeatStatus;
 import com.kinoticket.backend.repositories.FilmShowSeatRepository;

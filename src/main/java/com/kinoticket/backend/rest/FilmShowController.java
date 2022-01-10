@@ -2,9 +2,9 @@ package com.kinoticket.backend.rest;
 
 import java.util.Optional;
 
+import com.kinoticket.backend.dto.FilmShowDTO;
+import com.kinoticket.backend.dto.FilmShowInformationDTO;
 import com.kinoticket.backend.model.FilmShow;
-import com.kinoticket.backend.model.FilmShowDTO;
-import com.kinoticket.backend.model.FilmShowInformationDTO;
 import com.kinoticket.backend.service.FilmShowService;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.UnitTestConfiguration;
+import com.kinoticket.backend.dto.FilmShowInformationDTO;
 import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.*;
 

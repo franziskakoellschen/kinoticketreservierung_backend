@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.kinoticket.backend.Exceptions.EntityNotFound;
-import com.kinoticket.backend.Exceptions.MissingParameterException;
+import com.kinoticket.backend.dto.BookingDTO;
+import com.kinoticket.backend.exceptions.EntityNotFound;
+import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
-import com.kinoticket.backend.model.BookingDTO;
 import com.kinoticket.backend.service.BookingService;
 
 import org.slf4j.Logger;
@@ -38,6 +38,7 @@ public class BookingController {
     @PostMapping()
     public ResponseEntity<Booking> postBooking(@RequestBody BookingDTO bookingDTO) {
 
+
         ResponseEntity<Booking> responseEntity = null;
         Booking sentBooking = null;
 
@@ -45,7 +46,6 @@ public class BookingController {
             logger.warn("BookingController: Booking attempt faild: Seats are not blocked anymore.");
             return new ResponseEntity<Booking>(HttpStatus.CONFLICT);
         }
-
         try {
             sentBooking = service.putBooking(bookingDTO);
             logger.info("BookingController: Booking " + sentBooking.getId() + " successful");

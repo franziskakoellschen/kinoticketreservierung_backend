@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
+
 import org.springframework.lang.NonNull;
 
 import lombok.AllArgsConstructor;
@@ -67,12 +68,6 @@ public class Movie implements Serializable {
     private String genre;
 
     @Column
-    private long image_id;
-
-    @Column
     private String templateUrl;
-
-
-
 
 }

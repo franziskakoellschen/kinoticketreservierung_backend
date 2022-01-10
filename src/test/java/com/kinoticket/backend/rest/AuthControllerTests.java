@@ -3,6 +3,8 @@ package com.kinoticket.backend.rest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -101,6 +103,65 @@ public class AuthControllerTests {
             .andExpect(status().isNotFound());
     }
 
+    
+    @Test
+    public void testChangePassword() throws Exception {
+
+        mvc.perform(
+            post("/auth/resetPassword").contentType(MediaType.APPLICATION_JSON).content(
+                "{\"email\":\"test@mail.de\"}"
+            ))
+            .andExpect(status().isNotFound()
+        );
+
+        Mockito.doNothing().when(emailService).sendPasswordResetEmail(any(), anyString());
+        
+        User user = new User();
+        Address address = new Address();
+        address.setEmailAddress("testMail");
+        user.setAddress(address);
+        List<User> allUsers = new ArrayList<>();
+        allUsers.add(user);
+        when(userRepository.findAll()).thenReturn(allUsers);
+        mvc.perform(
+            post("/auth/resetPassword").contentType(MediaType.APPLICATION_JSON).content(
+                "{\"email\":\"testMail\"}"
+            ))
+            .andExpect(status().isOk()
+        );
+
+        mvc.perform(
+            post("/auth/changePassword").contentType(MediaType.APPLICATION_JSON).content(
+                "{\"token\":\"invalidToken\",\"newPassword\":\"somePassword\"}"
+            ))
+            .andExpect(status().isBadRequest()
+        );
+
+        VerificationToken mockToken = Mockito.mock(VerificationToken.class);
+        when(mockToken.getExpiryDate()).thenReturn(new Date(new Date().getTime()-10000));
+        when(verificationTokenRepository.findByToken("someToken")).thenReturn(mockToken);
+        mvc.perform(
+            post("/auth/changePassword").contentType(MediaType.APPLICATION_JSON).content(
+                "{\"token\":\"someToken\",\"newPassword\":\"somePassword\"}"
+            ))
+            .andExpect(status().isBadRequest()
+        );
+
+        mockToken = Mockito.mock(VerificationToken.class);
+        when(mockToken.getExpiryDate()).thenReturn(new Date(new Date().getTime()+10000));
+        when(verificationTokenRepository.findByToken("someToken")).thenReturn(mockToken);
+        when(mockToken.getUser()).thenReturn(new User());
+        when(userRepository.getById(anyLong())).thenReturn(new User());
+        when(userRepository.save(any())).thenReturn(new User());
+        mvc.perform(
+            post("/auth/changePassword").contentType(MediaType.APPLICATION_JSON).content(
+                "{\"token\":\"someToken\",\"newPassword\":\"somePassword\"}"
+            ))
+            .andExpect(status().isOk()
+        );
+    }
+
+
     @Test
     public void testRegistrationConfifmation() throws Exception {
 
@@ -179,7 +240,7 @@ public class AuthControllerTests {
         assertTrue(result.getResponse().getContentAsString().contains("Error: Email is already in use!")); 
     }
 
-    
+
     @Test
     public void testSignupWithRoles() throws Exception {
         SignupRequest signupRequest = new SignupRequest();

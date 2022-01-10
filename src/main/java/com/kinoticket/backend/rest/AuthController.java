@@ -61,14 +61,14 @@ public class AuthController {
     @Autowired AddressRepository addressRepository;
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody PasswordResetRequest passwordResetRequest) {
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
         
         Optional<User> findByEmail = userService.findByEmail(passwordResetRequest.getEmail());
         if (findByEmail.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         emailService.sendPasswordResetEmail(
-            findByEmail.get(), createPasswordResetLink(findByEmail.get(), request.getRequestURL())
+            findByEmail.get(), createPasswordResetLink(findByEmail.get())
         );
         return ResponseEntity.ok().build();        
     }
@@ -204,12 +204,12 @@ public class AuthController {
         return getHost() + path;
     }
 
-    private String createPasswordResetLink(User user, StringBuffer requestUrl) {
+    private String createPasswordResetLink(User user) {
         String token = UUID.randomUUID().toString();
         userDetailsServiceImpl.createVerificationToken(user, token);
 
-        String host = requestUrl.substring(0, requestUrl.indexOf("/auth"));
-        host = host.replace("localhost:8080", "localhost:3000");
+        String host = getHost();
+        host = host.replace("http://localhost:8080", "https://localhost:3000");
         host = host.replace("backend", "frontend");
         String path = "/passwordReset?token=" + token;
 

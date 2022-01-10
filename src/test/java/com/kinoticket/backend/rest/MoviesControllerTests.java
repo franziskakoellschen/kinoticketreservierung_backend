@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,9 +28,7 @@ import com.kinoticket.backend.repositories.MovieRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -203,8 +200,6 @@ public class MoviesControllerTests {
         filterDTO.setGenre("Comedy");
         filterDTO.setDimension("3D");
 
-        java.sql.Date sqlDate1 = new java.sql.Date(date.getTime());
-
         List<Movie> movieList = new ArrayList<>();
         movieList.add(createMovie());
 
@@ -247,7 +242,6 @@ public class MoviesControllerTests {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
         String dateInString = "7-Jan-2022";
-        Date date = formatter.parse(dateInString);
 
         dateInString = "18-Jan-2022";
         Date date2 = formatter.parse(dateInString);
@@ -256,9 +250,6 @@ public class MoviesControllerTests {
         filterDTO.setLanguage("DE");
         filterDTO.setGenre("Comedy");
         filterDTO.setDimension("3D");
-
-        java.sql.Date sqlDate1 = new java.sql.Date(date.getTime());
-        java.sql.Date sqlDate2 = new java.sql.Date(date2.getTime());
 
         List<Movie> movieList = new ArrayList<>();
         movieList.add(createMovie());

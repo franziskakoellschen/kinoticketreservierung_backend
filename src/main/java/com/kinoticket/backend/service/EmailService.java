@@ -17,9 +17,10 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.kinoticket.backend.Exceptions.MissingParameterException;
+import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.Ticket;
+import com.kinoticket.backend.model.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,7 @@ public class EmailService {
      * 
      * @param booking This is the booking object, containing a list of all the
      *                tickets for which a pdf file is generated and sent.
-     * @return An indication wether the email was sent successful.
      */
-
     public void sendBookingConfirmation(Booking booking) throws MissingParameterException {
 
         if (booking == null) {
@@ -56,32 +55,45 @@ public class EmailService {
 
         List<File> ticketPdfs = generateTicketPdfs(booking);
 
-        String messageBody = createMessageBody(booking);
+        String messageBody = bookingMessageBody(booking);
 
-        MimeMessage message = createBookingConfirmationMessage(
-                booking.getBookingAddress().getEmailAddress(), messageBody, ticketPdfs);
-
-        emailSender.send(message);
+        sendEmail(booking.getBookingAddress().getEmailAddress(), messageBody, "Ihre Reservierung bei Theatery", ticketPdfs);
         removeFromDisk(ticketPdfs);
         logger.info("EmailService: Booking Confirmation sent for Booking " + booking.getId());
     }
 
-    private void removeFromDisk(List<File> ticketPdfs) {
-        for (File f : ticketPdfs) {
-            f.delete();
-        }
+    /**
+     * This methods sends a registration confirmation email,
+     * including a link in it's body. This link will activate
+     * the user profile.
+     * 
+     * @param user             The user to activate.
+     * @param registrationLink The activation link to be placed
+     *                         in the message body.
+     */
+    public void sendRegistrationEmail(User user, String registrationLink) {
+
+        String messageBody =
+              "Hallo "
+            + user.getUsername() + "!\n"
+            + "Zur Aktivierung deines Accounts auf folgenden Link klicken:\n"
+            + registrationLink;
+
+        sendEmail(user.getAddress().getEmailAddress(), messageBody, "Ihre Registrierung bei Theatery", null);
+        logger.info("EmailService: Registration Email sent for User " + user.getId());
     }
 
-    private String createMessageBody(Booking booking) {
-        String message = "Lieber Kunde,\n\n";
-        message += "vielen Dank für Ihre Bestellung bei Theatery.\n";
-        message += "Im Anhang finden Sie Ihre Tickets. Wir freuen uns auf Sie!\n\n";
-        message += "Ihr Team von Theatery";
+    /**
+     * Sends an email to the specified email, containing a subject,
+     * a message in it's body and optional attachements.
+     * 
+     * @param to            The recipient of the email.
+     * @param messageBody   The email's content.
+     * @param subject       The email's subject.
+     * @param attachments   The email's attachments (can be 'null').
+     */
+    private void sendEmail(String to, String messageBody, String subject, List<File> attachments) {
 
-        return message;
-    }
-
-    private MimeMessage createBookingConfirmationMessage(String to, String messageBody, List<File> ticketPdfs) {
         MimeMessage message = emailSender.createMimeMessage();
 
         MimeMessageHelper helper;
@@ -90,20 +102,42 @@ public class EmailService {
 
             helper.setFrom(System.getenv("KINOTICKET_EMAIL"), "Theatery");
             helper.setTo(to);
-            helper.setSubject("Ihre Reservierung bei Theatery");
+            helper.setSubject(subject);
             helper.setText(messageBody);
 
-            for (int i = 0; i < ticketPdfs.size(); i++) {
-                helper.addAttachment(ticketPdfs.get(i).getName(), ticketPdfs.get(i));
+            if (attachments != null) {
+                for (File attachment : attachments) {
+                    helper.addAttachment(attachment.getName(), attachment);
+                }
             }
 
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        emailSender.send(message);
+    }
+
+    /**
+     * Removes files from the disk.
+     * 
+     * @param ticketPdfs The files to be removed.
+     */
+    private void removeFromDisk(List<File> files) {
+        for (File f : files) {
+            f.delete();
+        }
+    }
+
+    private String bookingMessageBody(Booking booking) {
+        String message = "Lieber Kunde,\n\n";
+        message += "vielen Dank für Ihre Bestellung bei Theatery.\n";
+        message += "Im Anhang finden Sie Ihre Tickets. Wir freuen uns auf Sie!\n\n";
+        message += "Ihr Team von Theatery";
+
         return message;
     }
 
-    private List<File> generateTicketPdfs(Booking booking) throws MissingParameterException {
+    public List<File> generateTicketPdfs(Booking booking) throws MissingParameterException {
         List<Ticket> tickets = booking.getTickets();
 
         if (tickets == null) {
@@ -159,5 +193,4 @@ public class EmailService {
         }
         return ticketPdfs;
     }
-
 }

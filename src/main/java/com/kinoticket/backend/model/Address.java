@@ -6,20 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "BookingAddress")
-public class BookingAddress {
+@Table
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @OneToOne(mappedBy = "bookingAddress")
-    private Booking booking;
 
     @Column
     private String surName;
@@ -27,6 +25,7 @@ public class BookingAddress {
     @Column
     private String lastName;
 
+    @NotNull
     @Column
     private String emailAddress;
 

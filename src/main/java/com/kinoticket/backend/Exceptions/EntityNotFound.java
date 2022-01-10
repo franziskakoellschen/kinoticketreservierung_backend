@@ -1,4 +1,4 @@
-package com.kinoticket.backend.Exceptions;
+package com.kinoticket.backend.exceptions;
 
 public class EntityNotFound extends Exception{
     public EntityNotFound(String errorMessage){

@@ -121,7 +121,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid HttpServletRequest request, @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                 .badRequest()
@@ -152,20 +152,19 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        String registrationLink = createRegistrationLink(user, request.getRequestURL());
+        String registrationLink = createRegistrationLink(user);
         emailService.sendRegistrationEmail(user, registrationLink);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    private String createRegistrationLink(User user, StringBuffer requestUrl) {
+    private String createRegistrationLink(User user) {
         String token = UUID.randomUUID().toString();
         userDetailsServiceImpl.createVerificationToken(user, token);
 
-        String host = requestUrl.substring(0, requestUrl.indexOf("/auth"));
         String path = "/auth/registrationConfirm?token=" + token;
 
-        return host + path;
+        return getHost() + path;
     }
 
     private Set<Role> getRolesFromString(Set<String> strRoles) {
@@ -189,5 +188,15 @@ public class AuthController {
         } else {
             return roleRepository.save(new Role(role));
         }
+    }
+
+    private String getHost() {
+        if (System.getenv("STAGE") == "DEV") {
+            return "https://kinoticket-backend-dev.herokuapp.com";
+        }
+        if (System.getenv("STAGE") == "PROD") {
+            return "https://kinoticket-backend-prod.herokuapp.com";
+        }
+        return "http://localhost:8080";
     }
 }

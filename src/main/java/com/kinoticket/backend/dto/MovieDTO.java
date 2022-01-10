@@ -38,7 +38,6 @@ public class MovieDTO {
         this.filmLength = movie.getFilmLength();
         this.originCountry = movie.getOriginCountry();
         this.genre = movie.getGenre();
-        this.image_id = movie.getImage_id();
     }
 
     public MovieDTO() {}

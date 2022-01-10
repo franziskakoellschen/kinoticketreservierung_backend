@@ -1,17 +1,27 @@
 package com.kinoticket.backend.rest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kinoticket.backend.UnitTestConfiguration;
+import com.kinoticket.backend.model.FilmShow;
+import com.kinoticket.backend.model.FilterDTO;
 import com.kinoticket.backend.model.Movie;
 import com.kinoticket.backend.repositories.FilmShowRepository;
 import com.kinoticket.backend.repositories.MovieRepository;
@@ -28,7 +38,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 @SpringBootTest
 @Import(UnitTestConfiguration.class)
 public class MoviesControllerTests {
@@ -92,6 +101,219 @@ public class MoviesControllerTests {
                 post("/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMovie.write(createMovie()).getJson()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("title"));
+        assertTrue(result.getResponse().getContentAsString().contains("Foo"));
+        assertTrue(result.getResponse().getContentAsString().contains("year"));
+        assertTrue(result.getResponse().getContentAsString().contains("2000"));
+        assertTrue(result.getResponse().getContentAsString().contains("shortDescription"));
+        assertTrue(result.getResponse().getContentAsString().contains("FooBar"));
+        assertTrue(result.getResponse().getContentAsString().contains("fsk"));
+        assertTrue(result.getResponse().getContentAsString().contains("16"));
+    }
+
+    public FilmShow createFilmShow(Movie movie) throws ParseException {
+        FilmShow filmShow = new FilmShow();
+        filmShow.setMovie(movie);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+
+        String dateInString = "7-Jan-2022";
+        Date date = formatter.parse(dateInString);
+
+        filmShow.setDate(date);
+        filmShow.setTime(new Time(00,00,00));
+        filmShow.setLanguage("DE");
+        filmShow.setDimension("2D");
+
+        return filmShow;
+
+    }
+
+    @Test
+    void testFilterWithTwoDates() throws Exception {
+
+        FilterDTO filterDTO = new FilterDTO();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+
+        String dateInString = "7-Jan-2022";
+        Date date = formatter.parse(dateInString);
+
+        filterDTO.setDate1(date);
+        dateInString = "18-Jan-2022";
+        Date date2 = formatter.parse(dateInString);
+        filterDTO.setDate2(date2);
+        filterDTO.setSearchString("Harry Potter");
+        filterDTO.setLanguage("DE");
+        filterDTO.setGenre("Comedy");
+        filterDTO.setDimension("3D");
+
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(createMovie());
+
+        FilmShow filmShow = createFilmShow(movieList.get(0));
+        filmShow.setId(1l);
+
+        List<FilmShow> filmShowList = new ArrayList<>();
+
+        filmShowList.add(filmShow);
+
+        when(movieRepository.findMovieWithFilters(any(), any())).thenReturn(movieList);
+        when(filmShowRepository.findFilmShowsWithTwoDates(anyLong(),any() , any(), anyString(), anyString())).thenReturn(filmShowList);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(filterDTO);
+        MvcResult result = this.mvc.perform( post("/movies/filters")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("title"));
+        assertTrue(result.getResponse().getContentAsString().contains("Foo"));
+        assertTrue(result.getResponse().getContentAsString().contains("year"));
+        assertTrue(result.getResponse().getContentAsString().contains("2000"));
+        assertTrue(result.getResponse().getContentAsString().contains("shortDescription"));
+        assertTrue(result.getResponse().getContentAsString().contains("FooBar"));
+        assertTrue(result.getResponse().getContentAsString().contains("fsk"));
+        assertTrue(result.getResponse().getContentAsString().contains("16"));
+    }
+
+    @Test
+    void testFilterWithOneDateFrom() throws Exception {
+
+        FilterDTO filterDTO = new FilterDTO();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+
+        String dateInString = "7-Jan-2022";
+        Date date = formatter.parse(dateInString);
+
+        filterDTO.setDate1(date);
+        filterDTO.setSearchString("Harry Potter");
+        filterDTO.setLanguage("DE");
+        filterDTO.setGenre("Comedy");
+        filterDTO.setDimension("3D");
+
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(createMovie());
+
+        FilmShow filmShow = createFilmShow(movieList.get(0));
+        filmShow.setId(1l);
+
+        List<FilmShow> filmShowList = new ArrayList<>();
+
+        filmShowList.add(filmShow);
+
+        when(movieRepository.findMovieWithFilters(any(), any())).thenReturn(movieList);
+
+        when( filmShowRepository.findFilmShowsWithFromDate(anyLong(), any(), anyString(), anyString() )).thenReturn(filmShowList);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(filterDTO);
+        MvcResult result = this.mvc.perform( post("/movies/filters")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("title"));
+        assertTrue(result.getResponse().getContentAsString().contains("Foo"));
+        assertTrue(result.getResponse().getContentAsString().contains("year"));
+        assertTrue(result.getResponse().getContentAsString().contains("2000"));
+        assertTrue(result.getResponse().getContentAsString().contains("shortDescription"));
+        assertTrue(result.getResponse().getContentAsString().contains("FooBar"));
+        assertTrue(result.getResponse().getContentAsString().contains("fsk"));
+        assertTrue(result.getResponse().getContentAsString().contains("16"));
+    }
+
+    @Test
+    void testFilterWithOneDateTo() throws Exception {
+
+        FilterDTO filterDTO = new FilterDTO();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+
+        String dateInString = "7-Jan-2022";
+
+        dateInString = "18-Jan-2022";
+        Date date2 = formatter.parse(dateInString);
+        filterDTO.setDate2(date2);
+        filterDTO.setSearchString("Harry Potter");
+        filterDTO.setLanguage("DE");
+        filterDTO.setGenre("Comedy");
+        filterDTO.setDimension("3D");
+
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(createMovie());
+
+        FilmShow filmShow = createFilmShow(movieList.get(0));
+        filmShow.setId(1l);
+
+        List<FilmShow> filmShowList = new ArrayList<>();
+
+        filmShowList.add(filmShow);
+
+        when(movieRepository.findMovieWithFilters(any(), any())).thenReturn(movieList);
+
+        when( filmShowRepository.findFilmShowsWithTwoDates(anyLong() ,any(),any(),anyString() , anyString() )).thenReturn(filmShowList);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(filterDTO);
+        MvcResult result = this.mvc.perform( post("/movies/filters")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("title"));
+        assertTrue(result.getResponse().getContentAsString().contains("Foo"));
+        assertTrue(result.getResponse().getContentAsString().contains("year"));
+        assertTrue(result.getResponse().getContentAsString().contains("2000"));
+        assertTrue(result.getResponse().getContentAsString().contains("shortDescription"));
+        assertTrue(result.getResponse().getContentAsString().contains("FooBar"));
+        assertTrue(result.getResponse().getContentAsString().contains("fsk"));
+        assertTrue(result.getResponse().getContentAsString().contains("16"));
+    }
+    @Test
+    void testFilterWithZeroDates() throws Exception {
+
+        FilterDTO filterDTO = new FilterDTO();
+
+        filterDTO.setSearchString("Harry Potter");
+        filterDTO.setLanguage("DE");
+        filterDTO.setGenre("Comedy");
+        filterDTO.setDimension("3D");
+
+        List<Movie> movieList = new ArrayList<>();
+        movieList.add(createMovie());
+
+        FilmShow filmShow = createFilmShow(movieList.get(0));
+        filmShow.setId(1l);
+
+        List<FilmShow> filmShowList = new ArrayList<>();
+
+        filmShowList.add(filmShow);
+
+        when(movieRepository.findMovieWithFilters(any(), any())).thenReturn(movieList);
+        when(filmShowRepository.findFutureFilmShowsByMovieWithFilter(anyLong(),any() , any(), eq("3D"), eq("DE"))).thenReturn(filmShowList);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(filterDTO);
+        MvcResult result = this.mvc.perform( post("/movies/filters")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
                 .andExpect(status().isOk())
                 .andReturn();
 

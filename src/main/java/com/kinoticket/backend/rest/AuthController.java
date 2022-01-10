@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.kinoticket.backend.model.*;
 import com.kinoticket.backend.repositories.AddressRepository;
 import com.kinoticket.backend.model.ERole;
 import com.kinoticket.backend.model.Role;

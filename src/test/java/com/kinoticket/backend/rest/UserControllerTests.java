@@ -5,9 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kinoticket.backend.UnitTestConfiguration;
-import com.kinoticket.backend.rest.request.LoginRequest;
-import com.kinoticket.backend.rest.request.SignupRequest;
-import com.kinoticket.backend.rest.request.UsernameCheckRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,10 +27,6 @@ public class UserControllerTests {
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
-
-    private JacksonTester<UsernameCheckRequest> jsonUNCR;
-    private JacksonTester<SignupRequest> jsonSuR;
-    private JacksonTester<LoginRequest> jsonLIR;
 
     @BeforeEach
     void before() {

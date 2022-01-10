@@ -32,6 +32,7 @@ import com.kinoticket.backend.service.EmailService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ClearEnvironmentVariable;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,8 +270,8 @@ public class AuthControllerTests {
 
     
     @Test
-	@SetEnvironmentVariable(key = "STAGE", value="PROD")
-    public void testSignupProd() throws Exception {
+	@ClearEnvironmentVariable(key = "FRONTEND_URL")
+    public void testSignupLocalHost() throws Exception {
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setEmail("testMail");
         signupRequest.setUsername("testUser");
@@ -291,8 +292,8 @@ public class AuthControllerTests {
     }
 
     @Test
-	@SetEnvironmentVariable(key = "STAGE", value="DEV")
-    public void testSignupDev() throws Exception {
+	@SetEnvironmentVariable(key = "FRONTEND_URL", value="someUrl")
+    public void testSignupHeroku() throws Exception {
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setEmail("testMail");
         signupRequest.setUsername("testUser");

@@ -80,7 +80,7 @@ public class UserController {
         Optional<User> user = userRepository.findByUsername(requestedUser.getUsername());
 
         if(user.isPresent()){
-            List<Booking> bookings = user.get().getBookings();
+            List<Booking> bookings = userService.getActiveBookings(user.get());
             return ResponseEntity.ok().body(bookings);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

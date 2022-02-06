@@ -480,4 +480,13 @@ public class BookingControllerTests {
                                 .andExpect(status().isOk());
 
         }
+
+        @Test
+        @WithMockUser(username="testUser")
+        void cancelNotPresentBooking() throws Exception {
+
+                mvc.perform(post("/booking/cancel/2"))
+                        .andExpect(status().isUnauthorized());
+        }
+
 }

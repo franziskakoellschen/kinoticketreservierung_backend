@@ -22,6 +22,7 @@ import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.UserRepository;
 import com.kinoticket.backend.repositories.VerificationTokenRepository;
+import com.kinoticket.backend.rest.BookingControllerTests;
 import com.kinoticket.backend.security.VerificationToken;
 
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,16 @@ public class UserServiceTests {
         userService.activateUser(new VerificationToken(user, token));
 
         assertTrue(user.isActive());
+    }
+
+    @Test
+    void testGetBookings() {
+        User mockedUser = new User();
+        ArrayList<Booking> arrayList = new ArrayList<Booking>();
+        arrayList.add(BookingControllerTests.createBooking());
+        mockedUser.setBookings(arrayList);
+
+        assertEquals(1, userService.getActiveBookings(mockedUser).size());
     }
 
     @Test

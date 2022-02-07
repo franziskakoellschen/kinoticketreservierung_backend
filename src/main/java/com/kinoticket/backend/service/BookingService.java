@@ -10,6 +10,7 @@ import com.kinoticket.backend.exceptions.EntityNotFound;
 import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.FilmShowSeat;
+import com.kinoticket.backend.model.FilmShowSeatStatus;
 import com.kinoticket.backend.model.Ticket;
 import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.*;
@@ -122,16 +123,18 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public Booking cancelBooking(long id) throws EntityNotFound {
-        Booking updatedBooking = bookingRepository.findById(id);
-        if (updatedBooking == null) {
-            throw new EntityNotFound("Can't find Entity by Id" + id);
+    public Booking cancelBooking(Booking booking) {
+
+        List<Ticket> tickets = booking.getTickets();
+        for (Ticket t : tickets) {
+            filmShowSeatService.changeSeat(t.getFilmShowSeat(), FilmShowSeatStatus.FREE);
         }
+        booking.setActive(false);
+        booking.setTickets(null);
+        bookingRepository.save(booking);
+        ticketRepository.deleteAll(tickets);
 
-        updatedBooking.setActive(false);
-
-        return bookingRepository.save(updatedBooking);
-
+        return booking;
     }
 
     public Booking updateBooking(Booking booking) {

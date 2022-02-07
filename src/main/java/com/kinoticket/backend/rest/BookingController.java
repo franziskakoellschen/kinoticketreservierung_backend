@@ -10,6 +10,7 @@ import com.kinoticket.backend.dto.BookingDTO;
 import com.kinoticket.backend.exceptions.EntityNotFound;
 import com.kinoticket.backend.exceptions.MissingParameterException;
 import com.kinoticket.backend.model.Booking;
+import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.service.BookingService;
 
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -127,18 +130,27 @@ public class BookingController {
     }
 
     @PostMapping(value = "/cancel/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Booking> cancelBooking(@PathVariable long id) {
-        ResponseEntity<Booking> responseEntity = null;
-        Booking sentBooking = null;
-        try {
-            sentBooking = service.cancelBooking(id);
-            responseEntity = new ResponseEntity<Booking>(sentBooking, HttpStatus.OK);
-        } catch (EntityNotFound mp) {
-            log.error("Invalid Parameter: " + mp.getMessage());
-            responseEntity = new ResponseEntity<Booking>(sentBooking, HttpStatus.BAD_REQUEST);
-        }
-        return responseEntity;
 
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        Booking theBooking = null;
+        for (Booking b : currentUser.getBookings()) {
+            if (b.getId().equals(id)) {
+                theBooking = b;
+            }
+        }
+        if (theBooking == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (theBooking.isActive() == false) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        service.cancelBooking(theBooking);
+        return ResponseEntity.ok().build();
     }
 
 }

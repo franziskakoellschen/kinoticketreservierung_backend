@@ -94,9 +94,10 @@ public class BookingControllerTests {
                 mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         }
 
-        public Booking createBooking() {
+        public static Booking createBooking() {
 
                 Booking booking = new Booking();
+                booking.setId(1L);
 
                 String meansOfPayment = "Visa";
                 boolean isPaid = true;
@@ -470,14 +471,22 @@ public class BookingControllerTests {
         }
 
         @Test
+        @WithMockUser(username="testUser")
         void cancelBooking() throws Exception {
 
+                
                 when(bookingRepository.findById(1l)).thenReturn(createBooking());
                 mvc.perform(post("/booking/cancel/1"))
                                 .andExpect(status().isOk());
 
-                when(bookingRepository.findById(1)).thenReturn(null);
-                mvc.perform(post("/booking/cancel/1"))
-                                .andExpect(status().isBadRequest());
         }
+
+        @Test
+        @WithMockUser(username="testUser")
+        void cancelNotPresentBooking() throws Exception {
+
+                mvc.perform(post("/booking/cancel/2"))
+                        .andExpect(status().isUnauthorized());
+        }
+
 }

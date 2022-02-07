@@ -1,12 +1,14 @@
 package com.kinoticket.backend.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import com.kinoticket.backend.dto.UserDTO;
 import com.kinoticket.backend.model.Address;
+import com.kinoticket.backend.model.Booking;
 import com.kinoticket.backend.model.User;
 import com.kinoticket.backend.repositories.AddressRepository;
 import com.kinoticket.backend.repositories.UserRepository;
@@ -110,5 +112,13 @@ public class UserService implements UserDetailsService {
         User byId = userRepository.getById(user.getId());
         byId.setPassword(newPassword);
         userRepository.save(byId);
+    }
+
+    public List<Booking> getActiveBookings(User user) {
+        List<Booking> activeBookings = new ArrayList<>();
+        for (Booking booking : user.getBookings()) {
+            if (booking.isActive()) activeBookings.add(booking);
+        }
+        return activeBookings;
     }
 }
